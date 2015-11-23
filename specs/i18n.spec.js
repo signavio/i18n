@@ -1,11 +1,11 @@
-import i18n, { init, setLocale, reset } from 'i18n';
+import i18n, { init, setLocale, reset } from '../src/index';
 
 import React from 'react';
 
 import ReactDOMServer from 'react-dom/server';
 
 
-import config from '../../src/locales/config';
+import config from './config';
 
 function getLangLoader(locale) {
   // A runtime exception will be throw every time that the requested locale file

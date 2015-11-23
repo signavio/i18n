@@ -69,11 +69,11 @@ module.exports = function(config) {
     config.set(_.merge({}, {
 
         // frameworks to use
-        frameworks: [ 'mocha', 'chai', 'sinon', 'phantomjs-shim' ],
+        frameworks: [ 'mocha', 'chai', 'phantomjs-shim' ],
 
         // list of files / patterns to load in the browser
         files: [
-            'node_modules/babel-core/browser-polyfill.js',
+            'node_modules/babel-polyfill/dist/polyfill.js',
             'specs/runner.js'
         ],
 
@@ -116,12 +116,12 @@ module.exports = function(config) {
         plugins: [
             require('karma-webpack'),
             require('karma-mocha'),
-            require('karma-sinon'),
             require('karma-chai'),
 
             require('karma-phantomjs-shim'),
             require('karma-spec-reporter'),
-            require('karma-phantomjs-launcher')
+            require('karma-phantomjs-launcher'),
+            require('karma-chrome-launcher')
         ]
 
     }, getConfig()));
