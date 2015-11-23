@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "lodash": "^3.10.1",
-    "marked": "^0.3.5"
+    "marked": "^0.3.5",
+    "jsxgettext": "git+https://github.com/jfschwarz/jsxgettext.git#bdcb85c2c66cf24f66553b451433f74acb6d0985"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",
