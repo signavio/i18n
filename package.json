@@ -1,0 +1,20 @@
+{
+  "name": "@effektif/i18n",
+  "version": "0.0.1",
+  "description": "Minimalist gettext style i18n for JavaScript used internally at Effektif",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/effektif/i18n.git"
+  },
+  "scripts": {
+    "test": "karma start"
+  },
+  "author": "Jan-Felix Schwarz",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/effektif/i18n/issues"
+  },
+  "dependencies": {
+  }
+}
