@@ -8,13 +8,19 @@
     "url": "https://github.com/effektif/i18n.git"
   },
   "scripts": {
-    "test": "karma start"
+    "test": "karma start",
+    "transpile": "babel src --out-dir lib",
+    "pretranspile": "npm run clean",
+    "clean": "rm -r lib"
   },
   "author": "Jan-Felix Schwarz",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/effektif/i18n/issues"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "babel": "^6.1.18",
+    "karma": "^0.13.15"
   }
 }
