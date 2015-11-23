@@ -7,6 +7,10 @@
     "type": "git",
     "url": "https://github.com/effektif/i18n.git"
   },
+  "bin": {
+    "i18n-extract": "./bin/i18n-extract.js",
+    "i18n-merge": "./bin/i18n-merge.js"
+  },
   "scripts": {
     "test": "karma start",
     "transpile": "babel src --out-dir lib",
