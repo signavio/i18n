@@ -23,9 +23,10 @@
     "url": "https://github.com/effektif/i18n/issues"
   },
   "dependencies": {
+    "babel-gettext-extractor": "^1.0.2",
+    "gettext-parser": "^1.1.2",
     "lodash": "^3.10.1",
-    "marked": "^0.3.5",
-    "jsxgettext": "git+https://github.com/jfschwarz/jsxgettext.git#bdcb85c2c66cf24f66553b451433f74acb6d0985"
+    "marked": "^0.3.5"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",

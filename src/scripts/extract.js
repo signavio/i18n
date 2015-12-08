@@ -1,8 +1,9 @@
-var fs = require('fs');
-var path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-var _ = require('lodash');
-var jsxgettext = require('jsxgettext');
+import _ from 'lodash';
+import { transformFileSync } from 'babel';
+import babelGettextExtractor from './babel-gettext-extractor';
 
 if(process.argv.length < 4) {
     throw new Error('Invalid arguments, expected: `node i18n/scripts/extract.js source_file ... pot_file`');
@@ -18,16 +19,7 @@ _.each(process.argv.slice(2, process.argv.length-1), function (fileName) {
         return;
     }
 
-    sources[fileName] = fs.readFileSync(fileName, 'utf8');
+    transformFileSync(fileName, {
+        plugins: [ babelGettextExtractor ]
+    });
 });
-
-var result = jsxgettext.generateFromBabel(sources, {
-    keyword: 'i18n',
-    plural: 'i18n',
-    output: templatePath,
-    babelOptions: {
-        stage: 0
-    }
-});
-
-fs.writeFileSync(templatePath, result, 'utf8');
