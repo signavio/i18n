@@ -15,7 +15,8 @@
     "test": "karma start",
     "transpile": "babel src --out-dir lib",
     "pretranspile": "npm run clean",
-    "clean": "rm -r lib"
+    "clean": "rm -r lib",
+    "prepublish": "npm run transpile"
   },
   "author": "Jan-Felix Schwarz",
   "license": "BSD-3-Clause",
