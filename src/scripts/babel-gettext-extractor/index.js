@@ -9,6 +9,32 @@ var DEFAULT_HEADERS = {
   'content-type': 'text/plain; charset=UTF-8'
 };
 
+function isStringLiteral(node) {
+  return node.type === 'Literal' && (typeof node.value === 'string');
+}
+
+function isStringConcatExpr(node) {
+  var left = node.left;
+  var right = node.right;
+
+  return node.type === "BinaryExpression" && node.operator === '+' && (
+      (isStringLiteral(left) || isStrConcatExpr(left)) &&
+      (isStringLiteral(right) || isStrConcatExpr(right))
+  );
+}
+
+function getStringValue(node) {
+  if(isStringLiteral(node)) {
+    return node.value;
+  }
+
+  if(isStringConcatExpr(node)) {
+    return getStringValue(node.left) + getStringValue(node.right);
+  }
+
+  return null;
+}
+
 function getTranslatorComment(node) {
   var comments = [];
   (node.leadingComments || []).forEach(function(commentNode) {
@@ -79,16 +105,21 @@ export default function(_ref) {
         return;
       }
 
-      if (!args[0].type === 'Literal') {
+      var value = getStringValue(args[0])
+
+      if(!value) {
         return;
       }
 
-      translate.msgid = args[0].value;
+      translate.msgid = value;
       translate.msgstr = [''];
       
-      if(args.length >= 2 && args[1].type === 'Literal') {
-        translate.msgid_plural = args[1].value;
-        translate.msgstr.push('');
+      if(args.length >= 2) {
+        value = getStringValue(args[1]);
+        if(value) {
+          translate.msgid_plural = value;
+          translate.msgstr.push('');
+        }
       }
 
       var fn = config.log.filename;

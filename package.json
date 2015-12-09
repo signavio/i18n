@@ -26,6 +26,7 @@
   "dependencies": {
     "babel-gettext-extractor": "^1.0.2",
     "gettext-parser": "^1.1.2",
+    "glob": "^6.0.1",
     "lodash": "^3.10.1",
     "marked": "^0.3.5"
   },
