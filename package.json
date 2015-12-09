@@ -1,6 +1,6 @@
 {
   "name": "@signavio/effektif-i18n",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Minimalist gettext style i18n for JavaScript used internally at Effektif",
   "main": "lib/index.js",
   "repository": {
