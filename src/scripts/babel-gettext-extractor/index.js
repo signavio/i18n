@@ -18,8 +18,8 @@ function isStringConcatExpr(node) {
   var right = node.right;
 
   return node.type === "BinaryExpression" && node.operator === '+' && (
-      (isStringLiteral(left) || isStrConcatExpr(left)) &&
-      (isStringLiteral(right) || isStrConcatExpr(right))
+      (isStringLiteral(left) || isStringConcatExpr(left)) &&
+      (isStringLiteral(right) || isStringConcatExpr(right))
   );
 }
 
