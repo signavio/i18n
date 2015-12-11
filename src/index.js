@@ -81,7 +81,7 @@ export function onChangeLocale(listener) {
 }
 
 export function offChangeLocale(listener) {
-    changeLocaleListeners = _.remove(changeLocaleListeners, listener);
+    changeLocaleListeners.splice(changeLocaleListeners.indexOf(listener), 1);
 }
 
 /** 
