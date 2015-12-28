@@ -38,7 +38,7 @@ Add a section like the following to the `packages.json`:
 ```
     scripts": {
         "i18n-init": "cd src/locales && msginit --no-translator --input messages.pot --locale",
-        "i18n": "i18n-extract src/**/*.js src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
+        "i18n": "i18n-extract \"src/**/!(*.spec).js?(x)\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
     },
 ```
 
