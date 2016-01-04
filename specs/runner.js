@@ -6,7 +6,7 @@ import _ from "lodash";
 var context = require.context('./', true, /\.spec\.js$/);
 context.keys().forEach(context);
 
-var allFiles = require.context('../src', true, /\.jsx?$/);
+var allFiles = require.context('../src', false, /\.jsx?$/);
 
 var blacklist = [/.*\.spec.js$/, /scripts/];
 
