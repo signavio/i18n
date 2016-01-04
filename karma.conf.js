@@ -31,13 +31,19 @@ var getConfig = function() {
             return {
                 // list of preprocessors
                 preprocessors: {
-                    'src/**/*.js': ['webpack'],
-                    'specs/**/*.js': ['webpack']
+                    'src/**/*.js': ['webpack', 'coverage'],
+                    'specs/**/*.js': ['webpack', 'coverage']
                 },
 
                 // test results reporter to use
                 // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-                reporters: ['dots', 'junit'],
+                reporters: ['dots', 'coverage', 'junit'],
+
+                coverageReporter: {
+                    type: 'cobertura',
+                    dir: 'coverage/',
+                    subdir: '.'
+                },
 
                 junitReporter: {
                     outputDir: 'junit'
@@ -89,6 +95,11 @@ module.exports = function(config) {
 
                     { test: /\.json$/, loader: 'json' }
                 ]
+            },
+            node: {
+                fs: "empty",
+                child_process: "empty",
+                net: "empty"
             }
         },
 
@@ -121,7 +132,9 @@ module.exports = function(config) {
             require('karma-phantomjs-shim'),
             require('karma-spec-reporter'),
             require('karma-phantomjs-launcher'),
-            require('karma-chrome-launcher')
+            require('karma-chrome-launcher'),
+            require('karma-junit-reporter'),
+            require('karma-coverage'),
         ]
 
     }, getConfig()));

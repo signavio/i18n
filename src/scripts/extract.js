@@ -3,7 +3,7 @@ import path from 'path';
 import glob from 'glob';
 
 import _ from 'lodash';
-import { transformFileSync } from 'babel';
+import { transformFileSync } from 'babel-core';
 import babelGettextExtractor from './babel-gettext-extractor';
 
 if(process.argv.length < 4) {
