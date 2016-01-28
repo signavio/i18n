@@ -55,7 +55,9 @@ export function setLocale(locale) {
  * Returns the currently active locale
  **/
 export function locale() {
-    let langRaw = specifiedLocale || window.navigator.userLanguage || window.navigator.language;
+    let langRaw = specifiedLocale || 
+        (window && (window.navigator.userLanguage || window.navigator.language) || 
+        "en_US";
     let langParts = langRaw.replace('-', '_').split('_');
 
     let language = langParts[0];
