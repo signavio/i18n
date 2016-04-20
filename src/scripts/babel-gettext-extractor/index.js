@@ -46,15 +46,16 @@ function getTranslatorComment(node) {
   return comments.length > 0 ? comments.join('\n') : null;
 }
 
-export default function(_ref) {
+export default function plugin(babel) {
+
   var currentFileName;
   var data;
-  var Plugin = _ref.Plugin;
+  var Plugin = babel.Plugin;
   var relocatedComments = {};
 
-  return new Plugin('babel-gettext-extractor', {visitor: {
+  return { visitor: {
 
-    VariableDeclaration: function(node, parent, scope, config) {
+    VariableDeclaration: function({ node }) {
       var translatorComment = getTranslatorComment(node);
       if (!translatorComment) {
         return;
@@ -68,7 +69,7 @@ export default function(_ref) {
       });
     },
 
-    CallExpression: function(node, parent, scope, config) {
+    CallExpression: function({ node, parent }, config) {
       var gtCfg = config.opts && config.opts.extra
         && config.opts.extra.gettext || {};
 
@@ -156,5 +157,5 @@ export default function(_ref) {
       var output = gettextParser.po.compile(data);
       fs.writeFileSync(fileName, output);
     }
-  }});
+  }};
 };
