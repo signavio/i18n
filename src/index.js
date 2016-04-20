@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import forEach from 'lodash/forEach';
 
 import createTranslate from './translate';
 
@@ -118,14 +119,14 @@ function tryToGetLangLoader(locale) {
 }
 
 function loadBundle(resolve, reject) {
-    if(!_.isFunction(getLangLoader)) {
+    if(!isFunction(getLangLoader)) {
         throw new Error("Cannot load a bundle as no valid getLangLoader function has been set");
     }
 
     let waitForLangChunk = tryToGetLangLoader(locale());
     waitForLangChunk(function(messages) {
         singleton.messages = messages;
-        _.each(changeLocaleListeners, (listener) => listener());
+        forEach(changeLocaleListeners, (listener) => listener());
         resolve();
     });
 }
