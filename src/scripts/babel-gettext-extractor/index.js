@@ -52,7 +52,7 @@ export default function(_ref) {
   var Plugin = _ref.Plugin;
   var relocatedComments = {};
 
-  return new Plugin('babel-plugin-example', {visitor: {
+  return new Plugin('babel-gettext-extractor', {visitor: {
 
     VariableDeclaration: function(node, parent, scope, config) {
       var translatorComment = getTranslatorComment(node);

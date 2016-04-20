@@ -25,7 +25,6 @@
     "url": "https://github.com/effektif/i18n/issues"
   },
   "dependencies": {
-    "babel-gettext-plugin": "^2.0.0",
     "gettext-parser": "^1.1.2",
     "glob": "^6.0.1",
     "lodash": "^4.0.0",
