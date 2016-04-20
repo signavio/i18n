@@ -10,7 +10,7 @@ var DEFAULT_HEADERS = {
 };
 
 function isStringLiteral(node) {
-  return node.type === 'Literal' && (typeof node.value === 'string');
+  return node.type === 'StringLiteral';
 }
 
 function isStringConcatExpr(node) {
@@ -70,13 +70,11 @@ export default function plugin(babel) {
     },
 
     CallExpression: function({ node, parent }, config) {
-      var gtCfg = config.opts && config.opts.extra
-        && config.opts.extra.gettext || {};
 
-      var functionName = gtCfg.functionName || DEFAULT_FUNCTION_NAME;
-      var fileName = gtCfg.fileName || DEFAULT_FILE_NAME;
-      var headers = gtCfg.headers || DEFAULT_HEADERS;
-      var base = gtCfg.baseDirectory;
+      var functionName = config.opts.functionName || DEFAULT_FUNCTION_NAME;
+      var fileName = config.opts.fileName || DEFAULT_FILE_NAME;
+      var headers = config.opts.headers || DEFAULT_HEADERS;
+      var base = config.opts.baseDirectory;
       if (base) {
         base = base.match(/^(.*?)\/*$/)[1] + '/';
       }
@@ -123,7 +121,7 @@ export default function plugin(babel) {
         }
       }
 
-      var fn = config.log.filename;
+      var fn = config.file.log.filename;
       if (base && fn && fn.substr(0, base.length) == base) {
         fn = fn.substr(base.length);
       }
