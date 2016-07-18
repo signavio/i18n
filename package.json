@@ -57,6 +57,7 @@
     "mocha": "^2.3.4",
     "phantomjs": "^1.9.18",
     "po-loader": "^0.3.1",
+    "po2json": "^0.4.2",
     "react-dom": "^15.0.1",
     "webpack": "^1.12.8"
   }
