@@ -1,6 +1,12 @@
-import _ from 'lodash';
-import marked from 'marked';
-import React from 'react';
+import isString from 'lodash/isString'
+import isNumber from 'lodash/isNumber'
+import isPlainObject from 'lodash/isPlainObject'
+import forEach from 'lodash/forEach'
+import pickBy from 'lodash/pickBy'
+import has from 'lodash/has'
+import escape from 'lodash/escape'
+import marked from 'marked'
+import React from 'react'
 
 var defaultOptions = {
     markdown: false
@@ -12,20 +18,24 @@ export default (singleton) => function translate(text, plural, options) {
     // format: singular key -> [ plural key, singular translations, plural translation ]
 
 
-    if(!options && _.isObject(plural)) {
+    if(!options && isPlainObject(plural)) {
         options = plural;
         plural = undefined;
     }
-    options = _.extend({}, defaultOptions, options);
+    options = {
+        ...defaultOptions,
+        ...options,
+    };
 
     const [ pluralKey, translatedSingular, translatedPlural ] = singleton.messages[text] || [null, null, null];
 
     // find the raw translation message
     let translation;
+
     if(plural && needsPlural(options)) {
-        translation = translatedPlural && _.isString(translatedPlural) ? translatedPlural : plural;
+        translation = translatedPlural && isString(translatedPlural) ? translatedPlural : plural;
     } else {
-        translation = translatedSingular && _.isString(translatedSingular) ? translatedSingular : text;
+        translation = translatedSingular && isString(translatedSingular) ? translatedSingular : text;
     }
 
     // apply markdown processing if necessary
@@ -43,7 +53,7 @@ export default (singleton) => function translate(text, plural, options) {
 }
 
 function needsPlural(options) {
-    return _.isNumber(options.count) && options.count > 1;
+    return isNumber(options.count) && options.count > 1;
 }
 
 function applyMarkdown(translation) {
@@ -68,14 +78,14 @@ function htmlStringToReactComponent(html) {
 }
 
 function insertInterpolations(translation, options) {
-    let regularInterpolations = _.pick(
+    let regularInterpolations = pickBy(
         options,
-        (val, key, obj) => !_.has(defaultOptions, key) && !React.isValidElement(val)
+        (val, key, obj) => !has(defaultOptions, key) && !React.isValidElement(val)
     );
-    _.each(regularInterpolations, (val, key) => {
+    forEach(regularInterpolations, (val, key) => {
         translation = translation.replace(
             new RegExp("__" + key + "__", "g"),
-            options.markdown ? _.escape(val) : val   // only escape options when using markdown
+            options.markdown ? escape(val) : val   // only escape options when using markdown
         );
     });
     return translation;
@@ -98,14 +108,14 @@ function insertReactComponentInterpolations(translation, options) {
 
         if(React.isValidElement(component)) {
             result.push(
-                _.contains(result, component) ?
+                result.indexOf(component) >= 0 ?
                     React.cloneElement(component) :
                     component
             );
         } else {
             // interpolation value is not a React component
 
-            if(_.has(options, key)) {
+            if(has(options, key)) {
                 result.push(component);
             } else {
                 // no interpolation specified, leave the placeholder unchanged
