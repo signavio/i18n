@@ -12,31 +12,30 @@ var defaultOptions = {
     markdown: false
 };
 
-export default (singleton) => function translate(text, pluralText, options) {
+export default (singleton) => function translate(text, plural, options) {
 
     // singleton.messages contains the translation messages for the currently active languae
     // format: singular key -> [ plural key, singular translations, plural translation ]
 
 
-    if(!options && isPlainObject(pluralText)) {
-        options = pluralText;
-        pluralText = undefined;
+    if(!options && isPlainObject(plural)) {
+        options = plural;
+        plural = undefined;
     }
     options = {
-        ...defaultOptions, 
+        ...defaultOptions,
         ...options,
     };
 
-    let message = singleton.messages[text] || [null, null];
+    const [ pluralKey, translatedSingular, translatedPlural ] = singleton.messages[text] || [null, null, null];
 
     // find the raw translation message
     let translation;
-    if(pluralText && needsPlural(options)) {
-        translation = message.length > 2 && isString(message[2]) ?
-            message[2] : pluralText;
+
+    if(plural && needsPlural(options)) {
+        translation = translatedPlural && isString(translatedPlural) ? translatedPlural : plural;
     } else {
-        translation = isString(message[1]) ?
-            message[1] : text;
+        translation = translatedSingular && isString(translatedSingular) ? translatedSingular : text;
     }
 
     // apply markdown processing if necessary

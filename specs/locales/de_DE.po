@@ -19,3 +19,6 @@ msgid "__count__ comment"
 msgid_plural "__count__ comments"
 msgstr[0] "__count__ Kommentar"
 msgstr[1] "__count__ Kommentare"
+
+msgid "This is not translated"
+msgstr ""

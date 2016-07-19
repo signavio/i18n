@@ -30,7 +30,7 @@ describe("i18n", function() {
             });
         })
 
-        it('should load the respective bundle if called after init', function () {
+        it('should load the respective bundle if called after init', function (done) {
             setLocale('en_US');
             // return a promise and use mocha's built in promises support
             init(getLangLoader, config).then(() => {
@@ -38,6 +38,8 @@ describe("i18n", function() {
                 setLocale('de_DE');
                 return init(getLangLoader, config).then(() => {
                     expect(i18n('for')).to.equal('für');
+
+                    done();
                 });
             });
         });
@@ -110,6 +112,18 @@ describe("i18n", function() {
             expect(t).to.have.length(3);
             expect(t[0]).to.equal("This is a <");
             expect(t[2]).to.equal(">.");
+        });
+
+        it("should fallback to the translation key, if no translation was found.", (done) => {
+            expect(i18n("This is not translated")).to.equal("This is not translated");
+
+            setLocale("de_DE");
+
+            init(getLangLoader, config).then(() => {
+                expect(i18n("This is not translated")).to.equal("This is not translated");
+
+                done()
+            }).catch(done)
         });
 
         //it("should ??? when markdown wraps React component interpolations", function() {
