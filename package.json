@@ -1,6 +1,6 @@
 {
   "name": "signavio-i18n",
-  "version": "0.3.2",
+  "version": "1.0.0",
   "description": "Minimalist gettext style i18n for JavaScript",
   "main": "lib/index.js",
   "repository": {
