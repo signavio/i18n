@@ -1,18 +1,18 @@
-# i18n
-Minimalist gettext style i18n for JavaScript used internally at Effektif
+# signavio-i18n
+Minimalist gettext style i18n for JavaScript
 
 ## Features
 - Pluralization support (ngettext style)
 - Supports React components as interpolations
 - Optional markdown support
 - Compatible with [webpack po-loader](https://github.com/perchlayer/po-loader)
-- Comes with scripts for extracting translation strings from JavaScript (Babel) sources and updating .pot and .po files 
+- Comes with scripts for extracting translation strings from JavaScript (Babel) sources and updating .pot and .po files
 
 
 ## Installation
 
 ```
-npm install --save @signavio/i18n
+npm install --save signavio-i18n
 ```
 
 

@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require("../lib/scripts/extract");
+require('../lib/scripts/extract')

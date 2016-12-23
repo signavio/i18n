@@ -6,47 +6,56 @@ import pathExists from 'path-exists'
 const I18NRC_FILENAME = '.i18nrc'
 
 
-let existsCache = {}
-let configCache = {}
+const existsCache = {}
+const configCache = {}
 
 function exists(filename) {
-  let cached = existsCache[filename];
-  if (cached == null) {
-    return existsCache[filename] = pathExists.sync(filename);
-  } else {
-    return cached;
+  if (existsCache[filename] == null) {
+    existsCache[filename] = pathExists.sync(filename)
   }
+
+  return existsCache[filename]
 }
 
 function findConfig(loc) {
-  if (!loc) return;
-
-  if (!isAbsolute(loc)) {
-    loc = path.join(process.cwd(), loc);
+  if (!loc) {
+    return null
   }
 
-  while (loc !== (loc = path.dirname(loc))) {
-    let configLoc = path.join(loc, I18NRC_FILENAME);
+  let location = loc
+
+  if (!isAbsolute(location)) {
+    location = path.join(process.cwd(), location)
+  }
+
+  while (location !== (location = path.dirname(location))) {
+    const configLoc = path.join(location, I18NRC_FILENAME)
+
     if (exists(configLoc)) {
       return configLoc
     }
   }
 
-  throw new Error('Could not find .i18nrc')
+  return null
 }
 
 export default function getConfig(filename = '.') {
   const loc = findConfig(filename)
-  if(configCache[loc]) {
+
+  if (!loc) {
+    throw new Error('Could not find .i18nrc')
+  }
+
+  if (configCache[loc]) {
     return configCache[loc]
   }
 
-  let content = fs.readFileSync(loc, "utf8")
+  const content = fs.readFileSync(loc, 'utf8')
   try {
-    configCache[loc] = JSON.parse(content);
+    configCache[loc] = JSON.parse(content)
   } catch (err) {
-    err.message = `${loc}: Error while parsing JSON - ${err.message}`;
-    throw err;
+    err.message = `${loc}: Error while parsing JSON - ${err.message}`
+    throw err
   }
 
   return configCache[loc]

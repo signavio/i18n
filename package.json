@@ -1,30 +1,32 @@
 {
-  "name": "@signavio/effektif-i18n",
+  "name": "signavio-i18n",
   "version": "0.3.2",
-  "description": "Minimalist gettext style i18n for JavaScript used internally at Effektif",
+  "description": "Minimalist gettext style i18n for JavaScript",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/effektif/i18n.git"
+    "url": "https://github.com/signavio/i18n.git"
   },
   "bin": {
     "i18n-extract": "./bin/i18n-extract.js",
     "i18n-merge": "./bin/i18n-merge.js"
   },
   "scripts": {
+    "clean": "rimraf -rf lib",
+    "coverage": "npm run test",
+    "build": "babel src --out-dir lib",
+    "lint": "eslint src specs",
     "test": "karma start",
-    "test-ci": "NODE_ENV=production karma start",
-    "transpile": "babel src --out-dir lib",
-    "pretranspile": "npm run clean",
-    "clean": "rm -rf lib",
-    "prepublish": "npm run transpile"
+    "prebuild": "npm run clean",
+    "prepublish": "npm run build"
   },
   "author": "Jan-Felix Schwarz",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/effektif/i18n/issues"
+    "url": "https://github.com/signavio/i18n/issues"
   },
   "dependencies": {
+    "babel-core": "^6.2.1",
     "gettext-parser": "^1.1.2",
     "glob": "^6.0.1",
     "lodash": "^4.0.0",
@@ -34,7 +36,6 @@
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",
-    "babel-core": "^6.2.1",
     "babel-loader": "^6.2.0",
     "babel-polyfill": "^6.2.0",
     "babel-preset-es2015": "^6.1.18",
@@ -42,23 +43,29 @@
     "babel-preset-stage-0": "^6.5.0",
     "bundle-loader": "^0.5.4",
     "chai": "^3.4.1",
+    "eslint": "^3.12.2",
+    "eslint-config-signavio": "^1.4.1",
+    "eslint-config-signavio-test": "^1.2.1",
+    "eslint-plugin-chai-expect": "^1.1.1",
+    "eslint-plugin-mocha": "^4.7.0",
     "json-loader": "^0.5.3",
-    "karma": "^0.13.15",
+    "karma": "^1.3.0",
     "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^0.2.1",
-    "karma-coverage": "^0.5.3",
-    "karma-junit-reporter": "^0.3.8",
-    "karma-mocha": "^0.2.1",
-    "karma-phantomjs-launcher": "^0.2.1",
-    "karma-phantomjs-shim": "^1.1.2",
-    "karma-spec-reporter": "0.0.22",
-    "karma-webpack": "^1.7.0",
+    "karma-chrome-launcher": ">=0.1.1",
+    "karma-coverage": "^1.1.1",
+    "karma-junit-reporter": "^1.2.0",
+    "karma-mocha": "^1.3.0",
+    "karma-phantomjs-launcher": "1.0.0",
+    "karma-phantomjs-shim": "^1.0.0",
+    "karma-spec-reporter": "0.0.26",
+    "karma-webpack": "^1.8.0",
     "mocha": "^2.3.4",
-    "phantomjs": "^1.9.18",
+    "phantomjs-prebuilt": "^2.1.14",
     "po-loader": "^0.3.1",
     "po2json": "^0.4.2",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
+    "rimraf": "^2.5.4",
     "webpack": "^1.12.8"
   },
   "peerDependencies": {
