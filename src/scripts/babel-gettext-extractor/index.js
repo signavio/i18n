@@ -1,159 +1,156 @@
-var gettextParser = require('gettext-parser');
-var fs = require('fs');
+import gettextParser from 'gettext-parser'
+import fs from 'fs'
 
-var DEFAULT_FUNCTION_NAME = 'i18n';
+const DEFAULT_FUNCTION_NAME = 'i18n'
 
-var DEFAULT_FILE_NAME = 'messages.pot';
+const DEFAULT_FILE_NAME = 'messages.pot'
 
-var DEFAULT_HEADERS = {
-  'content-type': 'text/plain; charset=UTF-8'
-};
+const DEFAULT_HEADERS = {
+  'content-type': 'text/plain; charset=UTF-8',
+}
 
 function isStringLiteral(node) {
-  return node.type === 'StringLiteral';
+  return node.type === 'StringLiteral'
 }
 
 function isStringConcatExpr(node) {
-  var left = node.left;
-  var right = node.right;
+  const left = node.left
+  const right = node.right
 
-  return node.type === "BinaryExpression" && node.operator === '+' && (
-      (isStringLiteral(left) || isStringConcatExpr(left)) &&
-      (isStringLiteral(right) || isStringConcatExpr(right))
-  );
+  return node.type === 'BinaryExpression' && node.operator === '+' && (
+    (isStringLiteral(left) || isStringConcatExpr(left)) &&
+    (isStringLiteral(right) || isStringConcatExpr(right))
+  )
 }
 
 function getStringValue(node) {
-  if(isStringLiteral(node)) {
-    return node.value;
+  if (isStringLiteral(node)) {
+    return node.value
   }
 
-  if(isStringConcatExpr(node)) {
-    return getStringValue(node.left) + getStringValue(node.right);
+  if (isStringConcatExpr(node)) {
+    return getStringValue(node.left) + getStringValue(node.right)
   }
 
-  return null;
+  return null
 }
 
 function getTranslatorComment(node) {
-  var comments = [];
-  (node.leadingComments || []).forEach(function(commentNode) {
-    var match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im);
+  const comments = [];
+  (node.leadingComments || []).forEach((commentNode) => {
+    const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
     if (match) {
-      comments.push(match[1]);
+      comments.push(match[1])
     }
-  });
-  return comments.length > 0 ? comments.join('\n') : null;
+  })
+  return comments.length > 0 ? comments.join('\n') : null
 }
 
-export default function plugin(babel) {
-
-  var currentFileName;
-  var data;
-  var Plugin = babel.Plugin;
-  var relocatedComments = {};
+export default function plugin() {
+  let currentFileName
+  let data
+  const relocatedComments = {}
 
   return { visitor: {
 
-    VariableDeclaration: function({ node }) {
-      var translatorComment = getTranslatorComment(node);
+    VariableDeclaration({ node }) {
+      const translatorComment = getTranslatorComment(node)
       if (!translatorComment) {
-        return;
+        return
       }
-      node.declarations.forEach(function(declarator) {
-        var comment = getTranslatorComment(declarator);
+      node.declarations.forEach((declarator) => {
+        const comment = getTranslatorComment(declarator)
         if (!comment) {
-          var key = declarator.init.start + '|' + declarator.init.end;
-          relocatedComments[key] = translatorComment;
+          const key = `${declarator.init.start}|${declarator.init.end}`
+          relocatedComments[key] = translatorComment
         }
-      });
+      })
     },
 
-    CallExpression: function({ node, parent }, config) {
-
-      var functionName = config.opts.functionName || DEFAULT_FUNCTION_NAME;
-      var fileName = config.opts.fileName || DEFAULT_FILE_NAME;
-      var headers = config.opts.headers || DEFAULT_HEADERS;
-      var base = config.opts.baseDirectory;
+    CallExpression({ node, parent }, config) {
+      const functionName = config.opts.functionName || DEFAULT_FUNCTION_NAME
+      const fileName = config.opts.fileName || DEFAULT_FILE_NAME
+      const headers = config.opts.headers || DEFAULT_HEADERS
+      let base = config.opts.baseDirectory
       if (base) {
-        base = base.match(/^(.*?)\/*$/)[1] + '/';
+        base = `${base.match(/^(.*?)\/*$/)[1]}/`
       }
 
       if (fileName !== currentFileName) {
-        currentFileName = fileName;
+        currentFileName = fileName
         data = {
           charset: 'UTF-8',
-          headers: headers,
-          translations: {context: {}}
-        };
+          headers,
+          translations: { context: {} },
+        }
 
         headers['content-type'] = headers['content-type']
-          || DEFAULT_HEADERS['content-type'];
+          || DEFAULT_HEADERS['content-type']
       }
 
-      var defaultContext = data.translations.context;
+      const defaultContext = data.translations.context
 
       if (node.callee.name !== functionName) {
-        return;
+        return
       }
 
-      var translate = {};
+      const translate = {}
 
-      var args = node.arguments;
-      if(args.length === 0) {
-        return;
+      const args = node.arguments
+      if (args.length === 0) {
+        return
       }
 
-      var value = getStringValue(args[0])
+      let value = getStringValue(args[0])
 
-      if(!value) {
-        return;
+      if (!value) {
+        return
       }
 
-      translate.msgid = value;
-      translate.msgstr = [''];
-      
-      if(args.length >= 2) {
-        value = getStringValue(args[1]);
-        if(value) {
-          translate.msgid_plural = value;
-          translate.msgstr.push('');
+      translate.msgid = value
+      translate.msgstr = ['']
+
+      if (args.length >= 2) {
+        value = getStringValue(args[1])
+        if (value) {
+          translate.msgid_plural = value
+          translate.msgstr.push('')
         }
       }
 
-      var fn = config.file.log.filename;
-      if (base && fn && fn.substr(0, base.length) == base) {
-        fn = fn.substr(base.length);
+      let fn = config.file.log.filename
+      if (base && fn && fn.substr(0, base.length) === base) {
+        fn = fn.substr(base.length)
       }
 
       translate.comments = {
-        reference: fn + ':' + node.loc.start.line
-      };
+        reference: `${fn}:${node.loc.start.line}`,
+      }
 
-      var translatorComment = getTranslatorComment(node);
+      let translatorComment = getTranslatorComment(node)
       if (!translatorComment) {
-        translatorComment = getTranslatorComment(parent);
+        translatorComment = getTranslatorComment(parent)
         if (!translatorComment) {
           translatorComment = relocatedComments[
-            node.start + '|' + node.end];
+            `${node.start}|${node.end}`]
         }
       }
 
       if (translatorComment) {
-        translate.comments.translator = translatorComment;
+        translate.comments.translator = translatorComment
       }
 
-      var context = defaultContext;
-      var msgctxt = translate.msgctxt;
+      let context = defaultContext
+      const msgctxt = translate.msgctxt
       if (msgctxt) {
-        data.translations[msgctxt] = data.translations[msgctxt] || {};
-        context = data.translations[msgctxt];
+        data.translations[msgctxt] = data.translations[msgctxt] || {}
+        context = data.translations[msgctxt]
       }
 
-      context[translate.msgid] = translate;
+      context[translate.msgid] = translate
 
-      var output = gettextParser.po.compile(data);
-      fs.writeFileSync(fileName, output);
-    }
-  }};
-};
+      const output = gettextParser.po.compile(data)
+      fs.writeFileSync(fileName, output)
+    },
+  } }
+}
