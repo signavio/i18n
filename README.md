@@ -24,9 +24,9 @@ Add the configuration for gettext message extraction to your `.babelrc`:
 {
   "extra": {
     "gettext": {
-      "headers": <POT_HEADERS>,
-      "fileName": <PATH_TO_POT>,
-      "baseDirectory": <PATH_TO_BASEDIR>
+      "headers": "<POT_HEADERS>",
+      "fileName": "<PATH_TO_POT>",
+      "baseDirectory": "<PATH_TO_BASEDIR>"
     }
   }
 }
@@ -39,7 +39,7 @@ Add a section like the following to the `packages.json`:
 
 ```json
 {
-  scripts": {
+  "scripts": {
     "i18n-init": "cd src/locales && msginit --no-translator --input messages.pot --locale",
     "i18n": "i18n-extract \"src/**/!(*.spec).js?(x)\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
   }
