@@ -51,24 +51,32 @@ Add a section like the following to the `packages.json`:
 Add the translations to the PO files, and initialize the i18n module in your application using the `init` function:
 
 ```javascript
-import i18n, { init, setLocale, reset } from 'signavio-i18n';
+import i18n, { init, setLocale } from 'signavio-i18n';
 
 function getLangLoader(locale) {
   // Lazy load the translation bundles
-  let bundleLoader = require(`bundle?lazy!json!po./locales/${locale}.po`)
-  return bundleLoader
+  return require(`bundle?lazy!json!po./locales/${locale}.po`)
 };
 
 const config = {
-  default: 'en_US', // the default locale to use if the browser preference locale is not available
-  map: {  // optional mapping of locales
-      en: 'en_US',
-      de: 'de_DE',
-  }
+  // the default locale to use if the browser preference locale is not available
+  default: 'en_US',
+  // optional mapping of locales
+  map: {
+    en: 'en_US',
+    de: 'de_DE',
+  },
 }
 
 init(getLangLoader, config).then(() => {
   // promise will be resolved when the translation bundle for the active locale has been loaded
-  alert(i18n("Hello world!"))
+  alert(i18n('Hello world!'))
+  // >> Hello world!
+  
+  // switch to another language
+  setLocale('de').then(() => {
+    alert(i18n('Hello world!'))
+    // >> Hallo Welt!
+  })
 })
 ```
