@@ -11,7 +11,7 @@ Minimalist gettext style i18n for JavaScript
 
 ## Installation
 
-```
+```shell
 npm install --save signavio-i18n
 ```
 
@@ -20,14 +20,16 @@ npm install --save signavio-i18n
 
 Add the configuration for gettext message extraction to your `.babelrc`:
 
-```
-    "extra": {
-        "gettext": {
-            "headers": <POT_HEADERS>,
-            "fileName": <PATH_TO_POT>,
-            "baseDirectory": <PATH_TO_BASEDIR>
-        }
+```json
+{
+  "extra": {
+    "gettext": {
+      "headers": <POT_HEADERS>,
+      "fileName": <PATH_TO_POT>,
+      "baseDirectory": <PATH_TO_BASEDIR>
     }
+  }
+}
 ```
 
 All available options are documented here: https://github.com/getsentry/babel-gettext-extractor
@@ -35,36 +37,38 @@ All available options are documented here: https://github.com/getsentry/babel-ge
 
 Add a section like the following to the `packages.json`:
 
-```
-    scripts": {
-        "i18n-init": "cd src/locales && msginit --no-translator --input messages.pot --locale",
-        "i18n": "i18n-extract \"src/**/!(*.spec).js?(x)\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
-    },
+```json
+{
+  scripts": {
+    "i18n-init": "cd src/locales && msginit --no-translator --input messages.pot --locale",
+    "i18n": "i18n-extract \"src/**/!(*.spec).js?(x)\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
+  }
+}
 ```
 
 ## Usage
 
 Add the translations to the PO files, and initialize the i18n module in your application using the `init` function:
 
-```
-import i18n, { init, setLocale, reset } from '@signavio/i18n';
+```javascript
+import i18n, { init, setLocale, reset } from 'signavio-i18n';
 
 function getLangLoader(locale) {
-    // Lazy load the translation bundles
-    let bundleLoader = require(`bundle?lazy!json!po./locales/${locale}.po`);
-    return bundleLoader;
+  // Lazy load the translation bundles
+  let bundleLoader = require(`bundle?lazy!json!po./locales/${locale}.po`)
+  return bundleLoader
 };
 
-var config = {
-    default: 'en_US', // the default locale to use if the browser preference locale is not available
-    map: {  // optional mapping of locales
-        en: 'en_US',
-        de: 'de_DE'
-    }
-};
+const config = {
+  default: 'en_US', // the default locale to use if the browser preference locale is not available
+  map: {  // optional mapping of locales
+      en: 'en_US',
+      de: 'de_DE',
+  }
+}
 
 init(getLangLoader, config).then(() => {
-    // promise will be resolved when the translation bundle for the active locale has been loaded
-    alert(i18n("Hello world!"));
+  // promise will be resolved when the translation bundle for the active locale has been loaded
+  alert(i18n("Hello world!"))
 })
 ```
