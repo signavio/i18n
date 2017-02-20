@@ -22,3 +22,10 @@ msgstr[1] "__count__ comments"
 
 msgid "This is not translated"
 msgstr "This is not translated"
+
+msgctxt "button label"
+msgid "Export"
+msgstr "Export"
+
+msgid "Export"
+msgstr "Export"
