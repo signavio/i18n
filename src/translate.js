@@ -26,12 +26,14 @@ export default (singleton) => function translate(text, plural, options) {
   finalOptions = {
     ...defaultOptions,
     ...finalOptions,
+    msgctxt: options && options.msgctxt ? options.msgctxt + '%04' : '',
   }
 
+  console.log(finalOptions.msgctxt)
   const [
     translatedSingular,
     translatedPlural,
-  ] = (singleton.messages[text] || [null, null, null]).slice(1)
+  ] = (singleton.messages[unescape(finalOptions.msgctxt + text)] || [null, null, null]).slice(1)
 
   // find the raw translation message
   let translation
