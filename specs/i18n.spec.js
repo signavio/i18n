@@ -43,7 +43,7 @@ describe('i18n', () => {
   })
 
   describe('#translate', () => {
-    
+
     it('should return a plain string whenever possible', () => {
       const t = i18n('This is a __test__.', { test: 'success' })
       expect(t).to.be.a('string')
@@ -124,11 +124,11 @@ describe('i18n', () => {
       }).catch(done)
     })
 
-    it('should consider the msgctxt option, if provided', (done) => {
+    it('should consider the context option, if provided', (done) => {
         setLocale('de_DE')
 
         init(getLangLoader, config).then(() => {
-          expect(i18n('Export', {}, {msgctxt: 'button label'})).to.equal('Exportieren')
+          expect(i18n('Export', {context: 'button label'})).to.equal('Exportieren')
 
           done()
         }).catch(done)
