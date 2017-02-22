@@ -26,13 +26,13 @@ export default (singleton) => function translate(text, plural, options) {
   finalOptions = {
     ...defaultOptions,
     ...finalOptions,
-    context: finalOptions && finalOptions.context ? finalOptions.context + '%04' : '',
+    context: finalOptions && finalOptions.context ? finalOptions.context + '\u0004' : '',
   }
 
   const [
     translatedSingular,
     translatedPlural,
-  ] = (singleton.messages[unescape(finalOptions.context + text)] || [null, null, null]).slice(1)
+  ] = (singleton.messages[finalOptions.context + text] || [null, null, null]).slice(1)
 
   // find the raw translation message
   let translation
