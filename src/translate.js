@@ -26,7 +26,7 @@ export default (singleton) => function translate(text, plural, options) {
   finalOptions = {
     ...defaultOptions,
     ...finalOptions,
-    context: finalOptions && finalOptions.context ? finalOptions.context + '\u0004' : '',
+    context: finalOptions && finalOptions.context ? `${finalOptions.context}\u0004` : '',
   }
 
   const [

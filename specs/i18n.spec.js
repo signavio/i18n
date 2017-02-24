@@ -11,7 +11,7 @@ function getLangLoader(locale) {
   // A runtime exception will be throw every time that the requested locale file
   // cannot be found. Webpack uses a regular expression to build all locales as
   // separate bundles.
-  // eslint-disable-next-line import/no-dynamic-require
+  // eslint-disable-next-line global-require,import/no-dynamic-require
   return require(`bundle?lazy!./locales/${locale}.po`)
 }
 
@@ -43,7 +43,6 @@ describe('i18n', () => {
   })
 
   describe('#translate', () => {
-
     it('should return a plain string whenever possible', () => {
       const t = i18n('This is a __test__.', { test: 'success' })
       expect(t).to.be.a('string')
@@ -125,23 +124,23 @@ describe('i18n', () => {
     })
 
     it('should consider the context option, if provided', (done) => {
-        setLocale('de_DE')
+      setLocale('de_DE')
 
-        init(getLangLoader, config).then(() => {
-          expect(i18n('Export', {context: 'button label'})).to.equal('Exportieren')
+      init(getLangLoader, config).then(() => {
+        expect(i18n('Export', { context: 'button label' })).to.equal('Exportieren')
 
-          done()
-        }).catch(done)
+        done()
+      }).catch(done)
     })
 
     it('should use the translation key without any msgctxt, if no msgctxt is provided', (done) => {
-        setLocale('de_DE')
+      setLocale('de_DE')
 
-        init(getLangLoader, config).then(() => {
-          expect(i18n('Export')).to.equal('Exportiere')
+      init(getLangLoader, config).then(() => {
+        expect(i18n('Export')).to.equal('Exportiere')
 
-          done()
-        }).catch(done)
+        done()
+      }).catch(done)
     })
   })
 })
