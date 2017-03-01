@@ -18,7 +18,18 @@ npm install --save signavio-i18n
 
 ## Setup
 
-Add the configuration for gettext message extraction to your `.babelrc`:
+Add a section like the following to your `packages.json`:
+
+```json
+{
+  "scripts": {
+    "i18n-init": "cd src/locales && msginit --no-translator --input messages.pot --locale",
+    "i18n": "i18n-extract \"src/**/*.js\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
+  }
+}
+```
+
+Create the file `.i18nrc` and add a configuration object for gettext message extraction:
 
 ```json
 {
@@ -34,17 +45,6 @@ Add the configuration for gettext message extraction to your `.babelrc`:
 
 All available options are documented here: https://github.com/getsentry/babel-gettext-extractor
 
-
-Add a section like the following to the `packages.json`:
-
-```json
-{
-  "scripts": {
-    "i18n-init": "cd src/locales && msginit --no-translator --input messages.pot --locale",
-    "i18n": "i18n-extract \"src/**/*.js\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
-  }
-}
-```
 
 ## Usage
 
