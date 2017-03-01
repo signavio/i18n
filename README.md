@@ -55,7 +55,7 @@ import i18n, { init, setLocale } from 'signavio-i18n';
 
 function getLangLoader(locale) {
   // Lazy load the translation bundles
-  return require(`bundle?lazy!json!po./locales/${locale}.po`)
+  return require(`bundle?lazy!json!po!./locales/${locale}.po`)
 };
 
 const config = {
