@@ -33,13 +33,9 @@ Create the file `.i18nrc` and add a configuration object for gettext message ext
 
 ```json
 {
-  "extra": {
-    "gettext": {
-      "headers": "<POT_HEADERS>",
-      "fileName": "<PATH_TO_POT>",
-      "baseDirectory": "<PATH_TO_BASEDIR>"
-    }
-  }
+  "headers": "<POT_HEADERS>",
+  "fileName": "<PATH_TO_POT>",
+  "baseDirectory": "<PATH_TO_BASEDIR>"
 }
 ```
 
