@@ -18,24 +18,7 @@ npm install --save signavio-i18n
 
 ## Setup
 
-Add the configuration for gettext message extraction to your `.babelrc`:
-
-```json
-{
-  "extra": {
-    "gettext": {
-      "headers": "<POT_HEADERS>",
-      "fileName": "<PATH_TO_POT>",
-      "baseDirectory": "<PATH_TO_BASEDIR>"
-    }
-  }
-}
-```
-
-All available options are documented here: https://github.com/getsentry/babel-gettext-extractor
-
-
-Add a section like the following to the `packages.json`:
+Add a section like the following to your `packages.json`:
 
 ```json
 {
@@ -45,6 +28,19 @@ Add a section like the following to the `packages.json`:
   }
 }
 ```
+
+Create the file `.i18nrc` and add a configuration object for gettext message extraction:
+
+```json
+{
+  "headers": "<POT_HEADERS>",
+  "fileName": "<PATH_TO_POT>",
+  "baseDirectory": "<PATH_TO_BASEDIR>"
+}
+```
+
+All available options are documented here: https://github.com/getsentry/babel-gettext-extractor
+
 
 ## Usage
 
