@@ -39,7 +39,22 @@ Create the file `.i18nrc` and add a configuration object for gettext message ext
 }
 ```
 
-All available options are documented here: https://github.com/getsentry/babel-gettext-extractor
+More available options are documented here: https://github.com/getsentry/babel-gettext-extractor
+
+Optionally, you can also define your babel configuration in the `.i18nrc` file.
+This allows you to ignore your project's `.babelrc` file when extracting
+messages, which is helpful if your project is using a legacy version of babel
+(<6).
+
+```
+{
+    "fileName": "<PATH_TO_POT>",
+    "babel": {
+	    "babelrc": false,
+	     ...<other babel settings>
+	}
+}
+```
 
 
 ## Usage

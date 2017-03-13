@@ -16,10 +16,13 @@ _.each(files, (fileName) => {
   // eslint-disable-next-line no-console
   console.log(fileName)
 
-  const config = getConfig(fileName)
+  const { babel = {}, ...config } = getConfig(fileName)
+  const { plugins = [] } = babel
 
   transformFileSync(fileName, {
+    ...babel,
     plugins: [
+      ...plugins,
       [babelGettextExtractor, config],
     ],
   })
