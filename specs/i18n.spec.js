@@ -69,6 +69,12 @@ describe('i18n', () => {
       expect(renderedHtml).to.equal('<span>This is a <strong>&lt;success&gt;</strong>.</span>')
     })
 
+    it('should not replace "__markdown__" placeholders', () => {
+      const t = i18n('This is __markdown__.', { markdown: true })
+      const renderedHtml = ReactDOMServer.renderToStaticMarkup(<div>{t}</div>)
+      expect(renderedHtml).to.equal('<div><span>This is </span>__markdown__<span>.</span></div>')
+    })
+
     it.skip('should not be possible to break Markdown from interpolations', () => {
       const t = i18n('**__foo__**', { foo: 'bar** baz **baa', markdown: true })
       expect(React.isValidElement(t)).to.be.true
@@ -109,6 +115,14 @@ describe('i18n', () => {
       expect(t).to.have.length(3)
       expect(t[0]).to.equal('This is a <')
       expect(t[2]).to.equal('>.')
+    })
+
+    it('should keep original pattern for missing interpolations', (done) => {
+      init(getLangLoader, config).then(() => {
+        expect(i18n('1 __interpolation__ 2')).to.equal('1 __interpolation__ 2')
+
+        done()
+      }).catch(done)
     })
 
     it('should fallback to the translation key, if no translation was found.', (done) => {
