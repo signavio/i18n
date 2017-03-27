@@ -8,6 +8,8 @@ import escape from 'lodash/escape'
 import marked from 'marked'
 import React from 'react'
 
+const placeholderRegex = /__(\w+)__/g
+
 const defaultOptions = {
   markdown: false,
 }
@@ -104,7 +106,6 @@ function insertInterpolations(translation, options) {
 
 function insertReactComponentInterpolations(translation, options) {
   const result = []
-  const placeholderRegex = /__(\w+)__/g
   let match
   let substr
   let start = 0
@@ -123,21 +124,28 @@ function insertReactComponentInterpolations(translation, options) {
         ? React.cloneElement(component)
         : component
       )
-    } else if (has(options, key)) {
-      // interpolation value is not a React component
-      result.push(component)
     } else {
       // no interpolation specified, leave the placeholder unchanged
       result.push(match[0])
     }
-
     start = placeholderRegex.lastIndex
   }
 
+  // append part after last match
   if (start < translation.length) {
     substr = translation.substring(start)
     result.push(options.markdown ? htmlStringToReactComponent(substr) : substr)
   }
 
-  return result
+  // re-concatenate all string elements
+  return result.reduce((acc, element) => {
+    const lastAccumulatedElement = acc[acc.length - 1]
+    if (isString(element) && isString(lastAccumulatedElement)) {
+      // eslint-disable-next-line no-param-reassign
+      acc[acc.length - 1] = lastAccumulatedElement + element
+    } else {
+      acc.push(element)
+    }
+    return acc
+  }, [])
 }
