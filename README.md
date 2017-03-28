@@ -44,15 +44,15 @@ More available options are documented here: https://github.com/getsentry/babel-g
 Optionally, you can also define your babel configuration in the `.i18nrc` file.
 This allows you to ignore your project's `.babelrc` file when extracting
 messages, which is helpful if your project is using a legacy version of babel
-(<6).
+(\<6).
 
-```
+```json
 {
-    "fileName": "<PATH_TO_POT>",
-    "babel": {
-	    "babelrc": false,
-	     ...<other babel settings>
-	}
+  "fileName": "<PATH_TO_POT>",
+  "babel": {
+    "babelrc": false,
+    ...<other babel settings>
+  }
 }
 ```
 
