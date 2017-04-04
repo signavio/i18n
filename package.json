@@ -16,7 +16,7 @@
     "coverage": "npm run test",
     "build": "babel src --out-dir lib",
     "lint": "eslint src specs",
-    "test": "mocha-webpack",
+    "test": "mocha-webpack --reporter xunit > junit/test-results.xml",
     "pretest": "npm run build",
     "prebuild": "npm run clean",
     "prepublish": "npm run build"
@@ -66,7 +66,8 @@
     "source-map-support": "^0.4.14",
     "webpack": "2.3.2",
     "webpack-dev-server": "2.4.2",
-    "webpack-node-externals": "^1.5.4"
+    "webpack-node-externals": "^1.5.4",
+    "xunit-file": "^1.0.0"
   },
   "peerDependencies": {
     "react": "^15.0.1"
