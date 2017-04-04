@@ -17,6 +17,7 @@
     "build": "babel src --out-dir lib",
     "lint": "eslint src specs",
     "test": "mocha-webpack",
+    "pretest": "npm run build",
     "prebuild": "npm run clean",
     "prepublish": "npm run build"
   },
@@ -45,6 +46,7 @@
     "bundle-loader": "^0.5.4",
     "chai": "^3.4.1",
     "chai-enzyme": "^0.6.1",
+    "chai-files": "^1.4.0",
     "enzyme": "^2.8.0",
     "eslint": "^3.12.2",
     "eslint-config-signavio": "^1.4.1",

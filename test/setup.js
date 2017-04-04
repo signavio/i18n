@@ -15,7 +15,9 @@ global.Blob = window.Blob;
 // setup chai plugins
 var chai = require('chai');
 var chaiEnzyme = require('chai-enzyme');
+var chaiFiles = require('chai-files');
 chai.use(chaiEnzyme());
+chai.use(chaiFiles)
 
 // other re-exports for testing so that other packages do not have to add all testing deps
 var enzyme = require('enzyme');

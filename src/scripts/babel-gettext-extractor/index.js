@@ -57,7 +57,9 @@ function getReference(addLocation: AddLocationT, fn: string, node): ?string {
   }
 
   if (addLocation === 'file') {
-    return fn
+    const index = fn.lastIndexOf('/')
+
+    return `${fn.slice(index + 1)}:${node.loc.start.line}`
   }
 
   return null
@@ -145,7 +147,7 @@ export default function plugin() {
         fn = fn.substr(base.length)
       }
 
-      if (addLocation !== 'never' || !noLocation) {
+      if (addLocation !== 'never' && !noLocation) {
         translate.comments = {
           reference: getReference(addLocation, fn, node),
         }

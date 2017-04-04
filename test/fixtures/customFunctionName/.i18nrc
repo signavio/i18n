@@ -1,0 +1,5 @@
+{
+  "fileName": "test/fixtures/customFunctionName/messages.pot",
+  "functionName": "myFunc",
+  "baseDirectory": "test"
+}

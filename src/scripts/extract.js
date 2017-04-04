@@ -6,8 +6,8 @@ import babelGettextExtractor from './babel-gettext-extractor'
 
 import getConfig from './config'
 
-if (process.argv.length < 4) {
-  throw new Error('Invalid arguments, expected: `node i18n/scripts/extract.js "source_file_pattern"`')
+if (process.argv.length < 3) {
+  throw new Error(`Invalid arguments, expected: 'node i18n/scripts/extract.js "source_file_pattern"', got: ${process.argv}`)
 }
 
 const files = glob.sync(process.argv[2])
