@@ -3,7 +3,7 @@ import ReactDOMServer from 'react-dom/server'
 
 import { expect } from 'chai'
 
-import i18n, { init, setLocale, reset } from '../src/index'
+import i18n, { init, setLocale, reset } from '../../src'
 
 import config from './config'
 
@@ -12,7 +12,7 @@ function getLangLoader(locale) {
   // cannot be found. Webpack uses a regular expression to build all locales as
   // separate bundles.
   // eslint-disable-next-line global-require,import/no-dynamic-require
-  return require(`bundle?lazy!./locales/${locale}.po`)
+  return require(`bundle-loader?lazy-loader!./locales/${locale}.po`)
 }
 
 describe('i18n', () => {
