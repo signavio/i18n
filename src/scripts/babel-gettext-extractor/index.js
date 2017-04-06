@@ -1,5 +1,8 @@
+// @flow
 import gettextParser from 'gettext-parser'
 import fs from 'fs'
+
+import type { AddLocationT, ConfigT } from '../../types'
 
 const DEFAULT_FUNCTION_NAME = 'i18n'
 
@@ -8,6 +11,8 @@ const DEFAULT_FILE_NAME = 'messages.pot'
 const DEFAULT_HEADERS = {
   'content-type': 'text/plain; charset=UTF-8',
 }
+
+const DEFAULT_ADD_LOCATION = 'full'
 
 function isStringLiteral(node) {
   return node.type === 'StringLiteral'
@@ -46,6 +51,20 @@ function getTranslatorComment(node) {
   return comments.length > 0 ? comments.join('\n') : null
 }
 
+function getReference(addLocation: AddLocationT, fn: string, node): ?string {
+  if (!addLocation || addLocation === 'full') {
+    return `${fn}:${node.loc.start.line}`
+  }
+
+  if (addLocation === 'file') {
+    const index = fn.lastIndexOf('/')
+
+    return `${fn.slice(index + 1)}:${node.loc.start.line}`
+  }
+
+  return null
+}
+
 export default function plugin() {
   let currentFileName
   let data
@@ -67,10 +86,15 @@ export default function plugin() {
       })
     },
 
-    CallExpression({ node, parent }, config) {
-      const functionName = config.opts.functionName || DEFAULT_FUNCTION_NAME
-      const fileName = config.opts.fileName || DEFAULT_FILE_NAME
-      const headers = config.opts.headers || DEFAULT_HEADERS
+    CallExpression({ node, parent }, config: ConfigT) {
+      const {
+        functionName = DEFAULT_FUNCTION_NAME,
+        fileName = DEFAULT_FILE_NAME,
+        headers = DEFAULT_HEADERS,
+        addLocation = DEFAULT_ADD_LOCATION,
+        noLocation = false,
+      } = config.opts
+
       let base = config.opts.baseDirectory
       if (base) {
         base = `${base.match(/^(.*?)\/*$/)[1]}/`
@@ -123,8 +147,10 @@ export default function plugin() {
         fn = fn.substr(base.length)
       }
 
-      translate.comments = {
-        reference: `${fn}:${node.loc.start.line}`,
+      if (addLocation !== 'never' && !noLocation) {
+        translate.comments = {
+          reference: getReference(addLocation, fn, node),
+        }
       }
 
       let translatorComment = getTranslatorComment(node)

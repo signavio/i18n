@@ -1,3 +1,5 @@
+.tmp
+
 node_modules
 lib
 coverage
@@ -5,3 +7,4 @@ junit
 
 *.sublime-workspace
 *.log
+*.pot

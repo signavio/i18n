@@ -1,0 +1,5 @@
+{
+  "fileName": "test/fixtures/noLocation/messages.pot",
+  "baseDirectory": "test",
+  "noLocation": true
+}
