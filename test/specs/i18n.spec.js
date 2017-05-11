@@ -141,6 +141,7 @@ describe('i18n', () => {
       setLocale('de_DE')
 
       init(getLangLoader, config).then(() => {
+        expect(i18n('Export')).to.equal('Exportiere')
         expect(i18n('Export', { context: 'button label' })).to.equal('Exportieren')
 
         done()

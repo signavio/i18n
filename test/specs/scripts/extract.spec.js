@@ -134,4 +134,23 @@ describe('extract', () => {
       expect(messages).to.not.contain(`#: ${noLocationDir}/index.js:1`)
     })
   })
+
+  describe('message context', () => {
+    const contextLocation = `${fixtureDir}/messageContext`
+
+    afterEach(() => {
+      removeIfExists(`${contextLocation}/messages.pot`)
+    })
+
+    it('should add the message context to the .pot file', () => {
+      expect(file(`${contextLocation}/messages.pot`)).to.not.exist
+
+      callForDir(contextLocation)
+
+      const messages = file(`${contextLocation}/messages.pot`)
+      
+      expect(messages).to.exist
+      expect(messages).to.contain('msgctxt "This is context for my message"')
+    })
+  })
 })

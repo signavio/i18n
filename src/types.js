@@ -13,3 +13,7 @@ export type ConfigT = {
   addLocation?: AddLocationT,
   noLocation?: boolean,
 };
+
+export type AstNodeT = {
+  type: string,
+};
