@@ -13,7 +13,7 @@
   },
   "scripts": {
     "clean": "rimraf -rf lib",
-    "coverage": "yarn test",
+    "coverage": "cross-env NODE_ENV=coverage nyc --reporter=lcov --reporter=text yarn test",
     "build": "babel src --out-dir lib",
     "lint": "eslint src specs",
     "test": "mocha-webpack",
@@ -25,6 +25,13 @@
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/signavio/i18n/issues"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "instrument": false,
+    "sourceMap": false
   },
   "dependencies": {
     "babel-core": "^6.2.1",
@@ -47,16 +54,19 @@
     "chai": "^3.4.1",
     "chai-enzyme": "^0.6.1",
     "chai-files": "^1.4.0",
+    "cross-env": "^4.0.0",
     "enzyme": "^2.8.0",
     "eslint": "^3.12.2",
     "eslint-config-signavio": "^1.4.1",
     "eslint-config-signavio-test": "^1.2.1",
     "eslint-plugin-chai-expect": "^1.1.1",
     "eslint-plugin-mocha": "^4.7.0",
+    "istanbul-instrumenter-loader": "^2.0.0",
     "jsdom": "^9.12.0",
     "json-loader": "^0.5.3",
     "mocha": "^2.5.3",
     "mocha-webpack": "^0.7.0",
+    "nyc": "^10.3.2",
     "po-loader": "^0.3.1",
     "po2json": "^0.4.2",
     "react": "^15.0.1",
