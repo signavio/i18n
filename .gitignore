@@ -1,12 +1,11 @@
 .tmp
+.nyc_output
 
 node_modules
 lib
 coverage
 junit
 xunit.xml
-
-.tmp
 
 *.sublime-workspace
 *.log
