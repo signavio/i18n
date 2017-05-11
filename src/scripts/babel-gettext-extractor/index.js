@@ -3,7 +3,7 @@ import gettextParser from 'gettext-parser'
 import fs from 'fs'
 import { last, find } from 'lodash'
 
-import type { AddLocationT, ConfigT } from '../../types'
+import type { AddLocationT, ConfigT, AstNodeT } from '../../types'
 
 const DEFAULT_FUNCTION_NAME = 'i18n'
 
@@ -15,19 +15,19 @@ const DEFAULT_HEADERS = {
 
 const DEFAULT_ADD_LOCATION = 'full'
 
-function isStringLiteral(node) {
+function isStringLiteral(node: AstNodeT) {
   return node.type === 'StringLiteral'
 }
 
-function isObjectLiteral(node) {
+function isObjectLiteral(node: AstNodeT) {
   return node.type === 'ObjectExpression'
 }
 
-function getContextProperty(node) {
-  return find(node.properties, (property) => property.key.name === 'context')
+function getContextProperty(node: AstNodeT) {
+  return find(node.properties, (property: ObjectPropertyT) => property.key.name === 'context')
 }
 
-function isStringConcatExpr(node) {
+function isStringConcatExpr(node: AstNodeT) {
   const left = node.left
   const right = node.right
 
@@ -37,7 +37,7 @@ function isStringConcatExpr(node) {
   )
 }
 
-function getStringValue(node) {
+function getStringValue(node: AstNodeT) {
   if (isStringLiteral(node)) {
     return node.value
   }
@@ -49,9 +49,9 @@ function getStringValue(node) {
   return null
 }
 
-function getTranslatorComment(node) {
+function getTranslatorComment(node: AstNodeT) {
   const comments = [];
-  (node.leadingComments || []).forEach((commentNode) => {
+  (node.leadingComments || []).forEach((commentNode: AstNodeT) => {
     const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
     if (match) {
       comments.push(match[1])
@@ -60,7 +60,7 @@ function getTranslatorComment(node) {
   return comments.length > 0 ? comments.join('\n') : null
 }
 
-function getReference(addLocation: AddLocationT, fn: string, node): ?string {
+function getReference(addLocation: AddLocationT, fn: string, node: AstNodeT): ?string {
   if (!addLocation || addLocation === 'full') {
     return `${fn}:${node.loc.start.line}`
   }
@@ -81,12 +81,12 @@ export default function plugin() {
 
   return { visitor: {
 
-    VariableDeclaration({ node }) {
+    VariableDeclaration({ node }: { node: AstNodeT }) {
       const translatorComment = getTranslatorComment(node)
       if (!translatorComment) {
         return
       }
-      node.declarations.forEach((declarator) => {
+      node.declarations.forEach((declarator: AstNodeT) => {
         const comment = getTranslatorComment(declarator)
         if (!comment) {
           const key = `${declarator.init.start}|${declarator.init.end}`
@@ -95,7 +95,7 @@ export default function plugin() {
       })
     },
 
-    CallExpression({ node, parent }, config: ConfigT) {
+    CallExpression({ node, parent }: { node: AstNodeT, parent: AstNodeT }, config: ConfigT) {
       const {
         functionName = DEFAULT_FUNCTION_NAME,
         fileName = DEFAULT_FILE_NAME,
