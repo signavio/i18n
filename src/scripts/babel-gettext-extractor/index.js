@@ -1,6 +1,7 @@
 // @flow
 import gettextParser from 'gettext-parser'
 import fs from 'fs'
+import { last, find } from 'lodash'
 
 import type { AddLocationT, ConfigT } from '../../types'
 
@@ -16,6 +17,14 @@ const DEFAULT_ADD_LOCATION = 'full'
 
 function isStringLiteral(node) {
   return node.type === 'StringLiteral'
+}
+
+function isObjectLiteral(node) {
+  return node.type === 'ObjectExpression'
+}
+
+function getContextProperty(node) {
+  return find(node.properties, (property) => property.key.name === 'context')
 }
 
 function isStringConcatExpr(node) {
@@ -164,6 +173,20 @@ export default function plugin() {
 
       if (translatorComment) {
         translate.comments.translator = translatorComment
+      }
+
+      const options = last(args)
+
+      if (isObjectLiteral(options)) {
+        const ctxtProp = getContextProperty(options)
+
+        if (ctxtProp) {
+          const messageContext = ctxtProp.value.extra.rawValue
+
+          if (messageContext) {
+            translate.msgctxt = messageContext
+          }
+        }
       }
 
       let context = defaultContext
