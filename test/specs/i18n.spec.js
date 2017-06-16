@@ -157,5 +157,23 @@ describe('i18n', () => {
         done()
       }).catch(done)
     })
+
+    it('should resolve plural', () => {
+      const t1 = i18n('__count__ day', '__count__ days', { count: 0 })
+      const t2 = i18n('__count__ day', '__count__ days', { count: 2 })
+      const t3 = i18n('__count__ day', '__count__ days', { count: -2 })
+      expect(t1).to.be.a('string')
+      expect(t1).to.equal('0 days')
+      expect(t2).to.equal('2 days')
+      expect(t3).to.equal('-2 days')
+    })
+
+    it('should resolve singular', () => {
+      const t1 = i18n('__count__ case', '__count__ cases', { count: 1 })
+      const t2 = i18n('__count__ case', '__count__ cases', { count: -1 })
+      expect(t1).to.be.a('string')
+      expect(t1).to.equal('1 case')
+      expect(t2).to.equal('-1 case')
+    })
   })
 })

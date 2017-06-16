@@ -60,7 +60,7 @@ export default (singleton) => function translate(text, plural, options) {
 }
 
 function needsPlural(options) {
-  return isNumber(options.count) && options.count > 1
+  return isNumber(options.count) && Math.abs(options.count) !== 1
 }
 
 function isWrappedInPTag(translation) {
