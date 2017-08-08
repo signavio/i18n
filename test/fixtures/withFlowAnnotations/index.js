@@ -1,5 +1,3 @@
-// @flow
-
 type ComplexT = {
   [key: string]: string,
 }
