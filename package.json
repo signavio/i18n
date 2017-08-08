@@ -36,7 +36,8 @@
     "gettext-parser": "^1.1.2",
     "glob": "^6.0.1",
     "lodash": "^4.0.0",
-    "marked": "^0.3.5"
+    "marked": "^0.3.5",
+    "progress": "^2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",
