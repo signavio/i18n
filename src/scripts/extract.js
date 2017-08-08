@@ -19,11 +19,12 @@ const files = glob.sync(process.argv[2])
 
 const progressBar = new ProgressBar(' extracting [:bar] :percent :fileName', {
   total: files.length,
+  width: 10,
 })
 
 each(files, (fileName: string) => {
   // eslint-disable-next-line no-console
-  progressBar.tick(1)
+  progressBar.tick(1, { fileName })
 
   const { babel = {}, ...config } = getConfig(fileName)
   const { plugins = [] } = babel

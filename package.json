@@ -15,11 +15,13 @@
     "clean": "rimraf -rf lib",
     "coverage": "cross-env NODE_ENV=coverage nyc --reporter=lcov --reporter=text yarn test",
     "build": "babel src --out-dir lib",
+    "dryrun": "node ./bin/i18n-extract.js test/fixtures/**/*.js",
     "lint": "eslint src specs",
     "test": "mocha-webpack",
     "pretest": "yarn build",
     "prebuild": "yarn run clean",
-    "prepublish": "yarn build"
+    "prepublish": "yarn build",
+    "predryrun": "yarn build"
   },
   "author": "Jan-Felix Schwarz",
   "license": "BSD-3-Clause",
