@@ -18,8 +18,6 @@ export type AstNodeT = {
   type: string,
 }
 
-export type ConfigT = {}
-
 export type MapT<K, V> = {
   [key: K]: V,
 }
