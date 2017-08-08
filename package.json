@@ -27,9 +27,7 @@
     "url": "https://github.com/signavio/i18n/issues"
   },
   "nyc": {
-    "include": [
-      "src/**/*.js"
-    ],
+    "include": ["src/**/*.js"],
     "instrument": false,
     "sourceMap": false
   },
@@ -38,9 +36,7 @@
     "gettext-parser": "^1.1.2",
     "glob": "^6.0.1",
     "lodash": "^4.0.0",
-    "marked": "^0.3.5",
-    "path-exists": "^2.1.0",
-    "path-is-absolute": "^1.0.0"
+    "marked": "^0.3.5"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",

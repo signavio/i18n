@@ -1,0 +1,6 @@
+{
+  "key": "value",
+  "babel": {
+    "plugins": ["transform-flow-strip-types"]
+  }
+}

@@ -5,14 +5,16 @@ import { expect } from 'chai'
 
 const fixtureDir = `${process.cwd()}/test/fixtures`
 
-const removeIfExists = (fileName) => {
+const removeIfExists = fileName => {
   if (existsSync(fileName)) {
     unlinkSync(fileName)
   }
 }
 
-const callForDir = (dirName) => {
-  childProcess.execSync(`node ${process.cwd()}/bin/i18n-extract.js "${dirName}/**/*.js"`)
+const callForDir = dirName => {
+  childProcess.execSync(
+    `node ${process.cwd()}/bin/i18n-extract.js "${dirName}/**/*.js"`
+  )
 }
 
 describe('extract', () => {
@@ -148,9 +150,28 @@ describe('extract', () => {
       callForDir(contextLocation)
 
       const messages = file(`${contextLocation}/messages.pot`)
-      
+
       expect(messages).to.exist
       expect(messages).to.contain('msgctxt "This is context for my message"')
+    })
+  })
+
+  describe('babel', () => {
+    const flowLocation = `${fixtureDir}/withFlowAnnotations`
+
+    afterEach(() => {
+      removeIfExists(`${flowLocation}/messages.pot`)
+    })
+
+    it('should be possible to load extra plugins.', () => {
+      expect(file(`${flowLocation}/messages.pot`)).to.not.exist
+
+      callForDir(flowLocation)
+
+      const messages = file(`${flowLocation}/messages.pot`)
+
+      expect(messages).to.exist
+      expect(messages).to.contain('msgid "I got extracted"')
     })
   })
 })

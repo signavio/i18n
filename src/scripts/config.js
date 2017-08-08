@@ -1,45 +1,45 @@
+// @flow
 import path from 'path'
 import fs from 'fs'
-import isAbsolute from 'path-is-absolute'
-import pathExists from 'path-exists'
+
+import type { ConfigT, MapT } from '../types'
 
 const I18NRC_FILENAME = '.i18nrc'
 
+const existsCache: MapT<string, boolean> = {}
+const configCache: MapT<string, ConfigT> = {}
 
-const existsCache = {}
-const configCache = {}
-
-function exists(filename) {
-  if (existsCache[filename] == null) {
-    existsCache[filename] = pathExists.sync(filename)
+function exists(fileName: string): boolean {
+  if (existsCache[fileName] == null) {
+    existsCache[fileName] = fs.existsSync(fileName)
   }
 
-  return existsCache[filename]
+  return existsCache[fileName]
 }
 
-function findConfig(loc) {
+function findConfig(loc: string) {
   if (!loc) {
     return null
   }
 
   let location = loc
 
-  if (!isAbsolute(location)) {
+  if (!path.isAbsolute(location)) {
     location = path.join(process.cwd(), location)
   }
 
-  while (location !== (location = path.dirname(location))) {
+  do {
     const configLoc = path.join(location, I18NRC_FILENAME)
 
     if (exists(configLoc)) {
       return configLoc
     }
-  }
+  } while (location !== (location = path.dirname(location)))
 
   return null
 }
 
-export default function getConfig(filename = '.') {
+export default function getConfig(filename: string = '.'): ConfigT {
   const loc = findConfig(filename)
 
   if (!loc) {
