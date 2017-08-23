@@ -2,6 +2,7 @@
   "plugins": [
     "transform-proto-to-assign",
     "transform-flow-strip-types",
+    "lodash",
     ["transform-runtime", { "polyfill": false }]
   ],
   "env": {
