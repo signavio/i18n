@@ -21,14 +21,12 @@
     "transpile:js:es6": "cross-env NODE_ENV=production BABEL_ENV=es6 babel src --out-dir lib-es6 --copy-files",
     "clean": "rimraf -rf lib lib-es6",
     "coverage": "cross-env NODE_ENV=coverage nyc --reporter=lcov --reporter=text yarn test",
-    "build": "babel src --out-dir lib",
     "dryrun": "node ./bin/i18n-extract.js test/fixtures/**/*.js",
     "lint": "eslint src specs",
-    "test": "mocha-webpack",
-    "pretest": "yarn build",
-    "prebuild": "yarn run clean",
+    "test": "cross-env NODE_ENV=es5 mocha-webpack",
+    "pretest": "yarn run transpile",
     "prepublish": "yarn run transpile",
-    "predryrun": "yarn build"
+    "predryrun": "yarn run transpile"
   },
   "author": "Jan-Felix Schwarz",
   "license": "BSD-3-Clause",
@@ -36,9 +34,7 @@
     "url": "https://github.com/signavio/i18n/issues"
   },
   "nyc": {
-    "include": [
-      "src/**/*.js"
-    ],
+    "include": ["src/**/*.js"],
     "instrument": false,
     "sourceMap": false
   },
