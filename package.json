@@ -1,6 +1,6 @@
 {
   "name": "signavio-i18n",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Minimalist gettext style i18n for JavaScript",
   "main": "lib/index.js",
   "module": "lib-es6/index.js",
@@ -34,7 +34,9 @@
     "url": "https://github.com/signavio/i18n/issues"
   },
   "nyc": {
-    "include": ["src/**/*.js"],
+    "include": [
+      "src/**/*.js"
+    ],
     "instrument": false,
     "sourceMap": false
   },
