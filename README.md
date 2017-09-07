@@ -48,12 +48,12 @@ This allows you to ignore your project's `.babelrc` file when extracting
 messages, which is helpful if your project is using a legacy version of babel
 (\<6).
 
-```json
+```javascript
 {
   "fileName": "<PATH_TO_POT>",
   "babel": {
     "babelrc": false,
-    ...<other babel settings>
+    // other babel settings
   }
 }
 ```
@@ -150,5 +150,6 @@ i18n('I want _this_ to be **bold**', {
   markdown: true,
 })
 ```
+
 [version-badge]: https://img.shields.io/npm/v/signavio-i18n.svg?style=flat-square
 [package]: https://www.npmjs.com/package/signavio-i18n
