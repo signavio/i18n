@@ -1,3 +1,5 @@
+[![version][version-badge]][package]
+
 # signavio-i18n
 Minimalist gettext style i18n for JavaScript
 
@@ -148,3 +150,5 @@ i18n('I want _this_ to be **bold**', {
   markdown: true,
 })
 ```
+[version-badge]: https://img.shields.io/npm/v/signavio-i18n.svg?style=flat-square
+[package]: https://www.npmjs.com/package/signavio-i18n
