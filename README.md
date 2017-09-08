@@ -1,3 +1,4 @@
+[![Build Status](https://workflow-ci.signavio.com:8888/buildStatus/icon?job=I18N-PR)](https://workflow-ci.signavio.com:8888/job/I18N-PR/)
 [![version][version-badge]][package]
 
 # signavio-i18n
