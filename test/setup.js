@@ -9,7 +9,7 @@ var win = doc.defaultView;
 global.document = doc;
 global.window = win;
 win.console = global.console;
-global.navigator = { userAgent: "Node.js"};
+global.navigator = { userAgent: "Node.js" };
 global.Blob = window.Blob;
 
 // setup chai plugins
@@ -21,6 +21,10 @@ chai.use(chaiFiles)
 
 // other re-exports for testing so that other packages do not have to add all testing deps
 var enzyme = require('enzyme');
+
+// setup enzyme adapter (necessary since react v16)
+var Adapter = require('enzyme-adapter-react-16');
+enzyme.configure({ adapter: new Adapter() });
 
 // export preconfigured chai
 module.exports = {

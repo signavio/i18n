@@ -64,10 +64,11 @@
     "babel-preset-stage-2": "^6.5.0",
     "bundle-loader": "^0.5.4",
     "chai": "^3.4.1",
-    "chai-enzyme": "^0.6.1",
+    "chai-enzyme": "^1.0.0-beta.0",
     "chai-files": "^1.4.0",
     "cross-env": "^4.0.0",
-    "enzyme": "^2.9.1",
+    "enzyme": "^3.2.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^3.12.2",
     "eslint-config-signavio": "^1.4.1",
     "eslint-config-signavio-test": "^1.2.1",
@@ -81,9 +82,8 @@
     "nyc": "^10.3.2",
     "po-loader": "^0.3.1",
     "po2json": "^0.4.2",
-    "react": "^15.6.1",
-    "react-dom": "^15.0.1",
-    "react-test-renderer": "^15.6.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "rimraf": "^2.5.4",
     "source-map-support": "^0.4.14",
     "webpack": "2.3.2",
@@ -92,6 +92,6 @@
     "xunit-file": "^1.0.0"
   },
   "peerDependencies": {
-    "react": "^15.0.1"
+    "react": "^15.0.1 || ^16.0.0"
   }
 }
