@@ -13,20 +13,21 @@
     "i18n-merge": "./bin/i18n-merge.js"
   },
   "scripts": {
-    "pretranspile": "yarn run clean",
-    "transpile": "yarn transpile:es5 && yarn transpile:es6",
-    "transpile:es5": "yarn transpile:js:es5",
-    "transpile:js:es5": "cross-env NODE_ENV=production BABEL_ENV=es5 babel src --out-dir lib --copy-files",
-    "transpile:es6": "yarn transpile:js:es6",
-    "transpile:js:es6": "cross-env NODE_ENV=production BABEL_ENV=es6 babel src --out-dir lib-es6 --copy-files",
-    "clean": "rimraf -rf lib lib-es6",
-    "coverage": "cross-env NODE_ENV=coverage nyc --reporter=lcov --reporter=text yarn test",
+    "prebuild": "yarn run clean",
+    "build": "yarn build:es5 && yarn build:es6",
+    "build:es5":
+      "cross-env NODE_ENV=production BABEL_ENV=es5 babel src --out-dir lib",
+    "build:es6":
+      "cross-env NODE_ENV=production BABEL_ENV=es6 babel src --out-dir lib-es6",
+    "clean": "rimraf lib lib-es6",
+    "coverage":
+      "cross-env NODE_ENV=coverage nyc --reporter=lcov --reporter=text yarn test",
     "dryrun": "node ./bin/i18n-extract.js test/fixtures/**/*.js",
     "lint": "eslint src specs",
     "test": "cross-env NODE_ENV=es5 mocha-webpack",
-    "pretest": "yarn run transpile",
-    "prepublish": "yarn run transpile",
-    "predryrun": "yarn run transpile"
+    "pretest": "yarn build",
+    "prepublishOnly": "yarn build",
+    "predryrun": "yarn build"
   },
   "author": "Jan-Felix Schwarz",
   "license": "BSD-3-Clause",
@@ -34,9 +35,7 @@
     "url": "https://github.com/signavio/i18n/issues"
   },
   "nyc": {
-    "include": [
-      "src/**/*.js"
-    ],
+    "include": ["src/**/*.js"],
     "instrument": false,
     "sourceMap": false
   },
