@@ -78,6 +78,18 @@ jobs:
 
       - run: yarn lint
 
+  flow:
+    <<: *container_config
+
+    working_directory: *workspace_root
+
+    steps:
+      - checkout
+
+      - *restore_deps
+
+      - run: yarn flow
+
 workflows:
   version: 2
   build_and_test:
@@ -88,5 +100,9 @@ workflows:
           requires:
             - build
       - lint:
+          requires:
+            - build
+
+      - flow:
           requires:
             - build

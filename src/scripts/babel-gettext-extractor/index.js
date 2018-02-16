@@ -3,7 +3,12 @@ import gettextParser from 'gettext-parser'
 import fs from 'fs'
 import { last, find } from 'lodash'
 
-import type { AddLocationT, ConfigT, AstNodeT } from '../../types'
+import type {
+  AddLocationT,
+  ConfigT,
+  AstNodeT,
+  ObjectPropertyT,
+} from '../../types'
 
 const DEFAULT_FUNCTION_NAME = 'i18n'
 
@@ -24,16 +29,21 @@ function isObjectLiteral(node: AstNodeT) {
 }
 
 function getContextProperty(node: AstNodeT) {
-  return find(node.properties, (property: ObjectPropertyT) => property.key.name === 'context')
+  return find(
+    node.properties,
+    (property: ObjectPropertyT) => property.key.name === 'context'
+  )
 }
 
 function isStringConcatExpr(node: AstNodeT) {
   const left = node.left
   const right = node.right
 
-  return node.type === 'BinaryExpression' && node.operator === '+' && (
-    (isStringLiteral(left) || isStringConcatExpr(left)) &&
-    (isStringLiteral(right) || isStringConcatExpr(right))
+  return (
+    node.type === 'BinaryExpression' &&
+    node.operator === '+' &&
+    ((isStringLiteral(left) || isStringConcatExpr(left)) &&
+      (isStringLiteral(right) || isStringConcatExpr(right)))
   )
 }
 
@@ -50,8 +60,8 @@ function getStringValue(node: AstNodeT) {
 }
 
 function getTranslatorComment(node: AstNodeT) {
-  const comments = [];
-  (node.leadingComments || []).forEach((commentNode: AstNodeT) => {
+  const comments = []
+  ;(node.leadingComments || []).forEach((commentNode: AstNodeT) => {
     const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
     if (match) {
       comments.push(match[1])
@@ -60,7 +70,11 @@ function getTranslatorComment(node: AstNodeT) {
   return comments.length > 0 ? comments.join('\n') : null
 }
 
-function getReference(addLocation: AddLocationT, fn: string, node: AstNodeT): ?string {
+function getReference(
+  addLocation: AddLocationT,
+  fn: string,
+  node: AstNodeT
+): ?string {
   if (!addLocation || addLocation === 'full') {
     return `${fn}:${node.loc.start.line}`
   }
@@ -79,127 +93,134 @@ export default function plugin() {
   let data
   const relocatedComments = {}
 
-  return { visitor: {
-
-    VariableDeclaration({ node }: { node: AstNodeT }) {
-      const translatorComment = getTranslatorComment(node)
-      if (!translatorComment) {
-        return
-      }
-      node.declarations.forEach((declarator: AstNodeT) => {
-        const comment = getTranslatorComment(declarator)
-        if (!comment) {
-          const key = `${declarator.init.start}|${declarator.init.end}`
-          relocatedComments[key] = translatorComment
-        }
-      })
-    },
-
-    CallExpression({ node, parent }: { node: AstNodeT, parent: AstNodeT }, config: ConfigT) {
-      const {
-        functionName = DEFAULT_FUNCTION_NAME,
-        fileName = DEFAULT_FILE_NAME,
-        headers = DEFAULT_HEADERS,
-        addLocation = DEFAULT_ADD_LOCATION,
-        noLocation = false,
-      } = config.opts
-
-      let base = config.opts.baseDirectory
-      if (base) {
-        base = `${base.match(/^(.*?)\/*$/)[1]}/`
-      }
-
-      if (fileName !== currentFileName) {
-        currentFileName = fileName
-        data = {
-          charset: 'UTF-8',
-          headers,
-          translations: { context: {} },
-        }
-
-        headers['content-type'] = headers['content-type']
-          || DEFAULT_HEADERS['content-type']
-      }
-
-      const defaultContext = data.translations.context
-
-      if (node.callee.name !== functionName) {
-        return
-      }
-
-      const translate = {}
-
-      const args = node.arguments
-      if (args.length === 0) {
-        return
-      }
-
-      let value = getStringValue(args[0])
-
-      if (!value) {
-        return
-      }
-
-      translate.msgid = value
-      translate.msgstr = ['']
-
-      if (args.length >= 2) {
-        value = getStringValue(args[1])
-        if (value) {
-          translate.msgid_plural = value
-          translate.msgstr.push('')
-        }
-      }
-
-      let fn = config.file.log.filename
-      if (base && fn && fn.substr(0, base.length) === base) {
-        fn = fn.substr(base.length)
-      }
-
-      if (addLocation !== 'never' && !noLocation) {
-        translate.comments = {
-          reference: getReference(addLocation, fn, node),
-        }
-      }
-
-      let translatorComment = getTranslatorComment(node)
-      if (!translatorComment) {
-        translatorComment = getTranslatorComment(parent)
+  return {
+    visitor: {
+      VariableDeclaration({ node }: { node: AstNodeT }) {
+        const translatorComment = getTranslatorComment(node)
         if (!translatorComment) {
-          translatorComment = relocatedComments[
-            `${node.start}|${node.end}`]
+          return
         }
-      }
+        node.declarations.forEach((declarator: AstNodeT) => {
+          const comment = getTranslatorComment(declarator)
+          if (!comment) {
+            const key = `${declarator.init.start}|${declarator.init.end}`
+            relocatedComments[key] = translatorComment
+          }
+        })
+      },
 
-      if (translatorComment) {
-        translate.comments.translator = translatorComment
-      }
+      CallExpression(
+        { node, parent }: { node: AstNodeT, parent: AstNodeT },
+        config: ConfigT
+      ) {
+        const {
+          functionName = DEFAULT_FUNCTION_NAME,
+          fileName = DEFAULT_FILE_NAME,
+          headers = DEFAULT_HEADERS,
+          addLocation = DEFAULT_ADD_LOCATION,
+          noLocation = false,
+        } = config.opts
 
-      const options = last(args)
+        let base = config.opts.baseDirectory
+        if (base) {
+          base = `${base.match(/^(.*?)\/*$/)[1]}/`
+        }
 
-      if (isObjectLiteral(options)) {
-        const ctxtProp = getContextProperty(options)
+        if (fileName !== currentFileName) {
+          currentFileName = fileName
+          data = {
+            charset: 'UTF-8',
+            headers,
+            translations: { context: {} },
+          }
 
-        if (ctxtProp) {
-          const messageContext = ctxtProp.value.extra.rawValue
+          headers['content-type'] =
+            headers['content-type'] || DEFAULT_HEADERS['content-type']
+        }
 
-          if (messageContext) {
-            translate.msgctxt = messageContext
+        const defaultContext = data.translations.context
+
+        if (node.callee.name !== functionName) {
+          return
+        }
+
+        const translate = {}
+
+        const args = node.arguments
+        if (args.length === 0) {
+          return
+        }
+
+        let value = getStringValue(args[0])
+
+        if (!value) {
+          return
+        }
+
+        translate.msgid = value
+        translate.msgstr = ['']
+
+        if (args.length >= 2) {
+          value = getStringValue(args[1])
+          if (value) {
+            translate.msgid_plural = value
+            translate.msgstr.push('')
           }
         }
-      }
 
-      let context = defaultContext
-      const msgctxt = translate.msgctxt
-      if (msgctxt) {
-        data.translations[msgctxt] = data.translations[msgctxt] || {}
-        context = data.translations[msgctxt]
-      }
+        let fn = config.file.log.filename
+        if (base && fn && fn.substr(0, base.length) === base) {
+          fn = fn.substr(base.length)
+        }
 
-      context[translate.msgid] = translate
+        if (addLocation !== 'never' && !noLocation) {
+          translate.comments = {
+            reference: getReference(addLocation, fn, node),
+          }
+        }
 
-      const output = gettextParser.po.compile(data)
-      fs.writeFileSync(fileName, output)
+        let translatorComment = getTranslatorComment(node)
+        if (!translatorComment) {
+          translatorComment = getTranslatorComment(parent)
+          if (!translatorComment) {
+            translatorComment = relocatedComments[`${node.start}|${node.end}`]
+          }
+        }
+
+        if (translatorComment && translate.comments) {
+          translate.comments = {
+            ...translate.comments,
+
+            translator: translatorComment,
+          }
+        }
+
+        const options = last(args)
+
+        if (isObjectLiteral(options)) {
+          const ctxtProp = getContextProperty(options)
+
+          if (ctxtProp) {
+            const messageContext = ctxtProp.value.extra.rawValue
+
+            if (messageContext) {
+              translate.msgctxt = messageContext
+            }
+          }
+        }
+
+        let context = defaultContext
+        const msgctxt = translate.msgctxt
+        if (msgctxt) {
+          data.translations[msgctxt] = data.translations[msgctxt] || {}
+          context = data.translations[msgctxt]
+        }
+
+        context[translate.msgid] = translate
+
+        const output = gettextParser.po.compile(data)
+        fs.writeFileSync(fileName, output)
+      },
     },
-  } }
+  }
 }
