@@ -21,3 +21,9 @@ export type AstNodeT = {
 export type MapT<K, V> = {
   [key: K]: V,
 }
+
+export type ObjectPropertyT = {
+  key: {
+    name: string,
+  },
+}

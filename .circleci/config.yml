@@ -1,0 +1,108 @@
+version: 2
+
+references:
+  workspace_root: &workspace_root
+    ~/repo
+
+  container_config: &container_config
+    docker:
+      - image: circleci/node:latest
+
+  dep_cache_key: &dep_cache_key
+    deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+  dep_backup_cache_key: &dep_backup_cache_key
+    deps-{{ .Branch }}
+
+  restore_deps: &restore_deps
+    restore_cache:
+      keys:
+        - *dep_cache_key
+        - *dep_backup_cache_key
+
+  publish_test_results: &publish_test_results
+    store_test_results:
+      path: ./
+
+  store_test_results: &store_test_results
+    store_artifacts:
+      path: xunit.xml
+      prefix: tests
+
+jobs:
+  build:
+    <<: *container_config
+
+    working_directory: *workspace_root
+
+    steps:
+      - checkout
+
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+
+      - restore_cache:
+          keys:
+            - deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - *dep_backup_cache_key
+
+      - run: yarn install
+
+      - save_cache:
+          key: deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+
+  test:
+    <<: *container_config
+
+    working_directory: *workspace_root
+
+    steps:
+      - checkout
+
+      - *restore_deps
+
+      - run: yarn test --reporter xunit-file
+
+      - *publish_test_results
+      - *store_test_results
+
+  lint:
+    <<: *container_config
+
+    working_directory: *workspace_root
+
+    steps:
+      - checkout
+
+      - *restore_deps
+
+      - run: yarn lint
+
+  flow:
+    <<: *container_config
+
+    working_directory: *workspace_root
+
+    steps:
+      - checkout
+
+      - *restore_deps
+
+      - run: yarn flow
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+
+      - test:
+          requires:
+            - build
+      - lint:
+          requires:
+            - build
+
+      - flow:
+          requires:
+            - build
