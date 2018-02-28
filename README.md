@@ -1,23 +1,23 @@
-[![Build Status](https://workflow-ci.signavio.com:8888/buildStatus/icon?job=I18N-PR)](https://workflow-ci.signavio.com:8888/job/I18N-PR/)
+[![CircleCI](https://circleci.com/gh/signavio/i18n/tree/master.svg?style=svg)](https://circleci.com/gh/signavio/i18n/tree/master)
 [![version][version-badge]][package]
 
 # signavio-i18n
+
 Minimalist gettext style i18n for JavaScript
 
 ## Features
-- [Supports React components as interpolations](#interpolations)
-- [Pluralization support](#pluralization) (ngettext style)
-- [markdown support](#markdown)
-- Compatible with [webpack po-loader](https://github.com/perchlayer/po-loader)
-- Comes with scripts for extracting translation strings from JavaScript (Babel) sources and updating .pot and .po files
 
+* [Supports React components as interpolations](#interpolations)
+* [Pluralization support](#pluralization) (ngettext style)
+* [markdown support](#markdown)
+* Compatible with [webpack po-loader](https://github.com/perchlayer/po-loader)
+* Comes with scripts for extracting translation strings from JavaScript (Babel) sources and updating .pot and .po files
 
 ## Installation
 
 ```shell
 npm install --save signavio-i18n
 ```
-
 
 ## Setup
 
@@ -26,8 +26,10 @@ Add a section like the following to your `packages.json`:
 ```json
 {
   "scripts": {
-    "i18n-init": "cd src/locales && msginit --no-translator --input messages.pot --locale",
-    "i18n": "i18n-extract \"src/**/*.js\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
+    "i18n-init":
+      "cd src/locales && msginit --no-translator --input messages.pot --locale",
+    "i18n":
+      "i18n-extract \"src/**/*.js\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
   }
 }
 ```
@@ -59,18 +61,17 @@ messages, which is helpful if your project is using a legacy version of babel
 }
 ```
 
-
 ## Usage
 
 Add the translations to the PO files, and initialize the i18n module in your application using the `init` function:
 
 ```javascript
-import i18n, { init, setLocale } from 'signavio-i18n';
+import i18n, { init, setLocale } from 'signavio-i18n'
 
 function getLangLoader(locale) {
   // Lazy load the translation bundles
   return require(`bundle?lazy!json!po!./locales/${locale}.po`)
-};
+}
 
 const config = {
   // the default locale to use if the browser preference locale is not available
@@ -112,7 +113,7 @@ So you can do things like:
 
 ```jsx
 i18n('Contact __supportLink__', {
-  supportLink: <a href='mailto:support@signavio.com'>Support</a>,
+  supportLink: <a href="mailto:support@signavio.com">Support</a>,
 })
 ```
 
