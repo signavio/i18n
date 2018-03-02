@@ -3,12 +3,7 @@ import gettextParser from 'gettext-parser'
 import fs from 'fs'
 import { last, find } from 'lodash'
 
-import type {
-  AddLocationT,
-  ConfigT,
-  AstNodeT,
-  ObjectPropertyT,
-} from '../../types'
+import type { AddLocationT, ConfigT, AstNodeT, ObjectPropertyT } from '../types'
 
 const DEFAULT_FUNCTION_NAME = 'i18n'
 
