@@ -59,7 +59,7 @@ function getStringValue(node: AstNodeT) {
   return null
 }
 
-function getTranslatorComment(node: AstNodeT) {
+function getExtractedComment(node: AstNodeT) {
   const comments = []
   ;(node.leadingComments || []).forEach((commentNode: AstNodeT) => {
     const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
@@ -96,15 +96,15 @@ export default function plugin() {
   return {
     visitor: {
       VariableDeclaration({ node }: { node: AstNodeT }) {
-        const translatorComment = getTranslatorComment(node)
-        if (!translatorComment) {
+        const extractedComment = getExtractedComment(node)
+        if (!extractedComment) {
           return
         }
         node.declarations.forEach((declarator: AstNodeT) => {
-          const comment = getTranslatorComment(declarator)
+          const comment = getExtractedComment(declarator)
           if (!comment) {
             const key = `${declarator.init.start}|${declarator.init.end}`
-            relocatedComments[key] = translatorComment
+            relocatedComments[key] = extractedComment
           }
         })
       },
@@ -179,19 +179,19 @@ export default function plugin() {
           }
         }
 
-        let translatorComment = getTranslatorComment(node)
-        if (!translatorComment) {
-          translatorComment = getTranslatorComment(parent)
-          if (!translatorComment) {
-            translatorComment = relocatedComments[`${node.start}|${node.end}`]
+        let extractedComment = getExtractedComment(node)
+        if (!extractedComment) {
+          extractedComment = getExtractedComment(parent)
+          if (!extractedComment) {
+            extractedComment = relocatedComments[`${node.start}|${node.end}`]
           }
         }
 
-        if (translatorComment && translate.comments) {
+        if (extractedComment && translate.comments) {
           translate.comments = {
             ...translate.comments,
 
-            translator: translatorComment,
+            extracted: extractedComment,
           }
         }
 
