@@ -156,6 +156,25 @@ describe('extract', () => {
     })
   })
 
+  describe('extracted comment', () => {
+    const extractedCommentLocation = `${fixtureDir}/extractedComment`
+    
+    afterEach(() => {
+      removeIfExists(`${extractedCommentLocation}/messages.pot`)
+    })
+
+    it('should add the extracted comment correctly to the .pot file', () => {
+      expect(file(`${extractedCommentLocation}/messages.pot`)).to.not.exist
+
+      callForDir(extractedCommentLocation)
+
+      const messages = file(`${extractedCommentLocation}/messages.pot`)
+  
+      expect(messages).to.exist
+      expect(messages).to.contain('#. This is a comment for the translators') 
+    })   
+  })
+
   describe('babel', () => {
     const flowLocation = `${fixtureDir}/withFlowAnnotations`
 
