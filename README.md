@@ -154,7 +154,7 @@ i18n('I want _this_ to be **bold**', {
 ```
 
 
-[build-badge]: https://circleci.com/gh/signavio/signavio-i18n/tree/master.svg?style=shield&circle-token=:circle-token
-[build]: https://circleci.com/gh/signavio/signavio-i18n/tree/master
+[build-badge]: https://circleci.com/gh/signavio/i18n/tree/master.svg?style=shield&circle-token=:circle-token
+[build]: https://circleci.com/gh/signavio/i18n/tree/master
 [npm-badge]: https://img.shields.io/npm/v/signavio-i18n.png?style=flat-square
 [npm]: https://www.npmjs.org/package/signavio-i18n
