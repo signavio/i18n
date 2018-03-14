@@ -1,7 +1,7 @@
-[![CircleCI](https://circleci.com/gh/signavio/i18n/tree/master.svg?style=svg)](https://circleci.com/gh/signavio/i18n/tree/master)
-[![version][version-badge]][package]
-
 # signavio-i18n
+
+[![CircleCI][build-badge]][build]
+[![npm package][npm-badge]][npm]
 
 Minimalist gettext style i18n for JavaScript
 
@@ -153,5 +153,8 @@ i18n('I want _this_ to be **bold**', {
 })
 ```
 
-[version-badge]: https://img.shields.io/npm/v/signavio-i18n.svg?style=flat-square
-[package]: https://www.npmjs.com/package/signavio-i18n
+
+[build-badge]: https://circleci.com/gh/signavio/signavio-i18n/tree/master.svg?style=shield&circle-token=:circle-token
+[build]: https://circleci.com/gh/signavio/signavio-i18n/tree/master
+[npm-badge]: https://img.shields.io/npm/v/signavio-i18n.png?style=flat-square
+[npm]: https://www.npmjs.org/package/signavio-i18n
