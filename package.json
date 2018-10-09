@@ -40,7 +40,6 @@
     "sourceMap": false
   },
   "dependencies": {
-    "babel-core": "^6.2.1",
     "gettext-parser": "^1.1.2",
     "glob": "^6.0.1",
     "lodash": "^4.0.0",
@@ -94,6 +93,7 @@
     "xunit-file": "^1.0.0"
   },
   "peerDependencies": {
+    "@babel/core": "^7.0.0",
     "react": "^15.0.1 || ^16.0.0"
   }
 }
