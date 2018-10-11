@@ -11,8 +11,12 @@ function getLangLoader(locale) {
   // A runtime exception will be throw every time that the requested locale file
   // cannot be found. Webpack uses a regular expression to build all locales as
   // separate bundles.
-  // eslint-disable-next-line global-require,import/no-dynamic-require
-  return require(`bundle-loader?lazy-loader!./locales/${locale}.po`)
+
+  // Don't use string template here because of weird webpack bug:
+  // https://github.com/webpack/webpack/issues/4921
+
+  // eslint-disable-next-line global-require,import/no-dynamic-require,prefer-template
+  return require('bundle-loader?lazy-loader!./locales/' + locale + '.po')
 }
 
 describe('i18n', () => {

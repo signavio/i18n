@@ -2,7 +2,7 @@
 import glob from 'glob'
 import ProgressBar from 'progress'
 import { each } from 'lodash'
-import { transformFileSync } from 'babel-core'
+import { transformFileSync } from '@babel/core'
 import babelGettextExtractor from './babel-gettext-extractor'
 
 import getConfig from './config'

@@ -1,6 +1,6 @@
 {
   "fileName": "test/fixtures/withFlowAnnotations/messages.pot",
   "babel": {
-    "plugins": ["transform-flow-strip-types"]
+    "plugins": ["@babel/plugin-transform-flow-strip-types"]
   }
 }

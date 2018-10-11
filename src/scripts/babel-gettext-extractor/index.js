@@ -168,10 +168,7 @@ export default function plugin() {
           }
         }
 
-        // Getting the file options is different in babel v6 & v7.
-        // Try both ways to be compatibility with both versions.
-        const opts = config.file.log || config.file.opts
-        let fn = opts.filename
+        let fn = config.file.opts.filename
 
         if (base && fn && fn.substr(0, base.length) === base) {
           fn = fn.substr(base.length)
