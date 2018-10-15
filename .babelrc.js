@@ -9,10 +9,10 @@ module.exports = {
         : {},
     ],
     '@babel/preset-react',
+    '@babel/preset-flow',
   ],
   plugins: [
     '@babel/plugin-transform-proto-to-assign',
-    '@babel/plugin-transform-flow-strip-types',
     'lodash',
     '@babel/plugin-transform-runtime',
     'transform-remove-console',
