@@ -168,7 +168,8 @@ export default function plugin() {
           }
         }
 
-        let fn = config.file.log.filename
+        let fn = config.file.opts.filename
+
         if (base && fn && fn.substr(0, base.length) === base) {
           fn = fn.substr(base.length)
         }
