@@ -88,11 +88,11 @@ function getReference(
   return null
 }
 
-export default function plugin() {
-  let currentFileName
-  let data
-  const relocatedComments = {}
+let currentWriteToFileName
+let data
+const relocatedComments = {}
 
+export default function plugin() {
   return {
     visitor: {
       VariableDeclaration({ node }: { node: AstNodeT }) {
@@ -126,13 +126,9 @@ export default function plugin() {
           base = `${base.match(/^(.*?)\/*$/)[1]}/`
         }
 
-        if (fileName !== currentFileName) {
-          currentFileName = fileName
-          data = {
-            charset: 'UTF-8',
-            headers,
-            translations: { context: {} },
-          }
+        if (fileName !== currentWriteToFileName) {
+          currentWriteToFileName = fileName
+          data = { charset: 'UTF-8', headers, translations: { context: {} } }
 
           headers['content-type'] =
             headers['content-type'] || DEFAULT_HEADERS['content-type']
@@ -168,15 +164,18 @@ export default function plugin() {
           }
         }
 
-        let fn = config.file.opts.filename
-
-        if (base && fn && fn.substr(0, base.length) === base) {
-          fn = fn.substr(base.length)
+        let sourceFileName = config.file.opts.filename
+        if (
+          base &&
+          sourceFileName &&
+          sourceFileName.substr(0, base.length) === base
+        ) {
+          sourceFileName = sourceFileName.substr(base.length)
         }
 
         if (addLocation !== 'never' && !noLocation) {
           translate.comments = {
-            reference: getReference(addLocation, fn, node),
+            reference: getReference(addLocation, sourceFileName, node),
           }
         }
 
