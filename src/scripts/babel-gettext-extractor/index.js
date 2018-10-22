@@ -88,6 +88,15 @@ function getReference(
   return null
 }
 
+function getRelativePathName({ filename, root }, base = '') {
+  // to remove first '/' as well
+  const sourceFileName = filename.substr(root.length + 1)
+
+  return sourceFileName.substr(0, base.length) === base
+    ? sourceFileName.substr(base.length)
+    : sourceFileName
+}
+
 let currentWriteToFileName
 let data
 const relocatedComments = {}
@@ -164,14 +173,7 @@ export default function plugin() {
           }
         }
 
-        let sourceFileName = config.file.opts.filename
-        if (
-          base &&
-          sourceFileName &&
-          sourceFileName.substr(0, base.length) === base
-        ) {
-          sourceFileName = sourceFileName.substr(base.length)
-        }
+        let sourceFileName = getRelativePathName(config.file.opts, base)
 
         if (addLocation !== 'never' && !noLocation) {
           translate.comments = {
