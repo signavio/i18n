@@ -88,7 +88,10 @@ function getReference(
   return null
 }
 
-function getRelativePathName({ filename, root }, base = '') {
+function getRelativePathName(
+  { filename, root }: { filename: string, root: string },
+  base: string = ''
+) {
   // to remove first '/' as well
   const sourceFileName = filename.substr(root.length + 1)
 
@@ -173,7 +176,7 @@ export default function plugin() {
           }
         }
 
-        let sourceFileName = getRelativePathName(config.file.opts, base)
+        const sourceFileName = getRelativePathName(config.file.opts, base)
 
         if (addLocation !== 'never' && !noLocation) {
           translate.comments = {
