@@ -78,20 +78,20 @@ describe('extract', () => {
       callForDir(defaultDir)
 
       const messages = file(`${defaultDir}/messages.pot`)
-
+      const referencePath = 'fixtures/addLocation/default'
       expect(messages).to.exist
-      expect(messages).to.contain(`#: ${defaultDir}/index.js:1`)
+      expect(messages).to.contain(`#: ${referencePath}/index.js:1`)
     })
 
     it('should be possible to explicitly state that you want the full path', () => {
       expect(file(`${fullDir}/messages.pot`)).to.not.exist
 
       callForDir(fullDir)
-
       const messages = file(`${fullDir}/messages.pot`)
+      const referencePath = 'fixtures/addLocation/full'
 
       expect(messages).to.exist
-      expect(messages).to.contain(`#: ${fullDir}/index.js:1`)
+      expect(messages).to.contain(`#: ${referencePath}/index.js:1`)
     })
 
     it('should be possible to only include the file name', () => {
@@ -158,7 +158,7 @@ describe('extract', () => {
 
   describe('extracted comment', () => {
     const extractedCommentLocation = `${fixtureDir}/extractedComment`
-    
+
     afterEach(() => {
       removeIfExists(`${extractedCommentLocation}/messages.pot`)
     })
@@ -169,10 +169,10 @@ describe('extract', () => {
       callForDir(extractedCommentLocation)
 
       const messages = file(`${extractedCommentLocation}/messages.pot`)
-  
+
       expect(messages).to.exist
-      expect(messages).to.contain('#. This is a comment for the translators') 
-    })   
+      expect(messages).to.contain('#. This is a comment for the translators')
+    })
   })
 
   describe('babel', () => {
@@ -191,6 +191,22 @@ describe('extract', () => {
 
       expect(messages).to.exist
       expect(messages).to.contain('msgid "I got extracted"')
+    })
+  })
+
+  describe('includes message from multiple files', () => {
+    const multipleFilesLocation = `${fixtureDir}/multipleFiles`
+    afterEach(() => {
+      removeIfExists(`${multipleFilesLocation}/messages.pot`)
+    })
+    it('should have message from two files', () => {
+      expect(file(`${multipleFilesLocation}/messages.pot`)).to.not.exist
+      callForDir(multipleFilesLocation)
+      const messages = file(`${multipleFilesLocation}/messages.pot`)
+
+      expect(messages).to.exist
+      expect(messages).to.contain('msgid "Hello"')
+      expect(messages).to.contain('msgid "World"')
     })
   })
 })

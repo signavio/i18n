@@ -88,11 +88,23 @@ function getReference(
   return null
 }
 
-export default function plugin() {
-  let currentFileName
-  let data
-  const relocatedComments = {}
+function getRelativePathName(
+  { filename, root }: { filename: string, root: string },
+  base: string = ''
+) {
+  // to remove first '/' as well
+  const sourceFileName = filename.substr(root.length + 1)
 
+  return sourceFileName.substr(0, base.length) === base
+    ? sourceFileName.substr(base.length)
+    : sourceFileName
+}
+
+let currentWriteToFileName
+let data
+const relocatedComments = {}
+
+export default function plugin() {
   return {
     visitor: {
       VariableDeclaration({ node }: { node: AstNodeT }) {
@@ -126,13 +138,9 @@ export default function plugin() {
           base = `${base.match(/^(.*?)\/*$/)[1]}/`
         }
 
-        if (fileName !== currentFileName) {
-          currentFileName = fileName
-          data = {
-            charset: 'UTF-8',
-            headers,
-            translations: { context: {} },
-          }
+        if (fileName !== currentWriteToFileName) {
+          currentWriteToFileName = fileName
+          data = { charset: 'UTF-8', headers, translations: { context: {} } }
 
           headers['content-type'] =
             headers['content-type'] || DEFAULT_HEADERS['content-type']
@@ -168,15 +176,11 @@ export default function plugin() {
           }
         }
 
-        let fn = config.file.opts.filename
-
-        if (base && fn && fn.substr(0, base.length) === base) {
-          fn = fn.substr(base.length)
-        }
+        const sourceFileName = getRelativePathName(config.file.opts, base)
 
         if (addLocation !== 'never' && !noLocation) {
           translate.comments = {
-            reference: getReference(addLocation, fn, node),
+            reference: getReference(addLocation, sourceFileName, node),
           }
         }
 
