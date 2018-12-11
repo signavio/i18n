@@ -31,16 +31,14 @@ describe('i18n', () => {
       })
     })
 
-    it('should load the respective bundle if called after init', done => {
+    it('should load the respective bundle if called after init', () => {
       setLocale('en_US')
       // return a promise and use mocha's built in promises support
-      init(getLangLoader, config).then(() => {
+      return init(getLangLoader, config).then(() => {
         expect(i18n('for')).to.equal('for')
         setLocale('de_DE')
         return init(getLangLoader, config).then(() => {
           expect(i18n('for')).to.equal('für')
-
-          done()
         })
       })
     })
@@ -100,31 +98,35 @@ describe('i18n', () => {
       )
     })
 
-    it('should support React components for interpolation values', () => {
-      const comp = <div>comp content</div>
-      const t = i18n('before __reactComp__ after', {
-        reactComp: comp,
+    it('should support React elements as interpolation values', () => {
+      const element = <div>element content</div>
+      const t = i18n('before __reactElement__ after', {
+        reactElement: element,
       })
+      const elementClone = { ...t[1], key: null }
 
       expect(t).to.be.an('array')
       expect(t).to.have.length(3)
       expect(t[0]).to.equal('before ')
-      expect(t[1]).to.equal(comp)
+      expect(elementClone).to.deep.equal(element)
       expect(t[2]).to.equal(' after')
     })
 
-    it('should support using the same React component multiple times', () => {
-      const comp = <div>comp content</div>
-      const t = i18n('before __reactComp__ within __reactComp__', {
-        reactComp: comp,
+    it('should support using the same React element multiple times', () => {
+      const element = <div>element content</div>
+      const t = i18n('before __reactElement__ within __reactElement__', {
+        reactElement: element,
       })
+
+      const elementClone1 = { ...t[1], key: null }
+      const elementClone2 = { ...t[3], key: null }
 
       expect(t).to.be.an('array')
       expect(t).to.have.length(4)
       expect(t[0]).to.equal('before ')
-      expect(t[1]).to.deep.equal(comp)
+      expect(elementClone1).to.deep.equal(element)
       expect(t[2]).to.equal(' within ')
-      expect(t[3]).to.deep.equal(comp)
+      expect(elementClone2).to.deep.equal(element)
     })
 
     it('should keep HTML entities in translation messages unescaped', () => {
@@ -137,59 +139,40 @@ describe('i18n', () => {
       expect(t[2]).to.equal('>.')
     })
 
-    it('should keep original pattern for missing interpolations', done => {
-      init(getLangLoader, config)
-        .then(() => {
-          expect(i18n('1 __interpolation__ 2')).to.equal(
-            '1 __interpolation__ 2'
-          )
+    it('should keep original pattern for missing interpolations', () =>
+      init(getLangLoader, config).then(() => {
+        expect(i18n('1 __interpolation__ 2')).to.equal('1 __interpolation__ 2')
+      }))
 
-          done()
-        })
-        .catch(done)
-    })
-
-    it('should fallback to the translation key, if no translation was found.', done => {
+    it('should fallback to the translation key, if no translation was found.', () => {
       expect(i18n('This is not translated')).to.equal('This is not translated')
 
       setLocale('de_DE')
 
-      init(getLangLoader, config)
-        .then(() => {
-          expect(i18n('This is not translated')).to.equal(
-            'This is not translated'
-          )
-
-          done()
-        })
-        .catch(done)
+      return init(getLangLoader, config).then(() => {
+        expect(i18n('This is not translated')).to.equal(
+          'This is not translated'
+        )
+      })
     })
 
-    it('should consider the context option, if provided', done => {
+    it('should consider the context option, if provided', () => {
       setLocale('de_DE')
 
-      init(getLangLoader, config)
-        .then(() => {
-          expect(i18n('Export')).to.equal('Exportiere')
-          expect(i18n('Export', { context: 'button label' })).to.equal(
-            'Exportieren'
-          )
-
-          done()
-        })
-        .catch(done)
+      return init(getLangLoader, config).then(() => {
+        expect(i18n('Export')).to.equal('Exportiere')
+        expect(i18n('Export', { context: 'button label' })).to.equal(
+          'Exportieren'
+        )
+      })
     })
 
-    it('should use the translation key without any msgctxt, if no msgctxt is provided', done => {
+    it('should use the translation key without any msgctxt, if no msgctxt is provided', () => {
       setLocale('de_DE')
 
-      init(getLangLoader, config)
-        .then(() => {
-          expect(i18n('Export')).to.equal('Exportiere')
-
-          done()
-        })
-        .catch(done)
+      return init(getLangLoader, config).then(() => {
+        expect(i18n('Export')).to.equal('Exportiere')
+      })
     })
 
     it('should resolve plural', () => {
@@ -208,6 +191,28 @@ describe('i18n', () => {
       expect(t1).to.be.a('string')
       expect(t1).to.equal('1 case')
       expect(t2).to.equal('-1 case')
+    })
+
+    it('should assign unique keys to all React element interpolations', () => {
+      const result = i18n(
+        'This __button__ is used twice: __button__. __foo__',
+        {
+          button: React.createElement('button'),
+          foo: React.createElement('span', { key: 'will-be-overridden' }),
+        }
+      )
+
+      expect(result[1].key).to.equal('1')
+      expect(result[3].key).to.equal('3')
+      expect(result[5].key).to.equal('5')
+
+      const resultMarkdown = i18n('A __button__ and a [link](#foo)', {
+        button: React.createElement('button'),
+        markdown: true,
+      })
+      resultMarkdown.forEach(element => {
+        expect(element).to.have.property('key')
+      })
     })
   })
 })

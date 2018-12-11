@@ -87,7 +87,7 @@ function applyMarkdown(translation) {
 
   // remove single, outer wrapping <p>-tag
   if (isWrappedInPTag(finalTranslation)) {
-    // last occurrence of <p> is at the start, first occurence of </p> is a the very end
+    // last occurrence of <p> is at the start, first occurrence of </p> is a the very end
     finalTranslation = finalTranslation.substring(
       3,
       finalTranslation.length - 5
@@ -97,9 +97,9 @@ function applyMarkdown(translation) {
   return finalTranslation.replace(/\\_/g, '_')
 }
 
-function htmlStringToReactComponent(html) {
+function htmlStringToReactComponent(html, { key }) {
   // eslint-disable-next-line react/no-danger
-  return <span dangerouslySetInnerHTML={{ __html: html }} />
+  return <span key={key} dangerouslySetInnerHTML={{ __html: html }} />
 }
 
 function insertInterpolations(translation, options) {
@@ -133,16 +133,16 @@ function insertReactComponentInterpolations(translation, options) {
     if (match.index > 0) {
       substr = translation.substring(start, match.index)
       result.push(
-        options.markdown ? htmlStringToReactComponent(substr) : substr
+        options.markdown
+          ? htmlStringToReactComponent(substr, {
+              key: result.length,
+            })
+          : substr
       )
     }
 
     if (React.isValidElement(component)) {
-      result.push(
-        result.indexOf(component) >= 0
-          ? React.cloneElement(component)
-          : component
-      )
+      result.push(React.cloneElement(component, { key: result.length }))
     } else {
       // no interpolation specified, leave the placeholder unchanged
       result.push(match[0])
@@ -153,7 +153,13 @@ function insertReactComponentInterpolations(translation, options) {
   // append part after last match
   if (start < translation.length) {
     substr = translation.substring(start)
-    result.push(options.markdown ? htmlStringToReactComponent(substr) : substr)
+    result.push(
+      options.markdown
+        ? htmlStringToReactComponent(substr, {
+            key: result.length,
+          })
+        : substr
+    )
   }
 
   // re-concatenate all string elements
