@@ -31,7 +31,7 @@ describe('i18n', () => {
       })
     })
 
-    it('should load the respective bundle if called after init', (done) => {
+    it('should load the respective bundle if called after init', done => {
       setLocale('en_US')
       // return a promise and use mocha's built in promises support
       init(getLangLoader, config).then(() => {
@@ -60,30 +60,44 @@ describe('i18n', () => {
     })
 
     it('should support using Markdown in translation messages', () => {
-      const t = i18n('This is a **__test__**.', { test: 'success', markdown: true })
+      const t = i18n('This is a **__test__**.', {
+        test: 'success',
+        markdown: true,
+      })
       expect(React.isValidElement(t)).to.be.true
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
-      expect(renderedHtml).to.equal('<span>This is a <strong>success</strong>.</span>')
+      expect(renderedHtml).to.equal(
+        '<span>This is a <strong>success</strong>.</span>'
+      )
     })
 
     it('should correctly escape interpolations when used with Markdown', () => {
-      const t = i18n('This is a **__test__**.', { test: '<success>', markdown: true })
+      const t = i18n('This is a **__test__**.', {
+        test: '<success>',
+        markdown: true,
+      })
       expect(React.isValidElement(t)).to.be.true
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
-      expect(renderedHtml).to.equal('<span>This is a <strong>&lt;success&gt;</strong>.</span>')
+      expect(renderedHtml).to.equal(
+        '<span>This is a <strong>&lt;success&gt;</strong>.</span>'
+      )
     })
 
     it('should not replace "__markdown__" placeholders', () => {
       const t = i18n('This is __markdown__.', { markdown: true })
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(<div>{t}</div>)
-      expect(renderedHtml).to.equal('<div><span>This is </span>__markdown__<span>.</span></div>')
+      expect(renderedHtml).to.equal(
+        '<div><span>This is </span>__markdown__<span>.</span></div>'
+      )
     })
 
     it.skip('should not be possible to break Markdown from interpolations', () => {
       const t = i18n('**__foo__**', { foo: 'bar** baz **baa', markdown: true })
       expect(React.isValidElement(t)).to.be.true
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
-      expect(renderedHtml).to.equal('<span>foo <strong>bar** baz **baa</strong></span>')
+      expect(renderedHtml).to.equal(
+        '<span>foo <strong>bar** baz **baa</strong></span>'
+      )
     })
 
     it('should support React components for interpolation values', () => {
@@ -114,52 +128,68 @@ describe('i18n', () => {
     })
 
     it('should keep HTML entities in translation messages unescaped', () => {
-      const t = i18n('This is a <__test__>.', { test: React.createElement('span', null, 'success') })
+      const t = i18n('This is a <__test__>.', {
+        test: React.createElement('span', null, 'success'),
+      })
       expect(t).to.be.an('array')
       expect(t).to.have.length(3)
       expect(t[0]).to.equal('This is a <')
       expect(t[2]).to.equal('>.')
     })
 
-    it('should keep original pattern for missing interpolations', (done) => {
-      init(getLangLoader, config).then(() => {
-        expect(i18n('1 __interpolation__ 2')).to.equal('1 __interpolation__ 2')
+    it('should keep original pattern for missing interpolations', done => {
+      init(getLangLoader, config)
+        .then(() => {
+          expect(i18n('1 __interpolation__ 2')).to.equal(
+            '1 __interpolation__ 2'
+          )
 
-        done()
-      }).catch(done)
+          done()
+        })
+        .catch(done)
     })
 
-    it('should fallback to the translation key, if no translation was found.', (done) => {
+    it('should fallback to the translation key, if no translation was found.', done => {
       expect(i18n('This is not translated')).to.equal('This is not translated')
 
       setLocale('de_DE')
 
-      init(getLangLoader, config).then(() => {
-        expect(i18n('This is not translated')).to.equal('This is not translated')
+      init(getLangLoader, config)
+        .then(() => {
+          expect(i18n('This is not translated')).to.equal(
+            'This is not translated'
+          )
 
-        done()
-      }).catch(done)
+          done()
+        })
+        .catch(done)
     })
 
-    it('should consider the context option, if provided', (done) => {
+    it('should consider the context option, if provided', done => {
       setLocale('de_DE')
 
-      init(getLangLoader, config).then(() => {
-        expect(i18n('Export')).to.equal('Exportiere')
-        expect(i18n('Export', { context: 'button label' })).to.equal('Exportieren')
+      init(getLangLoader, config)
+        .then(() => {
+          expect(i18n('Export')).to.equal('Exportiere')
+          expect(i18n('Export', { context: 'button label' })).to.equal(
+            'Exportieren'
+          )
 
-        done()
-      }).catch(done)
+          done()
+        })
+        .catch(done)
     })
 
-    it('should use the translation key without any msgctxt, if no msgctxt is provided', (done) => {
+    it('should use the translation key without any msgctxt, if no msgctxt is provided', done => {
       setLocale('de_DE')
 
-      init(getLangLoader, config).then(() => {
-        expect(i18n('Export')).to.equal('Exportiere')
+      init(getLangLoader, config)
+        .then(() => {
+          expect(i18n('Export')).to.equal('Exportiere')
 
-        done()
-      }).catch(done)
+          done()
+        })
+        .catch(done)
     })
 
     it('should resolve plural', () => {

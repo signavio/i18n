@@ -12,7 +12,6 @@ const singleton = {
   messages: {},
 }
 
-
 /**
  * The translate function
  * @param text String - The base/singular form of the text to translate
@@ -37,7 +36,6 @@ export function init(getLangLoaderFn, configObj = {}) {
   return new Promise(loadBundle)
 }
 
-
 /**
  * Sets the locale to use. If init has been called before, returns a promise that resolves as soon
  * as the messages bundle has been loaded
@@ -54,12 +52,12 @@ export function setLocale(newLocale) {
   return null
 }
 
-
 /**
  * Returns the currently active locale
  **/
 export function locale() {
-  const langRaw = specifiedLocale ||
+  const langRaw =
+    specifiedLocale ||
     (window && (window.navigator.userLanguage || window.navigator.language)) ||
     'en_US'
   const langParts = langRaw.replace('-', '_').split('_')
@@ -81,7 +79,6 @@ export function locale() {
   return mapLocale(config.default || 'en_US') // fall back to default
 }
 
-
 export function onChangeLocale(listener) {
   changeLocaleListeners.push(listener)
 }
@@ -102,7 +99,6 @@ export function reset() {
   changeLocaleListeners = []
 }
 
-
 function mapLocale(localeToMap) {
   if (!config || !config.map) {
     return localeToMap
@@ -110,7 +106,6 @@ function mapLocale(localeToMap) {
 
   return config.map[localeToMap] || localeToMap
 }
-
 
 function tryToGetLangLoader(forLocale) {
   let waitForLangChunk
@@ -124,13 +119,15 @@ function tryToGetLangLoader(forLocale) {
 
 function loadBundle(resolve) {
   if (!isFunction(getLangLoader)) {
-    throw new Error('Cannot load a bundle as no valid getLangLoader function has been set')
+    throw new Error(
+      'Cannot load a bundle as no valid getLangLoader function has been set'
+    )
   }
 
   const waitForLangChunk = tryToGetLangLoader(locale())
-  waitForLangChunk((messages) => {
+  waitForLangChunk(messages => {
     singleton.messages = messages
-    forEach(changeLocaleListeners, (listener) => listener())
+    forEach(changeLocaleListeners, listener => listener())
     resolve()
   })
 }
