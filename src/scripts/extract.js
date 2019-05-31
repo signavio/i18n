@@ -1,5 +1,6 @@
 // @flow
 import glob from 'glob'
+import invariant from 'invariant'
 import ProgressBar from 'progress'
 
 import { transformFileSync } from '@babel/core'
@@ -7,13 +8,12 @@ import { transformFileSync } from '@babel/core'
 import babelGettextExtractor from './babel-gettext-extractor'
 import getConfig from './config'
 
-if (process.argv.length < 3) {
-  throw new Error(
-    `Invalid arguments, expected: 'node i18n/scripts/extract.js "source_file_pattern"', got: ${process.argv.join(
-      ' '
-    )}`
-  )
-}
+invariant(
+  process.argv.length >= 3,
+  `Invalid arguments, expected: 'node i18n/scripts/extract.js "source_file_pattern"', got: ${process.argv.join(
+    ' '
+  )}`
+)
 
 const files = glob.sync(process.argv[2])
 
