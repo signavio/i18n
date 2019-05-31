@@ -1,6 +1,8 @@
 // @flow
-import path from 'path'
 import fs from 'fs'
+import path from 'path'
+
+import invariant from 'invariant'
 
 import type { ConfigT, MapT } from '../types'
 
@@ -42,9 +44,7 @@ function findConfig(loc: string) {
 export default function getConfig(filename: string = '.'): ConfigT {
   const loc = findConfig(filename)
 
-  if (!loc) {
-    throw new Error('Could not find .i18nrc')
-  }
+  invariant(loc, 'Could not find .i18nrc')
 
   if (configCache[loc]) {
     return configCache[loc]
