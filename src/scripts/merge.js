@@ -1,22 +1,25 @@
-import path from 'path'
 import { exec } from 'child_process'
-
-import { each } from 'lodash'
+import path from 'path'
 
 if (process.argv.length < 4) {
-  throw new Error('Invalid arguments, expected: `node i18n/scripts/merge.js pot_file po_file ...`')
+  throw new Error(
+    'Invalid arguments, expected: `node i18n/scripts/merge.js pot_file po_file ...`'
+  )
 }
 
 const templatePath = path.resolve(process.cwd(), process.argv[2])
 
-each(process.argv.slice(3), (fileName) => {
-  exec(`msgmerge -o ${fileName} ${fileName} ${templatePath}`, (error, stdout, stderr) => {
-    // eslint-disable-next-line no-console
-    console.log(stdout)
+process.argv.slice(3).forEach(fileName => {
+  exec(
+    `msgmerge -o ${fileName} ${fileName} ${templatePath}`,
+    (error, stdout, stderr) => {
+      // eslint-disable-next-line no-console
+      console.log(stdout)
 
-    if (error) {
+      if (error) {
         // eslint-disable-next-line no-console
-      console.error(stderr)
+        console.error(stderr)
+      }
     }
-  })
+  )
 })

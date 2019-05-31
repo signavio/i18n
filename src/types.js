@@ -27,3 +27,14 @@ export type ObjectPropertyT = {
     name: string,
   },
 }
+
+export type LocaleMapT = {
+  [locale: string]: string,
+}
+
+export type MessagesT = {
+  [key: string]: [?string, ?string, ?string],
+}
+export type TranslationsT = {
+  messages: MessagesT,
+}

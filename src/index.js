@@ -1,17 +1,25 @@
-import isFunction from 'lodash/isFunction'
-import forEach from 'lodash/forEach'
+// @flow
+import invariant from 'invariant'
 
 import createTranslate from './translate'
+import { type LocaleMapT, type MessagesT, type TranslationsT } from './types'
 
-let config = {}
-let specifiedLocale
-let getLangLoader
-let changeLocaleListeners = []
-
-const singleton = {
-  messages: {},
+type ConfigT = {
+  default?: string,
+  map?: LocaleMapT,
 }
 
+type LangLoaderCallbackFnT = (messages: MessagesT) => void
+type GetLangLoderFnT = (locale: string) => LangLoaderCallbackFnT
+
+let config: ?ConfigT = {}
+let specifiedLocale
+let getLangLoader: ?GetLangLoderFnT
+let changeLocaleListeners = []
+
+const singleton: TranslationsT = {
+  messages: {},
+}
 
 /**
  * The translate function
@@ -31,12 +39,14 @@ export default translate
  * @param configObj A hashmap with keys `default` (default locale) and `map` (mapping of locales to
  * other locales)
  **/
-export function init(getLangLoaderFn, configObj = {}) {
+export function init(
+  getLangLoaderFn: GetLangLoderFnT,
+  configObj: ConfigT = {}
+): Promise<empty> {
   getLangLoader = getLangLoaderFn
   config = configObj
   return new Promise(loadBundle)
 }
-
 
 /**
  * Sets the locale to use. If init has been called before, returns a promise that resolves as soon
@@ -44,7 +54,7 @@ export function init(getLangLoaderFn, configObj = {}) {
  *
  * @param locale The locale code as a string (e.g.: `en_US`, `en`, etc.)
  */
-export function setLocale(newLocale) {
+export function setLocale(newLocale: string): ?Promise<empty> {
   specifiedLocale = newLocale
 
   if (getLangLoader) {
@@ -54,12 +64,12 @@ export function setLocale(newLocale) {
   return null
 }
 
-
 /**
  * Returns the currently active locale
  **/
-export function locale() {
-  const langRaw = specifiedLocale ||
+export function locale(): string {
+  const langRaw =
+    specifiedLocale ||
     (window && (window.navigator.userLanguage || window.navigator.language)) ||
     'en_US'
   const langParts = langRaw.replace('-', '_').split('_')
@@ -78,15 +88,19 @@ export function locale() {
     return currentLocale
   }
 
+  invariant(
+    config,
+    'could not determine default local due to missing configuration.'
+  )
+
   return mapLocale(config.default || 'en_US') // fall back to default
 }
 
-
-export function onChangeLocale(listener) {
+export function onChangeLocale(listener: Function) {
   changeLocaleListeners.push(listener)
 }
 
-export function offChangeLocale(listener) {
+export function offChangeLocale(listener: Function) {
   changeLocaleListeners.splice(changeLocaleListeners.indexOf(listener), 1)
 }
 
@@ -102,8 +116,7 @@ export function reset() {
   changeLocaleListeners = []
 }
 
-
-function mapLocale(localeToMap) {
+function mapLocale(localeToMap: string) {
   if (!config || !config.map) {
     return localeToMap
   }
@@ -111,10 +124,15 @@ function mapLocale(localeToMap) {
   return config.map[localeToMap] || localeToMap
 }
 
-
-function tryToGetLangLoader(forLocale) {
+function tryToGetLangLoader(forLocale: string) {
   let waitForLangChunk
+
   try {
+    invariant(
+      typeof getLangLoader === 'function',
+      'Cannot load a bundle as no valid getLangLoader function has been set'
+    )
+
     waitForLangChunk = getLangLoader(forLocale)
   } catch (e) {
     return null
@@ -122,15 +140,17 @@ function tryToGetLangLoader(forLocale) {
   return waitForLangChunk
 }
 
-function loadBundle(resolve) {
-  if (!isFunction(getLangLoader)) {
-    throw new Error('Cannot load a bundle as no valid getLangLoader function has been set')
-  }
+function loadBundle(resolve: Function) {
+  invariant(
+    typeof getLangLoader === 'function',
+    'Cannot load a bundle as no valid getLangLoader function has been set'
+  )
 
-  const waitForLangChunk = tryToGetLangLoader(locale())
-  waitForLangChunk((messages) => {
+  const waitForLangChunk = getLangLoader(locale())
+
+  waitForLangChunk((messages: MessagesT) => {
     singleton.messages = messages
-    forEach(changeLocaleListeners, (listener) => listener())
+    changeLocaleListeners.forEach((listener: Function) => listener())
     resolve()
   })
 }
