@@ -1,4 +1,5 @@
 {
-  "extends": "signavio-test",
-  "plugins": ["chai-expect", "mocha"],
+  "rules": {
+    "no-unused-expressions": "off"
+  }
 }

@@ -14,57 +14,69 @@ const defaultOptions = {
   markdown: false,
 }
 
-export default (singleton) => function translate(text, plural, options) {
-  // singleton.messages contains the translation messages for the currently active languae
-  // format: singular key -> [ plural key, singular translations, plural translation ]
-  let finalOptions = options
-  let finalPlural = plural
+export default singleton =>
+  function translate(text, plural, options) {
+    // singleton.messages contains the translation messages for the currently active languae
+    // format: singular key -> [ plural key, singular translations, plural translation ]
+    let finalOptions = options
+    let finalPlural = plural
 
-  if (!finalOptions && isPlainObject(finalPlural)) {
-    finalOptions = plural
-    finalPlural = undefined
+    if (!finalOptions && isPlainObject(finalPlural)) {
+      finalOptions = plural
+      finalPlural = undefined
+    }
+
+    finalOptions = {
+      ...defaultOptions,
+      ...finalOptions,
+      context:
+        finalOptions && finalOptions.context
+          ? `${finalOptions.context}\u0004`
+          : '',
+    }
+
+    const [translatedSingular, translatedPlural] = (
+      singleton.messages[finalOptions.context + text] || [null, null, null]
+    ).slice(1)
+
+    // find the raw translation message
+    let translation
+
+    if (finalPlural && needsPlural(finalOptions)) {
+      translation =
+        translatedPlural && isString(translatedPlural)
+          ? translatedPlural
+          : finalPlural
+    } else {
+      translation =
+        translatedSingular && isString(translatedSingular)
+          ? translatedSingular
+          : text
+    }
+
+    // apply markdown processing if necessary
+    if (finalOptions.markdown) {
+      translation = applyMarkdown(translation)
+    }
+
+    // insert regular interpolations
+    translation = insertInterpolations(translation, finalOptions)
+
+    // insert React component interpolations
+    const result = insertReactComponentInterpolations(translation, finalOptions)
+
+    return result.length === 1 ? result[0] : result
   }
-
-  finalOptions = {
-    ...defaultOptions,
-    ...finalOptions,
-    context: finalOptions && finalOptions.context ? `${finalOptions.context}\u0004` : '',
-  }
-
-  const [
-    translatedSingular,
-    translatedPlural,
-  ] = (singleton.messages[finalOptions.context + text] || [null, null, null]).slice(1)
-
-  // find the raw translation message
-  let translation
-
-  if (finalPlural && needsPlural(finalOptions)) {
-    translation = translatedPlural && isString(translatedPlural) ? translatedPlural : finalPlural
-  } else {
-    translation = translatedSingular && isString(translatedSingular) ? translatedSingular : text
-  }
-
-  // apply markdown processing if necessary
-  if (finalOptions.markdown) {
-    translation = applyMarkdown(translation)
-  }
-
-  // insert regular interpolations
-  translation = insertInterpolations(translation, finalOptions)
-
-  // insert React component interpolations
-  const result = insertReactComponentInterpolations(translation, finalOptions)
-
-  return result.length === 1 ? result[0] : result
-}
 
 function needsPlural(options) {
   return isNumber(options.count) && Math.abs(options.count) !== 1
 }
 
 function isWrappedInPTag(translation) {
-  return translation.lastIndexOf('<p>') === 0 && translation.indexOf('</p>') === translation.length - 5
+  return (
+    translation.lastIndexOf('<p>') === 0 &&
+    translation.indexOf('</p>') === translation.length - 5
+  )
 }
 
 function applyMarkdown(translation) {
@@ -73,23 +85,27 @@ function applyMarkdown(translation) {
   // exclude them from the markdown notation. Use asterisk (*) instead.)
   let finalTranslation = marked(translation.replace(/_/g, '\\_'))
 
-    // remove single, outer wrapping <p>-tag
+  // remove single, outer wrapping <p>-tag
   if (isWrappedInPTag(finalTranslation)) {
-    // last occurrence of <p> is at the start, first occurence of </p> is a the very end
-    finalTranslation = finalTranslation.substring(3, finalTranslation.length - 5)
+    // last occurrence of <p> is at the start, first occurrence of </p> is a the very end
+    finalTranslation = finalTranslation.substring(
+      3,
+      finalTranslation.length - 5
+    )
   }
 
   return finalTranslation.replace(/\\_/g, '_')
 }
 
-function htmlStringToReactComponent(html) {
+function htmlStringToReactComponent(html, { key }) {
   // eslint-disable-next-line react/no-danger
-  return <span dangerouslySetInnerHTML={{ __html: html }} />
+  return <span key={key} dangerouslySetInnerHTML={{ __html: html }} />
 }
 
 function insertInterpolations(translation, options) {
-  const regularInterpolations = pickBy(options, (val, key) => (
-    !has(defaultOptions, key) && !React.isValidElement(val))
+  const regularInterpolations = pickBy(
+    options,
+    (val, key) => !has(defaultOptions, key) && !React.isValidElement(val)
   )
 
   let finalTranslation = translation
@@ -97,7 +113,7 @@ function insertInterpolations(translation, options) {
   forEach(regularInterpolations, (val, key) => {
     finalTranslation = finalTranslation.replace(
       new RegExp(`__${key}__`, 'g'),
-      options.markdown ? escape(val) : val   // only escape options when using markdown
+      options.markdown ? escape(val) : val // only escape options when using markdown
     )
   })
 
@@ -116,14 +132,17 @@ function insertReactComponentInterpolations(translation, options) {
 
     if (match.index > 0) {
       substr = translation.substring(start, match.index)
-      result.push(options.markdown ? htmlStringToReactComponent(substr) : substr)
+      result.push(
+        options.markdown
+          ? htmlStringToReactComponent(substr, {
+              key: result.length,
+            })
+          : substr
+      )
     }
 
     if (React.isValidElement(component)) {
-      result.push(result.indexOf(component) >= 0
-        ? React.cloneElement(component)
-        : component
-      )
+      result.push(React.cloneElement(component, { key: result.length }))
     } else {
       // no interpolation specified, leave the placeholder unchanged
       result.push(match[0])
@@ -134,7 +153,13 @@ function insertReactComponentInterpolations(translation, options) {
   // append part after last match
   if (start < translation.length) {
     substr = translation.substring(start)
-    result.push(options.markdown ? htmlStringToReactComponent(substr) : substr)
+    result.push(
+      options.markdown
+        ? htmlStringToReactComponent(substr, {
+            key: result.length,
+          })
+        : substr
+    )
   }
 
   // re-concatenate all string elements
