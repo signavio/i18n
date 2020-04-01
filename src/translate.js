@@ -8,14 +8,12 @@ import escape from 'lodash/escape'
 import marked from 'marked'
 import React from 'react'
 
-const placeholderRegex = /__(\w+)__/g
-
 const defaultOptions = {
   markdown: false,
 }
 
-export default singleton =>
-  function translate(text, plural, options) {
+export default singleton => {
+  return function translate(text, plural, options) {
     // singleton.messages contains the translation messages for the currently active languae
     // format: singular key -> [ plural key, singular translations, plural translation ]
     let finalOptions = options
@@ -68,70 +66,92 @@ export default singleton =>
     return result.length === 1 ? result[0] : result
   }
 
-function needsPlural(options) {
-  return isNumber(options.count) && Math.abs(options.count) !== 1
-}
+  function needsPlural(options) {
+    return isNumber(options.count) && Math.abs(options.count) !== 1
+  }
 
-function isWrappedInPTag(translation) {
-  return (
-    translation.lastIndexOf('<p>') === 0 &&
-    translation.indexOf('</p>') === translation.length - 5
-  )
-}
-
-function applyMarkdown(translation) {
-  // Escape underscores.
-  // (Since we use underscores to denote interpolations, we have to
-  // exclude them from the markdown notation. Use asterisk (*) instead.)
-  let finalTranslation = marked(translation.replace(/_/g, '\\_'))
-
-  // remove single, outer wrapping <p>-tag
-  if (isWrappedInPTag(finalTranslation)) {
-    // last occurrence of <p> is at the start, first occurrence of </p> is a the very end
-    finalTranslation = finalTranslation.substring(
-      3,
-      finalTranslation.length - 5
+  function isWrappedInPTag(translation) {
+    return (
+      translation.lastIndexOf('<p>') === 0 &&
+      translation.indexOf('</p>') === translation.length - 5
     )
   }
 
-  return finalTranslation.replace(/\\_/g, '_')
-}
+  function applyMarkdown(translation) {
+    // Escape underscores.
+    // (Since we use underscores to denote interpolations, we have to
+    // exclude them from the markdown notation. Use asterisk (*) instead.)
+    let finalTranslation = marked(translation.replace(/_/g, '\\_'))
 
-function htmlStringToReactComponent(html, { key }) {
-  // eslint-disable-next-line react/no-danger
-  return <span key={key} dangerouslySetInnerHTML={{ __html: html }} />
-}
+    // remove single, outer wrapping <p>-tag
+    if (isWrappedInPTag(finalTranslation)) {
+      // last occurrence of <p> is at the start, first occurrence of </p> is a the very end
+      finalTranslation = finalTranslation.substring(
+        3,
+        finalTranslation.length - 5
+      )
+    }
 
-function insertInterpolations(translation, options) {
-  const regularInterpolations = pickBy(
-    options,
-    (val, key) => !has(defaultOptions, key) && !React.isValidElement(val)
-  )
+    return finalTranslation.replace(/\\_/g, '_')
+  }
 
-  let finalTranslation = translation
+  function htmlStringToReactComponent(html, { key }) {
+    // eslint-disable-next-line react/no-danger
+    return <span key={key} dangerouslySetInnerHTML={{ __html: html }} />
+  }
 
-  forEach(regularInterpolations, (val, key) => {
-    finalTranslation = finalTranslation.replace(
-      new RegExp(`__${key}__`, 'g'),
-      options.markdown ? escape(val) : val // only escape options when using markdown
+  function insertInterpolations(translation, options) {
+    const regularInterpolations = pickBy(
+      options,
+      (val, key) => !has(defaultOptions, key) && !React.isValidElement(val)
     )
-  })
 
-  return finalTranslation
-}
+    let finalTranslation = translation
 
-function insertReactComponentInterpolations(translation, options) {
-  const result = []
-  let match
-  let substr
-  let start = 0
+    forEach(regularInterpolations, (val, key) => {
+      finalTranslation = finalTranslation.replace(
+        new RegExp(singleton.interpolationPattern.replace('(\\w+)', key), 'g'),
+        options.markdown ? escape(val) : val // only escape options when using markdown
+      )
+    })
 
-  while ((match = placeholderRegex.exec(translation)) !== null) {
-    const key = match[1]
-    const component = options[key]
+    return finalTranslation
+  }
 
-    if (match.index > 0) {
-      substr = translation.substring(start, match.index)
+  function insertReactComponentInterpolations(translation, options) {
+    const result = []
+    let match
+    let substr
+    let start = 0
+
+    const interpolationRegExp = new RegExp(singleton.interpolationPattern, 'g')
+    while ((match = interpolationRegExp.exec(translation)) !== null) {
+      const key = match[1]
+      const component = options[key]
+
+      if (match.index > 0) {
+        substr = translation.substring(start, match.index)
+        result.push(
+          options.markdown
+            ? htmlStringToReactComponent(substr, {
+                key: result.length,
+              })
+            : substr
+        )
+      }
+
+      if (React.isValidElement(component)) {
+        result.push(React.cloneElement(component, { key: result.length }))
+      } else {
+        // no interpolation specified, leave the placeholder unchanged
+        result.push(match[0])
+      }
+      start = interpolationRegExp.lastIndex
+    }
+
+    // append part after last match
+    if (start < translation.length) {
+      substr = translation.substring(start)
       result.push(
         options.markdown
           ? htmlStringToReactComponent(substr, {
@@ -141,36 +161,16 @@ function insertReactComponentInterpolations(translation, options) {
       )
     }
 
-    if (React.isValidElement(component)) {
-      result.push(React.cloneElement(component, { key: result.length }))
-    } else {
-      // no interpolation specified, leave the placeholder unchanged
-      result.push(match[0])
-    }
-    start = placeholderRegex.lastIndex
+    // re-concatenate all string elements
+    return result.reduce((acc, element) => {
+      const lastAccumulatedElement = acc[acc.length - 1]
+      if (isString(element) && isString(lastAccumulatedElement)) {
+        // eslint-disable-next-line no-param-reassign
+        acc[acc.length - 1] = lastAccumulatedElement + element
+      } else {
+        acc.push(element)
+      }
+      return acc
+    }, [])
   }
-
-  // append part after last match
-  if (start < translation.length) {
-    substr = translation.substring(start)
-    result.push(
-      options.markdown
-        ? htmlStringToReactComponent(substr, {
-            key: result.length,
-          })
-        : substr
-    )
-  }
-
-  // re-concatenate all string elements
-  return result.reduce((acc, element) => {
-    const lastAccumulatedElement = acc[acc.length - 1]
-    if (isString(element) && isString(lastAccumulatedElement)) {
-      // eslint-disable-next-line no-param-reassign
-      acc[acc.length - 1] = lastAccumulatedElement + element
-    } else {
-      acc.push(element)
-    }
-    return acc
-  }, [])
 }

@@ -7,11 +7,11 @@ Minimalist gettext style i18n for JavaScript
 
 ## Features
 
-* [Supports React components as interpolations](#interpolations)
-* [Pluralization support](#pluralization) (ngettext style)
-* [markdown support](#markdown)
-* Compatible with [webpack po-loader](https://github.com/perchlayer/po-loader)
-* Comes with scripts for extracting translation strings from JavaScript (Babel) sources and updating .pot and .po files
+- [Supports React components as interpolations](#interpolations)
+- [Pluralization support](#pluralization) (ngettext style)
+- [markdown support](#markdown)
+- Compatible with [webpack po-loader](https://github.com/perchlayer/po-loader)
+- Comes with scripts for extracting translation strings from JavaScript (Babel) sources and updating .pot and .po files
 
 ## Installation
 
@@ -26,10 +26,8 @@ Add a section like the following to your `packages.json`:
 ```json
 {
   "scripts": {
-    "i18n-init":
-      "cd src/locales && msginit --no-translator --input messages.pot --locale",
-    "i18n":
-      "i18n-extract \"src/**/*.js\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
+    "i18n-init": "cd src/locales && msginit --no-translator --input messages.pot --locale",
+    "i18n": "i18n-extract \"src/**/*.js\" src/locales/messages.pot && i18n-merge src/locales/messages.pot src/locales/*.po"
   }
 }
 ```
@@ -81,6 +79,8 @@ const config = {
     en: 'en_US',
     de: 'de_DE',
   },
+  // optional regular expression pattern for custom interpolation syntax
+  interpolationPattern: '__(\\w+)__', // this is the default value
 }
 
 init(getLangLoader, config).then(() => {
@@ -117,6 +117,14 @@ i18n('Contact __supportLink__', {
 })
 ```
 
+The default syntax for interpolations is a group of characters or numbers (`\w+`) wrapped in double underscores (`__`). If you require a different syntax this can be customized using the init option `interpolationPattern`. Internally, pattern value will be used to create a regular expression for matching interpolation placeholder like this:
+
+```
+new RegExp(interpolationPattern, 'g')
+```
+
+It must contain a capturing group (`(\w+)`) for capturing the interpolation key.
+
 ### Pluralization
 
 Often times you get to the situation that the same message needs to look slightly different depending on whether you talk about one or more things.
@@ -152,7 +160,6 @@ i18n('I want _this_ to be **bold**', {
   markdown: true,
 })
 ```
-
 
 [build-badge]: https://circleci.com/gh/signavio/i18n/tree/master.svg?style=shield&circle-token=:circle-token
 [build]: https://circleci.com/gh/signavio/i18n/tree/master
