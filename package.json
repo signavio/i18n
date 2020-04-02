@@ -106,7 +106,6 @@
     "rimraf": "^2.5.4",
     "source-map-support": "^0.4.14",
     "webpack": "2.3.2",
-    "webpack-dev-server": "3.1.11",
     "webpack-node-externals": "^1.5.4",
     "xunit-file": "^1.0.0"
   },
