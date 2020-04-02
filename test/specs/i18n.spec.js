@@ -214,5 +214,15 @@ describe('i18n', () => {
         expect(element).to.have.property('key')
       })
     })
+
+    it('should allow defining a custom syntax for interpolations', () =>
+      init(getLangLoader, {
+        ...config,
+        interpolationPattern: '\\{\\{(\\w+)\\}\\}',
+      }).then(() => {
+        expect(
+          i18n('This is a {{interpolation}}', { interpolation: 'green test' })
+        ).to.equal('This is a green test')
+      }))
   })
 })

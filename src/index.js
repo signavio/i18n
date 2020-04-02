@@ -10,6 +10,7 @@ let changeLocaleListeners = []
 
 const singleton = {
   messages: {},
+  interpolationPattern: '__(\\w+)__',
 }
 
 /**
@@ -33,6 +34,9 @@ export default translate
 export function init(getLangLoaderFn, configObj = {}) {
   getLangLoader = getLangLoaderFn
   config = configObj
+  if (config.interpolationPattern) {
+    singleton.interpolationPattern = configObj.interpolationPattern
+  }
   return new Promise(loadBundle)
 }
 
