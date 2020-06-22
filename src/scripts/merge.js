@@ -1,7 +1,5 @@
-import path from 'path'
 import { exec } from 'child_process'
-
-import { each } from 'lodash'
+import path from 'path'
 
 if (process.argv.length < 4) {
   throw new Error(
@@ -9,11 +7,25 @@ if (process.argv.length < 4) {
   )
 }
 
-const templatePath = path.resolve(process.cwd(), process.argv[2])
+const [, , ...cliArguments] = process.argv
 
-each(process.argv.slice(3), fileName => {
+const flags = []
+const files = []
+
+cliArguments.forEach((arg) => {
+  if (arg.startsWith('-')) {
+    flags.push(arg)
+  } else {
+    files.push(arg)
+  }
+})
+
+const [potFile, ...poFiles] = files
+const templatePath = path.resolve(process.cwd(), potFile)
+
+poFiles.forEach((fileName) => {
   exec(
-    `msgmerge -o ${fileName} ${fileName} ${templatePath}`,
+    `msgmerge ${flags.join(' ')} -o ${fileName} ${fileName} ${templatePath}`,
     (error, stdout, stderr) => {
       // eslint-disable-next-line no-console
       console.log(stdout)
