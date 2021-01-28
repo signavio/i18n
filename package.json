@@ -1,6 +1,6 @@
 {
   "name": "signavio-i18n",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Minimalist gettext style i18n for JavaScript",
   "main": "lib/index.js",
   "module": "lib-es6/index.js",
@@ -9,8 +9,8 @@
     "url": "https://github.com/signavio/i18n.git"
   },
   "bin": {
-    "i18n-extract": "./bin/i18n-extract.js",
-    "i18n-merge": "./bin/i18n-merge.js"
+    "i18n-extract": "bin/i18n-extract.js",
+    "i18n-merge": "bin/i18n-merge.js"
   },
   "scripts": {
     "prebuild": "yarn run clean",
