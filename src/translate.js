@@ -1,9 +1,8 @@
-import isNumber from 'lodash/isNumber'
-import isPlainObject from 'lodash/isPlainObject'
 import forEach from 'lodash/forEach'
 import pickBy from 'lodash/pickBy'
 import has from 'lodash/has'
 import escape from 'lodash/escape'
+
 import marked from 'marked'
 import React from 'react'
 
@@ -175,3 +174,6 @@ export default (singleton) => {
 }
 
 const isString = (str) => str && typeof str.valueOf() === 'string'
+const isNumber = (num) => num != null && typeof num.valueOf() === 'number'
+const isPlainObject = (obj) =>
+  Object.prototype.toString.call(obj) === '[object Object]'
