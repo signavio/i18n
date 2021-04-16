@@ -1,4 +1,3 @@
-import forEach from 'lodash/forEach'
 import escape from 'lodash/escape'
 
 import marked from 'marked'
@@ -107,7 +106,7 @@ export default (singleton) => {
 
     let finalTranslation = translation
 
-    forEach(regularInterpolations, (val, key) => {
+    Object.entries(regularInterpolations).forEach(([key, val]) => {
       finalTranslation = finalTranslation.replace(
         new RegExp(singleton.interpolationPattern.replace('(\\w+)', key), 'g'),
         options.markdown ? escape(val) : val // only escape options when using markdown
