@@ -1,7 +1,6 @@
 // @flow
 import glob from 'glob'
 import ProgressBar from 'progress'
-import { each } from 'lodash'
 import { transformFileSync } from '@babel/core'
 import babelGettextExtractor from './babel-gettext-extractor'
 
@@ -22,7 +21,7 @@ const progressBar = new ProgressBar(' extracting [:bar] :percent :fileName', {
   width: 10,
 })
 
-each(files, (fileName: string) => {
+files.forEach((fileName: string) => {
   // eslint-disable-next-line no-console
   progressBar.tick(1, { fileName })
 
