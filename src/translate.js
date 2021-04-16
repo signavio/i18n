@@ -1,4 +1,3 @@
-import isString from 'lodash/isString'
 import isNumber from 'lodash/isNumber'
 import isPlainObject from 'lodash/isPlainObject'
 import forEach from 'lodash/forEach'
@@ -12,7 +11,7 @@ const defaultOptions = {
   markdown: false,
 }
 
-export default singleton => {
+export default (singleton) => {
   return function translate(text, plural, options) {
     // singleton.messages contains the translation messages for the currently active languae
     // format: singular key -> [ plural key, singular translations, plural translation ]
@@ -174,3 +173,5 @@ export default singleton => {
     }, [])
   }
 }
+
+const isString = (str) => str && typeof str.valueOf() === 'string'
