@@ -1,5 +1,3 @@
-import isFunction from 'lodash/isFunction'
-
 import createTranslate from './translate'
 
 let config = {}
@@ -121,7 +119,7 @@ function tryToGetLangLoader(forLocale) {
 }
 
 function loadBundle(resolve) {
-  if (!isFunction(getLangLoader)) {
+  if (typeof getLangLoader === 'function') {
     throw new Error(
       'Cannot load a bundle as no valid getLangLoader function has been set'
     )
