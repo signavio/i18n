@@ -1,7 +1,7 @@
 // @flow
 import gettextParser from 'gettext-parser'
 import fs from 'fs'
-import { last, find } from 'lodash'
+import { find } from 'lodash'
 
 import type {
   AddLocationT,
@@ -200,7 +200,7 @@ export default function plugin() {
           }
         }
 
-        const options = last(args)
+        const options = args[args.length - 1]
 
         if (isObjectLiteral(options)) {
           const ctxtProp = getContextProperty(options)
