@@ -1,6 +1,5 @@
 import forEach from 'lodash/forEach'
-import pickBy from 'lodash/pickBy'
-import has from 'lodash/has'
+// import pickBy from 'lodash/pickBy'
 import escape from 'lodash/escape'
 
 import marked from 'marked'
@@ -99,10 +98,13 @@ export default (singleton) => {
   }
 
   function insertInterpolations(translation, options) {
-    const regularInterpolations = pickBy(
-      options,
-      (val, key) => !has(defaultOptions, key) && !React.isValidElement(val)
-    )
+    let regularInterpolations = {}
+
+    for (const [key, value] of Object.entries(options)) {
+      if (!has(defaultOptions, key) && !React.isValidElement(value)) {
+        regularInterpolations[key] = options[key]
+      }
+    }
 
     let finalTranslation = translation
 
@@ -177,3 +179,13 @@ const isString = (str) => str && typeof str.valueOf() === 'string'
 const isNumber = (num) => num != null && typeof num.valueOf() === 'number'
 const isPlainObject = (obj) =>
   Object.prototype.toString.call(obj) === '[object Object]'
+const has = (obj, key) => {
+  var keyParts = key.split('.')
+
+  return (
+    !!obj &&
+    (keyParts.length > 1
+      ? has(obj[key.split('.')[0]], keyParts.slice(1).join('.'))
+      : hasOwnProperty.call(obj, key))
+  )
+}
