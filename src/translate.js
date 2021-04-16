@@ -1,4 +1,3 @@
-import isNumber from 'lodash/isNumber'
 import isPlainObject from 'lodash/isPlainObject'
 import forEach from 'lodash/forEach'
 import pickBy from 'lodash/pickBy'
@@ -175,3 +174,4 @@ export default (singleton) => {
 }
 
 const isString = (str) => str && typeof str.valueOf() === 'string'
+const isNumber = (num) => num && typeof num.valueOf() === 'number'
