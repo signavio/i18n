@@ -16,6 +16,7 @@ export type ConfigT = {
 
 export type AstNodeT = {
   type: string,
+  properties?: Array<ObjectPropertyT>,
 }
 
 export type MapT<K, V> = {
