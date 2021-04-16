@@ -1,6 +1,5 @@
 import forEach from 'lodash/forEach'
 import pickBy from 'lodash/pickBy'
-import has from 'lodash/has'
 import escape from 'lodash/escape'
 
 import marked from 'marked'
@@ -101,7 +100,7 @@ export default (singleton) => {
   function insertInterpolations(translation, options) {
     const regularInterpolations = pickBy(
       options,
-      (val, key) => !has(defaultOptions, key) && !React.isValidElement(val)
+      (val, key) => !defaultOptions[key] && !React.isValidElement(val)
     )
 
     let finalTranslation = translation
