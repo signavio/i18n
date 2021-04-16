@@ -1,5 +1,4 @@
 import isFunction from 'lodash/isFunction'
-import forEach from 'lodash/forEach'
 
 import createTranslate from './translate'
 
@@ -129,9 +128,10 @@ function loadBundle(resolve) {
   }
 
   const waitForLangChunk = tryToGetLangLoader(locale())
-  waitForLangChunk(messages => {
+
+  waitForLangChunk((messages) => {
     singleton.messages = messages
-    forEach(changeLocaleListeners, listener => listener())
+    changeLocaleListeners.forEach((listener) => listener())
     resolve()
   })
 }

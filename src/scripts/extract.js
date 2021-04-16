@@ -14,6 +14,7 @@ if (process.argv.length < 3) {
   )
 }
 
+// glob sync returns an array of filenames matching the pattern
 const files = glob.sync(process.argv[2])
 
 const progressBar = new ProgressBar(' extracting [:bar] :percent :fileName', {
