@@ -1,7 +1,6 @@
 // @flow
 import gettextParser from 'gettext-parser'
 import fs from 'fs'
-import { find } from 'lodash'
 
 import type {
   AddLocationT,
@@ -29,9 +28,11 @@ function isObjectLiteral(node: AstNodeT) {
 }
 
 function getContextProperty(node: AstNodeT) {
-  return find(
-    node.properties,
-    (property: ObjectPropertyT) => property.key.name === 'context'
+  return (
+    node.properties &&
+    node.properties.find(
+      (property: ObjectPropertyT) => property.key.name === 'context'
+    )
   )
 }
 
