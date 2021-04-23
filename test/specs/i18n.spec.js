@@ -1,10 +1,9 @@
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-
 import { expect } from 'chai'
 
 import i18n, { init, setLocale, reset } from '../../src'
-
+import { escape } from '../../src/translate'
 import config from './config'
 
 function getLangLoader(locale) {
@@ -210,7 +209,7 @@ describe('i18n', () => {
         button: React.createElement('button'),
         markdown: true,
       })
-      resultMarkdown.forEach(element => {
+      resultMarkdown.forEach((element) => {
         expect(element).to.have.property('key')
       })
     })
@@ -224,5 +223,12 @@ describe('i18n', () => {
           i18n('This is a {{interpolation}}', { interpolation: 'green test' })
         ).to.equal('This is a green test')
       }))
+
+    it('should escape "&", "<", ">" \'"\' and "\'"', () => {
+      const str = '<div> & <p> are so called \'html tags"'
+      expect(escape(str)).to.equal(
+        '&lt;div&gt; &amp; &lt;p&gt; are so called &apos;html tags&quot;'
+      )
+    })
   })
 })
