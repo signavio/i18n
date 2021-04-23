@@ -1,5 +1,4 @@
 import forEach from 'lodash/forEach'
-// import pickBy from 'lodash/pickBy'
 import escape from 'lodash/escape'
 
 import marked from 'marked'
