@@ -1,5 +1,3 @@
-import escape from 'lodash/escape'
-
 import marked from 'marked'
 import React from 'react'
 
@@ -171,6 +169,36 @@ export default (singleton) => {
       return acc
     }, [])
   }
+}
+
+export const escape = (str) => {
+  if (!str) {
+    return
+  }
+
+  let escapedString = str
+
+  if (escapedString.includes('&')) {
+    escapedString = escapedString.replace(/&/g, '&amp;')
+  }
+
+  if (escapedString.includes('<')) {
+    escapedString = escapedString.replace(/</g, '&lt;')
+  }
+
+  if (escapedString.includes('>')) {
+    escapedString = escapedString.replace(/>/g, '&gt;')
+  }
+
+  if (escapedString.includes('"')) {
+    escapedString = escapedString.replace(/"/g, '&quot;')
+  }
+
+  if (escapedString.includes("'")) {
+    escapedString = escapedString.replace(/'/g, '&apos;')
+  }
+
+  return escapedString
 }
 
 const isString = (str) => str && typeof str.valueOf() === 'string'
