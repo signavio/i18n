@@ -97,7 +97,7 @@ export default (singleton) => {
     let regularInterpolations = {}
 
     for (const [key, value] of Object.entries(options)) {
-      if (!has(defaultOptions, key) && !React.isValidElement(value)) {
+      if (key !== 'markdown' && !React.isValidElement(value)) {
         regularInterpolations[key] = options[key]
       }
     }
@@ -205,13 +205,3 @@ const isString = (str) => str && typeof str.valueOf() === 'string'
 const isNumber = (num) => num != null && typeof num.valueOf() === 'number'
 const isPlainObject = (obj) =>
   Object.prototype.toString.call(obj) === '[object Object]'
-const has = (obj, key) => {
-  var keyParts = key.split('.')
-
-  return (
-    !!obj &&
-    (keyParts.length > 1
-      ? has(obj[key.split('.')[0]], keyParts.slice(1).join('.'))
-      : hasOwnProperty.call(obj, key))
-  )
-}
