@@ -1,6 +1,3 @@
-import isFunction from 'lodash/isFunction'
-import forEach from 'lodash/forEach'
-
 import createTranslate from './translate'
 
 let config = {}
@@ -122,16 +119,17 @@ function tryToGetLangLoader(forLocale) {
 }
 
 function loadBundle(resolve) {
-  if (!isFunction(getLangLoader)) {
+  if (typeof getLangLoader != 'function') {
     throw new Error(
       'Cannot load a bundle as no valid getLangLoader function has been set'
     )
   }
 
   const waitForLangChunk = tryToGetLangLoader(locale())
-  waitForLangChunk(messages => {
+
+  waitForLangChunk((messages) => {
     singleton.messages = messages
-    forEach(changeLocaleListeners, listener => listener())
+    changeLocaleListeners.forEach((listener) => listener())
     resolve()
   })
 }

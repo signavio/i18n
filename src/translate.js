@@ -1,10 +1,3 @@
-import isString from 'lodash/isString'
-import isNumber from 'lodash/isNumber'
-import isPlainObject from 'lodash/isPlainObject'
-import forEach from 'lodash/forEach'
-import pickBy from 'lodash/pickBy'
-import has from 'lodash/has'
-import escape from 'lodash/escape'
 import marked from 'marked'
 import React from 'react'
 
@@ -12,7 +5,7 @@ const defaultOptions = {
   markdown: false,
 }
 
-export default singleton => {
+export default (singleton) => {
   return function translate(text, plural, options) {
     // singleton.messages contains the translation messages for the currently active languae
     // format: singular key -> [ plural key, singular translations, plural translation ]
@@ -101,17 +94,20 @@ export default singleton => {
   }
 
   function insertInterpolations(translation, options) {
-    const regularInterpolations = pickBy(
-      options,
-      (val, key) => !has(defaultOptions, key) && !React.isValidElement(val)
-    )
+    let regularInterpolations = {}
+
+    for (const [key, value] of Object.entries(options)) {
+      if (key !== 'markdown' && !React.isValidElement(value)) {
+        regularInterpolations[key] = options[key]
+      }
+    }
 
     let finalTranslation = translation
 
-    forEach(regularInterpolations, (val, key) => {
+    Object.entries(regularInterpolations).forEach(([key, val]) => {
       finalTranslation = finalTranslation.replace(
         new RegExp(singleton.interpolationPattern.replace('(\\w+)', key), 'g'),
-        options.markdown ? escape(val) : val // only escape options when using markdown
+        options.markdown ? escapeHtml(val) : val // only escape options when using markdown
       )
     })
 
@@ -174,3 +170,20 @@ export default singleton => {
     }, [])
   }
 }
+
+// Stack Overflow approves
+// See https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript/6234804#6234804
+
+export function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
+const isString = (str) => str && typeof str.valueOf() === 'string'
+const isNumber = (num) => num != null && typeof num.valueOf() === 'number'
+const isPlainObject = (obj) =>
+  Object.prototype.toString.call(obj) === '[object Object]'

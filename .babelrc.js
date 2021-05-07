@@ -13,7 +13,6 @@ module.exports = {
   ],
   plugins: [
     '@babel/plugin-transform-proto-to-assign',
-    'lodash',
     '@babel/plugin-transform-runtime',
     'transform-remove-console',
     'transform-remove-debugger',
