@@ -107,7 +107,7 @@ export default (singleton) => {
     Object.entries(regularInterpolations).forEach(([key, val]) => {
       finalTranslation = finalTranslation.replace(
         new RegExp(singleton.interpolationPattern.replace('(\\w+)', key), 'g'),
-        options.markdown ? escape(val) : val // only escape options when using markdown
+        options.markdown ? escapeHtml(val) : val // only escape options when using markdown
       )
     })
 
@@ -171,34 +171,16 @@ export default (singleton) => {
   }
 }
 
-export const escape = (str) => {
-  if (!str) {
-    return
-  }
+// Stack Overflow approves
+// See https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript/6234804#6234804
 
-  let escapedString = str
-
-  if (escapedString.includes('&')) {
-    escapedString = escapedString.replace(/&/g, '&amp;')
-  }
-
-  if (escapedString.includes('<')) {
-    escapedString = escapedString.replace(/</g, '&lt;')
-  }
-
-  if (escapedString.includes('>')) {
-    escapedString = escapedString.replace(/>/g, '&gt;')
-  }
-
-  if (escapedString.includes('"')) {
-    escapedString = escapedString.replace(/"/g, '&quot;')
-  }
-
-  if (escapedString.includes("'")) {
-    escapedString = escapedString.replace(/'/g, '&apos;')
-  }
-
-  return escapedString
+export function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
 }
 
 const isString = (str) => str && typeof str.valueOf() === 'string'
