@@ -227,7 +227,7 @@ describe('i18n', () => {
     it('should escape "&", "<", ">" \'"\' and "\'"', () => {
       const str = '<div> & <p> are so called \'html tags"'
       expect(escapeHtml(str)).to.equal(
-        '&lt;div&gt; &amp; &lt;p&gt; are so called &apos;html tags&quot;'
+        '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
       )
     })
   })
