@@ -52,7 +52,8 @@ jobs:
             - node_modules
 
   black-duck-scan:
-    <<: *container_config
+    docker:
+      - image: cimg/node:latest
 
     working_directory: *workspace_root
 
