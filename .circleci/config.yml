@@ -73,7 +73,7 @@ jobs:
           paths:
             - node_modules
       - persist_to_workspace:
-          root: .
+          root: *workspace_root
           paths:
             - lib/
             - lib-es6/
