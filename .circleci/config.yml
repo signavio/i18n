@@ -53,7 +53,7 @@ jobs:
 
   black-duck-scan:
     docker:
-      - image: cimg/node:lts
+      - image: cimg/node:lts-browsers
 
     working_directory: *workspace_root
 
