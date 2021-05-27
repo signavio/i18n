@@ -51,7 +51,7 @@ jobs:
           paths:
             - node_modules
 
-  build-for-black-duck:
+  black-duck-scan:
     <<: *container_config
 
     working_directory: *workspace_root
@@ -63,13 +63,10 @@ jobs:
 
       - run: yarn install && yarn build
 
-      - persist_to_workspace:
-          root: *workspace_root
-          paths:
-            - lib/
-            - lib-es6/
-            - package.json
-            - yarn.lock
+      - blackduck/blackduck-detect:
+          blackduck-project-group: $BLACKDUCK_GROUP
+          blackduck-project-name: $BLACKDUCK_NAME
+          blackduck-project-path: *workspace_root
 
   test:
     <<: *container_config
@@ -135,12 +132,4 @@ workflows:
     #        branches:
     #          only: master
     jobs:
-      - build-for-black-duck
-      - blackduck/blackduck-scan:
-          context:
-            - BlackDuck
-          blackduck-project-group: $BLACKDUCK_GROUP
-          blackduck-project-name: $BLACKDUCK_NAME
-          blackduck-project-path: *workspace_root
-          requires:
-            - build-for-black-duck
+      - black-duck-scan
