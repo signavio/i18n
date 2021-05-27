@@ -133,4 +133,5 @@ workflows:
     #        branches:
     #          only: master
     jobs:
-      - black-duck-scan
+      - black-duck-scan:
+          context: BlackDuck
