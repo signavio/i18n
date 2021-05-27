@@ -53,7 +53,7 @@ jobs:
 
   black-duck-scan:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:lts
 
     working_directory: *workspace_root
 
