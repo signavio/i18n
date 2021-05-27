@@ -65,8 +65,8 @@ jobs:
       - run: yarn install && yarn build
 
       - blackduck/blackduck-detect:
-          blackduck-project-group: $BLACKDUCK_GROUP
-          blackduck-project-name: $BLACKDUCK_NAME
+          blackduck-project-group: SAP_PROCESS_MANAGER_OD_2.0
+          blackduck-project-name: i18n
           blackduck-project-path: *workspace_root
 
   test:
