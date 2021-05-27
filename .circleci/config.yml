@@ -61,17 +61,8 @@ jobs:
 
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
-      - restore_cache:
-          keys:
-            - deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - *dep_backup_cache_key
+      - run: yarn install && yarn build
 
-      - run: yarn install
-
-      - save_cache:
-          key: deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
       - persist_to_workspace:
           root: *workspace_root
           paths:
