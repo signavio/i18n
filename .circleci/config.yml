@@ -1,17 +1,17 @@
-version: 2
+version: 2.1
+
+orbs:
+  blackduck: signavio/blackduck@1.3.0
 
 references:
-  workspace_root: &workspace_root
-    ~/repo
+  workspace_root: &workspace_root ~/repo
 
   container_config: &container_config
     docker:
       - image: circleci/node:latest
 
-  dep_cache_key: &dep_cache_key
-    deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-  dep_backup_cache_key: &dep_backup_cache_key
-    deps-{{ .Branch }}
+  dep_cache_key: &dep_cache_key deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+  dep_backup_cache_key: &dep_backup_cache_key deps-{{ .Branch }}
 
   restore_deps: &restore_deps
     restore_cache:
@@ -50,6 +50,24 @@ jobs:
           key: deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
+
+  black-duck-scan:
+    docker:
+      - image: cimg/node:lts-browsers
+
+    working_directory: *workspace_root
+
+    steps:
+      - checkout
+
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+
+      - run: yarn install && yarn build
+
+      - blackduck/blackduck-detect:
+          blackduck-project-group: SAP_PROCESS_MANAGER_OD_2.0
+          blackduck-project-name: i18n
+          blackduck-project-path: *workspace_root
 
   test:
     <<: *container_config
@@ -106,3 +124,14 @@ workflows:
       - flow:
           requires:
             - build
+
+  blackduck-nightly-scan:
+    triggers:
+      - schedule:
+          cron: '0 0 * * *'
+          filters:
+            branches:
+              only: master
+    jobs:
+      - black-duck-scan:
+          context: BlackDuck
