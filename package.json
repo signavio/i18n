@@ -109,6 +109,6 @@
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0",
-    "react": ">=16.13.0"
+    "react": "^16.13.0"
   }
 }
