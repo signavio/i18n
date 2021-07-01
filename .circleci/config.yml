@@ -2,6 +2,13 @@ version: 2.1
 
 orbs:
   blackduck: signavio/blackduck@1.3.0
+  fortify: signavio/fortify@1.0.0
+
+executors:
+  fortify:
+    machine:
+      image: ubuntu-2004:202104-01
+    resource_class: 2xlarge
 
 references:
   workspace_root: &workspace_root ~/repo
@@ -69,6 +76,31 @@ jobs:
           blackduck-project-name: i18n
           blackduck-project-path: *workspace_root
 
+  fortify-translate-and-scan: 
+    executor: fortify
+    working_directory: *workspace_root
+    steps:
+      - checkout
+      - fortify/setup
+      - run:
+          name: Translate i18n
+          command: |
+            set -x
+            sourceanalyzer \
+              -b i18n \
+              -verbose \
+              ./src
+      - run:
+          name: Analyze i18n
+          command: |
+            sourceanalyzer \
+              -b i18n \
+              -verbose \
+              -scan \
+              -f i18n.fpr
+      - store_artifacts:
+          path: i18n.fpr
+
   test:
     <<: *container_config
 
@@ -135,3 +167,15 @@ workflows:
     jobs:
       - black-duck-scan:
           context: BlackDuck
+
+  fortify-workflow:
+    # triggers:
+    #   - schedule:
+    #       cron: "0 0 * * *"
+    #       filters:
+    #         branches:
+    #           only: master
+    jobs:
+      - fortify-translate-and-scan:
+          context:
+            - fortify
