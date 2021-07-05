@@ -111,7 +111,7 @@ jobs:
 
       - *restore_deps
 
-      - run: yarn test --reporter xunit-file
+      - run: yarn test --coverage
 
       - *publish_test_results
       - *store_test_results
