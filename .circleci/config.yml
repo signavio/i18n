@@ -28,7 +28,7 @@ references:
 
   publish_test_results: &publish_test_results
     store_test_results:
-      path: ./
+      path: ./junit.xml
 
   store_test_results: &store_test_results
     store_artifacts:
