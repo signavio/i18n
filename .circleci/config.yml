@@ -111,7 +111,7 @@ jobs:
 
       - *restore_deps
 
-      - run: yarn test --coverage
+      - run: yarn coverage --ci
 
       - *publish_test_results
       - *store_test_results
