@@ -32,7 +32,7 @@ references:
 
   store_test_results: &store_test_results
     store_artifacts:
-      path: xunit.xml
+      path: junit.xml
       prefix: tests
 
 jobs:

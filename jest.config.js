@@ -10,6 +10,7 @@ module.exports = {
   coveragePathIgnorePatterns: [
     "/node_modules/"
   ],
+  reporters: [ "default", "jest-junit" ],
   coverageProvider: "babel",
   coverageReporters: [
     "lcov",
