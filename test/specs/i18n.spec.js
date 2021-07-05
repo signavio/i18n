@@ -6,10 +6,6 @@ import { escapeHtml } from '../../src/translate'
 import config from './config'
 
 function getLangLoader(locale) {
-  // A runtime exception will be throw every time that the requested locale file
-  // cannot be found. Webpack uses a regular expression to build all locales as
-  // separate bundles.
-
   // eslint-disable-next-line global-require,import/no-dynamic-require,prefer-template
   return require('./locales/' + locale + '.po')
 }
