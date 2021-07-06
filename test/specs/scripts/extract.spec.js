@@ -1,7 +1,5 @@
 import childProcess from 'child_process'
-import { existsSync, unlinkSync } from 'fs'
-import { file } from 'chai-files'
-import { expect } from 'chai'
+import { existsSync, unlinkSync, readFileSync } from 'fs'
 
 const fixtureDir = `${process.cwd()}/test/fixtures`
 
@@ -26,15 +24,16 @@ describe('extract', () => {
     })
 
     it('should be possible to choose a custom function name', () => {
-      expect(file(`${customFunctionNameDir}/messages.pot`)).to.not.exist
+      expect(existsSync(`${customFunctionNameDir}/messages.pot`)).toBeFalsy()
 
       callForDir(customFunctionNameDir)
 
-      const messages = file(`${customFunctionNameDir}/messages.pot`)
+      expect(existsSync(`${customFunctionNameDir}/messages.pot`)).toBeDefined()
+      
+      const messages = readFileSync(`${customFunctionNameDir}/messages.pot`).toString("utf-8")
 
-      expect(messages).to.exist
-      expect(messages).to.contain('msgid "Hello World"')
-      expect(messages).to.not.contain('msgid "Not in the result"')
+      expect(messages).toContain('msgid "Hello World"')
+      expect(messages).not.toContain('msgid "Not in the result"')
     })
   })
 
@@ -46,14 +45,15 @@ describe('extract', () => {
     })
 
     it('should be possible to specify an extract output file', () => {
-      expect(file(`${customFileNameDir}/my-custom-messages.pot`)).to.not.exist
+      expect(existsSync(`${customFileNameDir}/my-custom-messages.pot`)).toBeFalsy()
 
       callForDir(customFileNameDir)
 
-      const messages = file(`${customFileNameDir}/my-custom-messages.pot`)
+      expect(existsSync(`${customFileNameDir}/my-custom-messages.pot`)).toBeDefined()
 
-      expect(messages).to.exist
-      expect(messages).to.contain('msgid "Hello World"')
+      const messages = readFileSync(`${customFileNameDir}/my-custom-messages.pot`).toString("utf-8")
+      expect(messages).toBeDefined()
+      expect(messages).toContain('msgid "Hello World"')
     })
   })
 
@@ -72,49 +72,60 @@ describe('extract', () => {
       removeIfExists(`${defaultDir}/messages.pot`)
     })
 
-    it('should by default include the location where the message key was found', () => {
-      expect(file(`${defaultDir}/messages.pot`)).to.not.exist
+    it(
+      'should by default include the location where the message key was found',
+      () => {
+        expect(existsSync(`${defaultDir}/messages.pot`)).toBeFalsy()
+        callForDir(defaultDir)
+        expect(existsSync(`${defaultDir}/messages.pot`)).toBeDefined()
 
-      callForDir(defaultDir)
+        const messages = readFileSync(`${defaultDir}/messages.pot`).toString("utf-8")
+        
+        const referencePath = 'fixtures/addLocation/default'
+        expect(messages).toBeDefined()
+        expect(messages).toContain(`#: ${referencePath}/index.js:1`)
+      }
+    )
 
-      const messages = file(`${defaultDir}/messages.pot`)
-      const referencePath = 'fixtures/addLocation/default'
-      expect(messages).to.exist
-      expect(messages).to.contain(`#: ${referencePath}/index.js:1`)
-    })
+    it(
+      'should be possible to explicitly state that you want the full path',
+      () => {
+        expect(existsSync(`${fullDir}/messages.pot`)).toBeFalsy()
+        
+        callForDir(fullDir)
+        expect(existsSync(`${fullDir}/messages.pot`)).toBeDefined()
 
-    it('should be possible to explicitly state that you want the full path', () => {
-      expect(file(`${fullDir}/messages.pot`)).to.not.exist
+        const messages = readFileSync(`${fullDir}/messages.pot`).toString("utf-8")
+        const referencePath = 'fixtures/addLocation/full'
 
-      callForDir(fullDir)
-      const messages = file(`${fullDir}/messages.pot`)
-      const referencePath = 'fixtures/addLocation/full'
-
-      expect(messages).to.exist
-      expect(messages).to.contain(`#: ${referencePath}/index.js:1`)
-    })
+        expect(messages).toBeDefined()
+        expect(messages).toContain(`#: ${referencePath}/index.js:1`)
+      }
+    )
 
     it('should be possible to only include the file name', () => {
-      expect(file(`${fileDir}/messages.pot`)).to.not.exist
-
+      expect(existsSync(`${fileDir}/messages.pot`)).toBeFalsy()
+      
       callForDir(fileDir)
+      expect(existsSync(`${fileDir}/messages.pot`)).toBeDefined()
 
-      const messages = file(`${fileDir}/messages.pot`)
+      const messages = readFileSync(`${fileDir}/messages.pot`).toString("utf-8")
 
-      expect(messages).to.exist
-      expect(messages).to.contain('#: index.js:1')
+      expect(messages).toBeDefined()
+      expect(messages).toContain('#: index.js:1')
     })
 
     it('should be possible to never show the location', () => {
-      expect(file(`${neverDir}/messages.pot`)).to.not.exist
-
+      expect(existsSync(`${neverDir}/messages.pot`)).toBeFalsy()
+      
       callForDir(neverDir)
+      expect(existsSync(`${neverDir}/messages.pot`)).toBeDefined()
 
-      const messages = file(`${neverDir}/messages.pot`)
+      const messages = readFileSync(`${neverDir}/messages.pot`).toString('utf-8')
 
-      expect(messages).to.exist
-      expect(messages).to.not.contain(`#: ${neverDir}/index.js:1`)
-      expect(messages).to.not.contain('#: index.js:1')
+      expect(messages).toBeDefined()
+      expect(messages).not.toContain(`#: ${neverDir}/index.js:1`)
+      expect(messages).not.toContain('#: index.js:1')
     })
   })
 
@@ -126,14 +137,15 @@ describe('extract', () => {
     })
 
     it('should suppress locations in the .pot file completely', () => {
-      expect(file(`${noLocationDir}/messages.pot`)).to.not.exist
-
+      expect(existsSync(`${noLocationDir}/messages.pot`)).toBeFalsy()
+      
       callForDir(noLocationDir)
+      expect(existsSync(`${noLocationDir}/messages.pot`)).toBeDefined()
 
-      const messages = file(`${noLocationDir}/messages.pot`)
+      const messages = readFileSync(`${noLocationDir}/messages.pot`).toString("utf-8")
 
-      expect(messages).to.exist
-      expect(messages).to.not.contain(`#: ${noLocationDir}/index.js:1`)
+      expect(messages).toBeDefined()
+      expect(messages).not.toContain(`#: ${noLocationDir}/index.js:1`)
     })
   })
 
@@ -145,14 +157,15 @@ describe('extract', () => {
     })
 
     it('should add the message context to the .pot file', () => {
-      expect(file(`${contextLocation}/messages.pot`)).to.not.exist
-
+      expect(existsSync(`${contextLocation}/messages.pot`)).toBeFalsy()
+      
       callForDir(contextLocation)
+      expect(existsSync(`${contextLocation}/messages.pot`)).toBeDefined()
 
-      const messages = file(`${contextLocation}/messages.pot`)
+      const messages = readFileSync(`${contextLocation}/messages.pot`).toString("utf-8")
 
-      expect(messages).to.exist
-      expect(messages).to.contain('msgctxt "This is context for my message"')
+      expect(messages).toBeDefined()
+      expect(messages).toContain('msgctxt "This is context for my message"')
     })
   })
 
@@ -164,14 +177,15 @@ describe('extract', () => {
     })
 
     it('should add the extracted comment correctly to the .pot file', () => {
-      expect(file(`${extractedCommentLocation}/messages.pot`)).to.not.exist
-
+      expect(existsSync(`${extractedCommentLocation}/messages.pot`)).toBeFalsy()
+      
       callForDir(extractedCommentLocation)
+      expect(existsSync(`${extractedCommentLocation}/messages.pot`)).toBeDefined()
 
-      const messages = file(`${extractedCommentLocation}/messages.pot`)
+      const messages = readFileSync(`${extractedCommentLocation}/messages.pot`).toString('utf-8')
 
-      expect(messages).to.exist
-      expect(messages).to.contain('#. This is a comment for the translators')
+      expect(messages).toBeDefined()
+      expect(messages).toContain('#. This is a comment for the translators')
     })
   })
 
@@ -183,14 +197,15 @@ describe('extract', () => {
     })
 
     it('should be possible to load extra plugins.', () => {
-      expect(file(`${flowLocation}/messages.pot`)).to.not.exist
-
+      expect(existsSync(`${flowLocation}/messages.pot`)).toBeFalsy()
+      
       callForDir(flowLocation)
+      expect(existsSync(`${flowLocation}/messages.pot`)).toBeDefined()
 
-      const messages = file(`${flowLocation}/messages.pot`)
+      const messages = readFileSync(`${flowLocation}/messages.pot`).toString('utf-8')
 
-      expect(messages).to.exist
-      expect(messages).to.contain('msgid "I got extracted"')
+      expect(messages).toBeDefined()
+      expect(messages).toContain('msgid "I got extracted"')
     })
   })
 
@@ -200,13 +215,15 @@ describe('extract', () => {
       removeIfExists(`${multipleFilesLocation}/messages.pot`)
     })
     it('should have message from two files', () => {
-      expect(file(`${multipleFilesLocation}/messages.pot`)).to.not.exist
+      expect(existsSync(`${multipleFilesLocation}/messages.pot`)).toBeFalsy()
       callForDir(multipleFilesLocation)
-      const messages = file(`${multipleFilesLocation}/messages.pot`)
+      expect(existsSync(`${multipleFilesLocation}/messages.pot`)).toBeDefined()
 
-      expect(messages).to.exist
-      expect(messages).to.contain('msgid "Hello"')
-      expect(messages).to.contain('msgid "World"')
+      const messages = readFileSync(`${multipleFilesLocation}/messages.pot`).toString("utf-8")
+
+      expect(messages).toBeDefined()
+      expect(messages).toContain('msgid "Hello"')
+      expect(messages).toContain('msgid "World"')
     })
   })
 })

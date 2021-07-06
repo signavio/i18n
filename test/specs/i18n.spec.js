@@ -1,59 +1,54 @@
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import { expect } from 'chai'
 
 import i18n, { init, setLocale, reset } from '../../src'
 import { escapeHtml } from '../../src/translate'
 import config from './config'
 
 function getLangLoader(locale) {
-  // A runtime exception will be throw every time that the requested locale file
-  // cannot be found. Webpack uses a regular expression to build all locales as
-  // separate bundles.
-
-  // Don't use string template here because of weird webpack bug:
-  // https://github.com/webpack/webpack/issues/4921
-
   // eslint-disable-next-line global-require,import/no-dynamic-require,prefer-template
-  return require('bundle-loader?lazy-loader!./locales/' + locale + '.po')
+  return require('./locales/' + locale + '.po')
 }
 
 describe('i18n', () => {
   beforeEach(reset)
 
   describe('setLocale', () => {
-    it('should make sure the correct bundle will be loaded when init is called', () => {
-      setLocale('de_DE')
-      // return a promise and use mocha's built in promises support
-      return init(getLangLoader, config).then(() => {
-        expect(i18n('for')).to.equal('für')
-      })
-    })
+    it(
+      'should make sure the correct bundle will be loaded when init is called',
+      () => {
+        setLocale('de_DE')
+        // return a promise and use mocha's built in promises support
+        return init(getLangLoader, config).then(() => {
+          expect(i18n('for')).toBe('für')
+        });
+      }
+    )
 
     it('should load the respective bundle if called after init', () => {
       setLocale('en_US')
       // return a promise and use mocha's built in promises support
       return init(getLangLoader, config).then(() => {
-        expect(i18n('for')).to.equal('for')
+        expect(i18n('for')).toBe('for')
         setLocale('de_DE')
         return init(getLangLoader, config).then(() => {
-          expect(i18n('for')).to.equal('für')
-        })
-      })
+          expect(i18n('for')).toBe('für')
+        });
+      });
     })
   })
 
   describe('#translate', () => {
     it('should return a plain string whenever possible', () => {
       const t = i18n('This is a __test__.', { test: 'success' })
-      expect(t).to.be.a('string')
-      expect(t).to.equal('This is a success.')
+      expect(typeof t).toBe('string')
+      expect(t).toBe('This is a success.')
     })
 
     it('should not escape interpolations', () => {
       const t = i18n('This is a __test__.', { test: '<success>' })
-      expect(t).to.be.a('string')
-      expect(t).to.equal('This is a <success>.')
+      expect(typeof t).toBe('string')
+      expect(t).toBe('This is a <success>.')
     })
 
     it('should support using Markdown in translation messages', () => {
@@ -61,11 +56,9 @@ describe('i18n', () => {
         test: 'success',
         markdown: true,
       })
-      expect(React.isValidElement(t)).to.be.true
+      expect(React.isValidElement(t)).toBe(true)
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
-      expect(renderedHtml).to.equal(
-        '<span>This is a <strong>success</strong>.</span>'
-      )
+      expect(renderedHtml).toBe('<span>This is a <strong>success</strong>.</span>')
     })
 
     it('should correctly escape interpolations when used with Markdown', () => {
@@ -73,28 +66,22 @@ describe('i18n', () => {
         test: '<success>',
         markdown: true,
       })
-      expect(React.isValidElement(t)).to.be.true
+      expect(React.isValidElement(t)).toBe(true)
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
-      expect(renderedHtml).to.equal(
-        '<span>This is a <strong>&lt;success&gt;</strong>.</span>'
-      )
+      expect(renderedHtml).toBe('<span>This is a <strong>&lt;success&gt;</strong>.</span>')
     })
 
     it('should not replace "__markdown__" placeholders', () => {
       const t = i18n('This is __markdown__.', { markdown: true })
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(<div>{t}</div>)
-      expect(renderedHtml).to.equal(
-        '<div><span>This is </span>__markdown__<span>.</span></div>'
-      )
+      expect(renderedHtml).toBe('<div><span>This is </span>__markdown__<span>.</span></div>')
     })
 
-    it.skip('should not be possible to break Markdown from interpolations', () => {
+    it('should not be possible to break Markdown from interpolations', () => {
       const t = i18n('**__foo__**', { foo: 'bar** baz **baa', markdown: true })
-      expect(React.isValidElement(t)).to.be.true
+      expect(React.isValidElement(t)).toBe(true)
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
-      expect(renderedHtml).to.equal(
-        '<span>foo <strong>bar** baz **baa</strong></span>'
-      )
+      expect(renderedHtml).toBe('<span><strong>bar** baz **baa</strong></span>')
     })
 
     it('should support React elements as interpolation values', () => {
@@ -104,11 +91,11 @@ describe('i18n', () => {
       })
       const elementClone = { ...t[1], key: null }
 
-      expect(t).to.be.an('array')
-      expect(t).to.have.length(3)
-      expect(t[0]).to.equal('before ')
-      expect(elementClone).to.deep.equal(element)
-      expect(t[2]).to.equal(' after')
+      expect(Array.isArray(t)).toBe(true)
+      expect(t).toHaveLength(3)
+      expect(t[0]).toBe('before ')
+      expect(elementClone).toEqual(element)
+      expect(t[2]).toBe(' after')
     })
 
     it('should support using the same React element multiple times', () => {
@@ -120,76 +107,78 @@ describe('i18n', () => {
       const elementClone1 = { ...t[1], key: null }
       const elementClone2 = { ...t[3], key: null }
 
-      expect(t).to.be.an('array')
-      expect(t).to.have.length(4)
-      expect(t[0]).to.equal('before ')
-      expect(elementClone1).to.deep.equal(element)
-      expect(t[2]).to.equal(' within ')
-      expect(elementClone2).to.deep.equal(element)
+      expect(Array.isArray(t)).toBe(true)
+      expect(t).toHaveLength(4)
+      expect(t[0]).toBe('before ')
+      expect(elementClone1).toEqual(element)
+      expect(t[2]).toBe(' within ')
+      expect(elementClone2).toEqual(element)
     })
 
     it('should keep HTML entities in translation messages unescaped', () => {
       const t = i18n('This is a <__test__>.', {
         test: React.createElement('span', null, 'success'),
       })
-      expect(t).to.be.an('array')
-      expect(t).to.have.length(3)
-      expect(t[0]).to.equal('This is a <')
-      expect(t[2]).to.equal('>.')
+      expect(Array.isArray(t)).toBe(true)
+      expect(t).toHaveLength(3)
+      expect(t[0]).toBe('This is a <')
+      expect(t[2]).toBe('>.')
     })
 
     it('should keep original pattern for missing interpolations', () =>
       init(getLangLoader, config).then(() => {
-        expect(i18n('1 __interpolation__ 2')).to.equal('1 __interpolation__ 2')
+        expect(i18n('1 __interpolation__ 2')).toBe('1 __interpolation__ 2')
       }))
 
-    it('should fallback to the translation key, if no translation was found.', () => {
-      expect(i18n('This is not translated')).to.equal('This is not translated')
+    it(
+      'should fallback to the translation key, if no translation was found.',
+      () => {
+        expect(i18n('This is not translated')).toBe('This is not translated')
 
-      setLocale('de_DE')
+        setLocale('de_DE')
 
-      return init(getLangLoader, config).then(() => {
-        expect(i18n('This is not translated')).to.equal(
-          'This is not translated'
-        )
-      })
-    })
+        return init(getLangLoader, config).then(() => {
+          expect(i18n('This is not translated')).toBe('This is not translated')
+        });
+      }
+    )
 
     it('should consider the context option, if provided', () => {
       setLocale('de_DE')
 
       return init(getLangLoader, config).then(() => {
-        expect(i18n('Export')).to.equal('Exportiere')
-        expect(i18n('Export', { context: 'button label' })).to.equal(
-          'Exportieren'
-        )
-      })
+        expect(i18n('Export')).toBe('Exportiere')
+        expect(i18n('Export', { context: 'button label' })).toBe('Exportieren')
+      });
     })
 
-    it('should use the translation key without any msgctxt, if no msgctxt is provided', () => {
-      setLocale('de_DE')
+    it(
+      'should use the translation key without any msgctxt, if no msgctxt is provided',
+      () => {
+        setLocale('de_DE')
 
-      return init(getLangLoader, config).then(() => {
-        expect(i18n('Export')).to.equal('Exportiere')
-      })
-    })
+        return init(getLangLoader, config).then(() => {
+          expect(i18n('Export')).toBe('Exportiere')
+        });
+      }
+    )
 
     it('should resolve plural', () => {
       const t1 = i18n('__count__ day', '__count__ days', { count: 0 })
       const t2 = i18n('__count__ day', '__count__ days', { count: 2 })
       const t3 = i18n('__count__ day', '__count__ days', { count: -2 })
-      expect(t1).to.be.a('string')
-      expect(t1).to.equal('0 days')
-      expect(t2).to.equal('2 days')
-      expect(t3).to.equal('-2 days')
+      expect(typeof t1).toBe('string')
+      expect(t1).toBe('0 days')
+      expect(t2).toBe('2 days')
+      expect(t3).toBe('-2 days')
     })
 
     it('should resolve singular', () => {
       const t1 = i18n('__count__ case', '__count__ cases', { count: 1 })
       const t2 = i18n('__count__ case', '__count__ cases', { count: -1 })
-      expect(t1).to.be.a('string')
-      expect(t1).to.equal('1 case')
-      expect(t2).to.equal('-1 case')
+      expect(typeof t1).toBe('string')
+      expect(t1).toBe('1 case')
+      expect(t2).toBe('-1 case')
     })
 
     it('should assign unique keys to all React element interpolations', () => {
@@ -201,16 +190,16 @@ describe('i18n', () => {
         }
       )
 
-      expect(result[1].key).to.equal('1')
-      expect(result[3].key).to.equal('3')
-      expect(result[5].key).to.equal('5')
+      expect(result[1].key).toBe('1')
+      expect(result[3].key).toBe('3')
+      expect(result[5].key).toBe('5')
 
       const resultMarkdown = i18n('A __button__ and a [link](#foo)', {
         button: React.createElement('button'),
         markdown: true,
       })
       resultMarkdown.forEach((element) => {
-        expect(element).to.have.property('key')
+        expect(element).toHaveProperty('key')
       })
     })
 
@@ -221,14 +210,12 @@ describe('i18n', () => {
       }).then(() => {
         expect(
           i18n('This is a {{interpolation}}', { interpolation: 'green test' })
-        ).to.equal('This is a green test')
+        ).toBe('This is a green test')
       }))
 
     it('should escape "&", "<", ">" \'"\' and "\'"', () => {
       const str = '<div> & <p> are so called \'html tags"'
-      expect(escapeHtml(str)).to.equal(
-        '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
-      )
+      expect(escapeHtml(str)).toBe('&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;')
     })
   })
 })
