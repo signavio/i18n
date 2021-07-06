@@ -1,5 +1,5 @@
 {
-  "name": "signavio-i18n",
+  "name": "@signavio/i18n",
   "version": "2.1.2",
   "description": "Minimalist gettext style i18n for JavaScript",
   "main": "lib/index.js",

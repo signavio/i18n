@@ -1,4 +1,4 @@
-# signavio-i18n
+# @signavio/i18n
 
 [![CircleCI][build-badge]][build]
 [![npm package][npm-badge]][npm]
@@ -16,7 +16,7 @@ Minimalist gettext style i18n for JavaScript
 ## Installation
 
 ```shell
-npm install --save signavio-i18n
+yarn add @signavio/i18n
 ```
 
 ## Setup
@@ -64,7 +64,7 @@ messages, which is helpful if your project is using a legacy version of babel
 Add the translations to the PO files, and initialize the i18n module in your application using the `init` function:
 
 ```javascript
-import i18n, { init, setLocale } from 'signavio-i18n'
+import i18n, { init, setLocale } from '@signavio/i18n'
 
 function getLangLoader(locale) {
   // Lazy load the translation bundles
@@ -152,7 +152,7 @@ i18n('Ok', { context: 'button' })
 
 ### Markdown
 
-Another convenience of `signavio-i18n` is the optional support for markdown in translations.
+Another convenience of `@signavio/i18n` is the optional support for markdown in translations.
 By default this is turned off, but you can activate it by setting the `markdown` option to `true`.
 
 ```javascript
@@ -163,5 +163,5 @@ i18n('I want _this_ to be **bold**', {
 
 [build-badge]: https://circleci.com/gh/signavio/i18n/tree/master.svg?style=shield&circle-token=:circle-token
 [build]: https://circleci.com/gh/signavio/i18n/tree/master
-[npm-badge]: https://img.shields.io/npm/v/signavio-i18n.png?style=flat-square
-[npm]: https://www.npmjs.org/package/signavio-i18n
+[npm-badge]: https://img.shields.io/npm/v/@signavio/i18n.png?style=flat-square
+[npm]: https://www.npmjs.org/package/@signavio/i18n
