@@ -15,7 +15,7 @@ references:
 
   container_config: &container_config
     docker:
-      - image: circleci/node:latest
+      - image: cimg/node:lts
 
   dep_cache_key: &dep_cache_key deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
   dep_backup_cache_key: &dep_backup_cache_key deps-{{ .Branch }}
