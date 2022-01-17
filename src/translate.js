@@ -1,4 +1,4 @@
-import marked from 'marked'
+import { marked } from 'marked'
 import React from 'react'
 
 const defaultOptions = {
