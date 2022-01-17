@@ -1,4 +1,4 @@
-import marked from 'marked'
+import { marked } from 'marked'
 import React from 'react'
 
 const defaultOptions = {
@@ -74,7 +74,7 @@ export default (singleton) => {
     // Escape underscores.
     // (Since we use underscores to denote interpolations, we have to
     // exclude them from the markdown notation. Use asterisk (*) instead.)
-    let finalTranslation = marked(translation.replace(/_/g, '\\_'))
+    let finalTranslation = marked.parse(translation.replace(/_/g, '\\_'))
 
     // remove single, outer wrapping <p>-tag
     if (isWrappedInPTag(finalTranslation)) {
