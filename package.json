@@ -1,6 +1,6 @@
 {
   "name": "@signavio/i18n",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Minimalist gettext style i18n for JavaScript",
   "main": "lib/index.js",
   "module": "lib-es6/index.js",
@@ -40,7 +40,7 @@
     "@babel/runtime": "^7.0.0",
     "gettext-parser": "2.0.0",
     "glob": "^6.0.1",
-    "marked": "^0.7.0",
+    "marked": "^4.0.10",
     "progress": "^2.0.0"
   },
   "devDependencies": {
