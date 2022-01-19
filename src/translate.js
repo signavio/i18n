@@ -70,7 +70,7 @@ export default (singleton) => {
     )
   }
 
-  function applyMarkdown(translation) {
+  function applyMarkdown(translation = '') {
     // Escape underscores.
     // (Since we use underscores to denote interpolations, we have to
     // exclude them from the markdown notation. Use asterisk (*) instead.)
@@ -93,7 +93,7 @@ export default (singleton) => {
     return <span key={key} dangerouslySetInnerHTML={{ __html: html }} />
   }
 
-  function insertInterpolations(translation, options) {
+  function insertInterpolations(translation = '', options) {
     let regularInterpolations = {}
 
     for (const [key, value] of Object.entries(options)) {
@@ -171,7 +171,7 @@ export default (singleton) => {
   }
 }
 
-// Lodash Escape Implementation 
+// Lodash Escape Implementation
 // See https://github.com/lodash/lodash/blob/master/escape.js
 export function escapeHtml(unsafe) {
   // Used to map characters to HTML entities.
@@ -180,7 +180,7 @@ export function escapeHtml(unsafe) {
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#039;'
+    "'": '&#039;',
   }
 
   // Used to match HTML entities and HTML characters.
@@ -188,9 +188,9 @@ export function escapeHtml(unsafe) {
   // Cast (null,undefined,[] and 0 to empty string => '')
   const reHasUnescapedHtml = RegExp(reUnescapedHtml.source)
 
-  return (unsafe && reHasUnescapedHtml.test(unsafe))
+  return unsafe && reHasUnescapedHtml.test(unsafe)
     ? unsafe.replace(reUnescapedHtml, (chr) => htmlEscapes[chr])
-    : (unsafe || '')
+    : unsafe || ''
 }
 
 const isString = (str) => str && typeof str.valueOf() === 'string'
