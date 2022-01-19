@@ -70,7 +70,7 @@ export default (singleton) => {
     )
   }
 
-  function applyMarkdown(translation) {
+  function applyMarkdown(translation = '') {
     // Escape underscores.
     // (Since we use underscores to denote interpolations, we have to
     // exclude them from the markdown notation. Use asterisk (*) instead.)
@@ -93,7 +93,7 @@ export default (singleton) => {
     return <span key={key} dangerouslySetInnerHTML={{ __html: html }} />
   }
 
-  function insertInterpolations(translation, options) {
+  function insertInterpolations(translation = '', options) {
     let regularInterpolations = {}
 
     for (const [key, value] of Object.entries(options)) {
@@ -171,16 +171,26 @@ export default (singleton) => {
   }
 }
 
-// Stack Overflow approves
-// See https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript/6234804#6234804
-
+// Lodash Escape Implementation
+// See https://github.com/lodash/lodash/blob/master/escape.js
 export function escapeHtml(unsafe) {
-  return unsafe
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
+  // Used to map characters to HTML entities.
+  const htmlEscapes = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  }
+
+  // Used to match HTML entities and HTML characters.
+  const reUnescapedHtml = /[&<>"']/g
+  // Cast (null,undefined,[] and 0 to empty string => '')
+  const reHasUnescapedHtml = RegExp(reUnescapedHtml.source)
+
+  return unsafe && reHasUnescapedHtml.test(unsafe)
+    ? unsafe.replace(reUnescapedHtml, (chr) => htmlEscapes[chr])
+    : unsafe || ''
 }
 
 const isString = (str) => str && typeof str.valueOf() === 'string'
