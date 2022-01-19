@@ -180,7 +180,7 @@ export function escapeHtml(unsafe) {
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#39;'
+    "'": '&#039;'
   }
 
   // Used to match HTML entities and HTML characters.
