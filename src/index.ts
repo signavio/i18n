@@ -1,6 +1,7 @@
 import createTranslate from './translate'
+import { TranslationConfiguration } from './types'
 
-let config = {}
+let config: TranslationConfiguration = {}
 let specifiedLocale
 let getLangLoader
 let changeLocaleListeners = []
@@ -28,7 +29,10 @@ export default translate
  * @param configObj A hashmap with keys `default` (default locale) and `map` (mapping of locales to
  * other locales)
  **/
-export function init(getLangLoaderFn, configObj = {}) {
+export function init(
+  getLangLoaderFn: () => Awaited<any>,
+  configObj: TranslationConfiguration = {}
+) {
   getLangLoader = getLangLoaderFn
   config = configObj
   if (config.interpolationPattern) {

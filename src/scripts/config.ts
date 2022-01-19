@@ -5,8 +5,8 @@ import type { ConfigT, MapT } from '../types'
 
 const I18NRC_FILENAME = '.i18nrc'
 
-const existsCache: MapT<string, boolean> = {}
-const configCache: MapT<string, ConfigT> = {}
+const existsCache: MapT<boolean> = {}
+const configCache: MapT<ConfigT> = {}
 
 function exists(fileName: string): boolean {
   if (existsCache[fileName] == null) {
