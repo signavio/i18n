@@ -29,7 +29,7 @@ describe('extract', () => {
       callForDir(customFunctionNameDir)
 
       expect(existsSync(`${customFunctionNameDir}/messages.pot`)).toBeDefined()
-      
+
       const messages = readFileSync(`${customFunctionNameDir}/messages.pot`).toString("utf-8")
 
       expect(messages).toContain('msgid "Hello World"')
@@ -80,7 +80,7 @@ describe('extract', () => {
         expect(existsSync(`${defaultDir}/messages.pot`)).toBeDefined()
 
         const messages = readFileSync(`${defaultDir}/messages.pot`).toString("utf-8")
-        
+
         const referencePath = 'fixtures/addLocation/default'
         expect(messages).toBeDefined()
         expect(messages).toContain(`#: ${referencePath}/index.js:1`)
@@ -91,7 +91,7 @@ describe('extract', () => {
       'should be possible to explicitly state that you want the full path',
       () => {
         expect(existsSync(`${fullDir}/messages.pot`)).toBeFalsy()
-        
+
         callForDir(fullDir)
         expect(existsSync(`${fullDir}/messages.pot`)).toBeDefined()
 
@@ -105,7 +105,7 @@ describe('extract', () => {
 
     it('should be possible to only include the file name', () => {
       expect(existsSync(`${fileDir}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(fileDir)
       expect(existsSync(`${fileDir}/messages.pot`)).toBeDefined()
 
@@ -117,7 +117,7 @@ describe('extract', () => {
 
     it('should be possible to never show the location', () => {
       expect(existsSync(`${neverDir}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(neverDir)
       expect(existsSync(`${neverDir}/messages.pot`)).toBeDefined()
 
@@ -138,7 +138,7 @@ describe('extract', () => {
 
     it('should suppress locations in the .pot file completely', () => {
       expect(existsSync(`${noLocationDir}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(noLocationDir)
       expect(existsSync(`${noLocationDir}/messages.pot`)).toBeDefined()
 
@@ -158,7 +158,7 @@ describe('extract', () => {
 
     it('should add the message context to the .pot file', () => {
       expect(existsSync(`${contextLocation}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(contextLocation)
       expect(existsSync(`${contextLocation}/messages.pot`)).toBeDefined()
 
@@ -178,7 +178,7 @@ describe('extract', () => {
 
     it('should add the extracted comment correctly to the .pot file', () => {
       expect(existsSync(`${extractedCommentLocation}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(extractedCommentLocation)
       expect(existsSync(`${extractedCommentLocation}/messages.pot`)).toBeDefined()
 
@@ -186,26 +186,6 @@ describe('extract', () => {
 
       expect(messages).toBeDefined()
       expect(messages).toContain('#. This is a comment for the translators')
-    })
-  })
-
-  describe('babel', () => {
-    const flowLocation = `${fixtureDir}/withFlowAnnotations`
-
-    afterEach(() => {
-      removeIfExists(`${flowLocation}/messages.pot`)
-    })
-
-    it('should be possible to load extra plugins.', () => {
-      expect(existsSync(`${flowLocation}/messages.pot`)).toBeFalsy()
-      
-      callForDir(flowLocation)
-      expect(existsSync(`${flowLocation}/messages.pot`)).toBeDefined()
-
-      const messages = readFileSync(`${flowLocation}/messages.pot`).toString('utf-8')
-
-      expect(messages).toBeDefined()
-      expect(messages).toContain('msgid "I got extracted"')
     })
   })
 
