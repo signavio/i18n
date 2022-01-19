@@ -1,4 +1,3 @@
-// @flow
 import gettextParser from 'gettext-parser'
 import fs from 'fs'
 
