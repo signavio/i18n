@@ -1,6 +1,6 @@
 {
   "name": "@signavio/i18n",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Minimalist gettext style i18n for JavaScript",
   "main": "lib/index.js",
   "module": "lib-es6/index.js",
