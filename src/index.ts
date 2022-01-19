@@ -30,7 +30,7 @@ export default translate
  * other locales)
  **/
 export function init(
-  getLangLoaderFn: () => Awaited<any>,
+  getLangLoaderFn: (locale: string) => Awaited<any>,
   configObj: TranslationConfiguration = {}
 ) {
   getLangLoader = getLangLoaderFn

@@ -6,10 +6,14 @@ const defaultOptions = {
 }
 
 export default (singleton) => {
-  return function translate(text, plural, options) {
+  return function translate(
+    text: string,
+    plural?: string | { [key: string]: any },
+    options?: { [key: string]: any }
+  ) {
     // singleton.messages contains the translation messages for the currently active languae
     // format: singular key -> [ plural key, singular translations, plural translation ]
-    let finalOptions = options
+    let finalOptions: any = options
     let finalPlural = plural
 
     if (!finalOptions && isPlainObject(finalPlural)) {

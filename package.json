@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
+    "@types/jest": "^27.4.0",
     "@types/marked": "^4.0.1",
     "@types/progress": "^2.0.5",
     "@types/react": "^17.0.38",

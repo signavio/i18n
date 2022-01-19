@@ -41,8 +41,7 @@ export type TranslationConfiguration = {
    * Map short-hand language keys into the respective language key
    */
   map?: {
-    en: 'en_US'
-    de: 'de_DE'
+    [key: string]: string
   }
 
   /**
