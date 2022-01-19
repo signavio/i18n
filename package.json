@@ -2,7 +2,8 @@
   "name": "@signavio/i18n",
   "version": "4.0.0",
   "description": "Minimalist gettext style i18n for JavaScript",
-  "module": "lib-es6/index.js",
+  "lib": "dist/lib/index.js",
+  "module": "dist/esm/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/signavio/i18n.git"
@@ -16,8 +17,10 @@
   },
   "scripts": {
     "prebuild": "yarn run clean",
-    "build": "cross-env NODE_ENV=production tsc build",
-    "clean": "rimraf lib lib-es6",
+    "clean": "rimraf lib modules",
+    "build": "yarn run build:lib && yarn build:module",
+    "build:lib": "cross-env NODE_ENV=production tsc --module commonjs --target es2015 --outDir dist/lib",
+    "build:module": "cross-env NODE_ENV=production tsc --module es2015 --target es2015 --outDir dist/esm",
     "coverage": "yarn test --runInBand --reporters=jest-junit",
     "dryrun": "node ./bin/i18n-extract.js test/fixtures/**/*.js",
     "format": "prettier --write --no-semi --single-quote --trailing-comma es5 \"{src,test}/**/*.js\"",
@@ -41,6 +44,10 @@
     "progress": "^2.0.0"
   },
   "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/marked": "^4.0.1",
+    "@types/progress": "^2.0.5",
+    "@types/react": "^17.0.38",
     "babel-eslint": "9.x",
     "commander": "6.2.1",
     "cross-env": "4.0.0",
