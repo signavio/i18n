@@ -76,7 +76,7 @@ jobs:
           blackduck-project-name: i18n
           blackduck-project-path: *workspace_root
 
-  fortify-translate-and-scan: 
+  fortify-translate-and-scan:
     executor: fortify
     working_directory: *workspace_root
     steps:
@@ -128,18 +128,6 @@ jobs:
 
       - run: yarn lint
 
-  flow:
-    <<: *container_config
-
-    working_directory: *workspace_root
-
-    steps:
-      - checkout
-
-      - *restore_deps
-
-      - run: yarn flow
-
 workflows:
   version: 2
   build_and_test:
@@ -150,10 +138,6 @@ workflows:
           requires:
             - build
       - lint:
-          requires:
-            - build
-
-      - flow:
           requires:
             - build
 
@@ -171,7 +155,7 @@ workflows:
   fortify-workflow:
     triggers:
       - schedule:
-          cron: "0 0 * * *"
+          cron: '0 0 * * *'
           filters:
             branches:
               only: master
