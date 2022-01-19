@@ -2,8 +2,6 @@ import gettextParser from 'gettext-parser'
 import fs from 'fs'
 
 import type {
-  AddLocationT,
-  ConfigT,
   AstNodeT,
   ObjectPropertyT,
 } from '../../types'

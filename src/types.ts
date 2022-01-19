@@ -15,6 +15,12 @@ export type ConfigT = {
   babel: Partial<TransformOptions>
 }
 
+export type ObjectPropertyT = {
+  key: {
+    name: string
+  }
+}
+
 export type AstNodeT = {
   type: string
   properties?: Array<ObjectPropertyT>
@@ -22,12 +28,6 @@ export type AstNodeT = {
 
 export type MapT<V> = {
   [key: string]: V
-}
-
-export type ObjectPropertyT = {
-  key: {
-    name: string
-  }
 }
 
 export type TranslationConfiguration = {

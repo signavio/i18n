@@ -1,3 +1,14 @@
 {
-  "extends": "react-app"
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "react-app"
+  ],
+  "rules": {
+    // note you must disable the base rule as it can report incorrect errors
+    // cf. https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/no-use-before-define.md#how-to-use
+    "no-use-before-define": "off"
+  }
 }

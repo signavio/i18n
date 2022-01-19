@@ -14,16 +14,13 @@ describe('i18n', () => {
   beforeEach(reset)
 
   describe('setLocale', () => {
-    it(
-      'should make sure the correct bundle will be loaded when init is called',
-      () => {
-        setLocale('de_DE')
-        // return a promise and use mocha's built in promises support
-        return init(getLangLoader, config).then(() => {
-          expect(i18n('for')).toBe('für')
-        });
-      }
-    )
+    it('should make sure the correct bundle will be loaded when init is called', () => {
+      setLocale('de_DE')
+      // return a promise and use mocha's built in promises support
+      return init(getLangLoader, config).then(() => {
+        expect(i18n('for')).toBe('für')
+      })
+    })
 
     it('should load the respective bundle if called after init', () => {
       setLocale('en_US')
@@ -33,8 +30,8 @@ describe('i18n', () => {
         setLocale('de_DE')
         return init(getLangLoader, config).then(() => {
           expect(i18n('for')).toBe('für')
-        });
-      });
+        })
+      })
     })
   })
 
@@ -58,7 +55,9 @@ describe('i18n', () => {
       })
       expect(React.isValidElement(t)).toBe(true)
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
-      expect(renderedHtml).toBe('<span>This is a <strong>success</strong>.</span>')
+      expect(renderedHtml).toBe(
+        '<span>This is a <strong>success</strong>.</span>'
+      )
     })
 
     it('should correctly escape interpolations when used with Markdown', () => {
@@ -68,13 +67,17 @@ describe('i18n', () => {
       })
       expect(React.isValidElement(t)).toBe(true)
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
-      expect(renderedHtml).toBe('<span>This is a <strong>&lt;success&gt;</strong>.</span>')
+      expect(renderedHtml).toBe(
+        '<span>This is a <strong>&lt;success&gt;</strong>.</span>'
+      )
     })
 
     it('should not replace "__markdown__" placeholders', () => {
       const t = i18n('This is __markdown__.', { markdown: true })
       const renderedHtml = ReactDOMServer.renderToStaticMarkup(<div>{t}</div>)
-      expect(renderedHtml).toBe('<div><span>This is </span>__markdown__<span>.</span></div>')
+      expect(renderedHtml).toBe(
+        '<div><span>This is </span>__markdown__<span>.</span></div>'
+      )
     })
 
     it('should not be possible to break Markdown from interpolations', () => {
@@ -130,18 +133,15 @@ describe('i18n', () => {
         expect(i18n('1 __interpolation__ 2')).toBe('1 __interpolation__ 2')
       }))
 
-    it(
-      'should fallback to the translation key, if no translation was found.',
-      () => {
+    it('should fallback to the translation key, if no translation was found.', () => {
+      expect(i18n('This is not translated')).toBe('This is not translated')
+
+      setLocale('de_DE')
+
+      return init(getLangLoader, config).then(() => {
         expect(i18n('This is not translated')).toBe('This is not translated')
-
-        setLocale('de_DE')
-
-        return init(getLangLoader, config).then(() => {
-          expect(i18n('This is not translated')).toBe('This is not translated')
-        });
-      }
-    )
+      })
+    })
 
     it('should consider the context option, if provided', () => {
       setLocale('de_DE')
@@ -149,19 +149,16 @@ describe('i18n', () => {
       return init(getLangLoader, config).then(() => {
         expect(i18n('Export')).toBe('Exportiere')
         expect(i18n('Export', { context: 'button label' })).toBe('Exportieren')
-      });
+      })
     })
 
-    it(
-      'should use the translation key without any msgctxt, if no msgctxt is provided',
-      () => {
-        setLocale('de_DE')
+    it('should use the translation key without any msgctxt, if no msgctxt is provided', () => {
+      setLocale('de_DE')
 
-        return init(getLangLoader, config).then(() => {
-          expect(i18n('Export')).toBe('Exportiere')
-        });
-      }
-    )
+      return init(getLangLoader, config).then(() => {
+        expect(i18n('Export')).toBe('Exportiere')
+      })
+    })
 
     it('should resolve plural', () => {
       const t1 = i18n('__count__ day', '__count__ days', { count: 0 })
@@ -215,7 +212,9 @@ describe('i18n', () => {
 
     it('should escape "&", "<", ">" \'"\' and "\'"', () => {
       const str = '<div> & <p> are so called \'html tags"'
-      expect(escapeHtml(str)).toBe('&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;')
+      expect(escapeHtml(str)).toBe(
+        '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
+      )
     })
   })
 })
