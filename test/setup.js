@@ -1,5 +1,3 @@
-// THIS FILE NEEDS TO STAY IN THIS SHITTY FORMAT
-
 // init jsdom
 var jsdom = require('jsdom').jsdom
 var doc = jsdom(
