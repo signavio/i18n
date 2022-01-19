@@ -188,9 +188,9 @@ export function escapeHtml(unsafe) {
   // Cast (null,undefined,[] and 0 to empty string => '')
   const reHasUnescapedHtml = RegExp(reUnescapedHtml.source)
 
-  return (string && reHasUnescapedHtml.test(string))
-    ? string.replace(reUnescapedHtml, (chr) => htmlEscapes[chr])
-    : (string || '')
+  return (unsafe && reHasUnescapedHtml.test(unsafe))
+    ? unsafe.replace(reUnescapedHtml, (chr) => htmlEscapes[chr])
+    : (unsafe || '')
 }
 
 const isString = (str) => str && typeof str.valueOf() === 'string'
