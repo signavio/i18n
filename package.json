@@ -24,7 +24,7 @@
     "coverage": "yarn test --runInBand --reporters=jest-junit",
     "dryrun": "node ./bin/i18n-extract.js test/fixtures/**/*.js",
     "format": "prettier --write --no-semi --single-quote --trailing-comma es5 \"{src,test}/**/*.js\"",
-    "lint": "eslint src test/specs",
+    "lint": "eslint src/**/*.{ts,tsx} test/specs/**/*.{tsx,js}",
     "test": "jest",
     "pretest": "yarn build",
     "prepublishOnly": "yarn build",
