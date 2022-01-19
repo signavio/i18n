@@ -171,16 +171,26 @@ export default (singleton) => {
   }
 }
 
-// Stack Overflow approves
-// See https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript/6234804#6234804
-
+// Lodash Escape Implementation 
+// See https://github.com/lodash/lodash/blob/master/escape.js
 export function escapeHtml(unsafe) {
-  return unsafe
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
+  // Used to map characters to HTML entities.
+  const htmlEscapes = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }
+
+  // Used to match HTML entities and HTML characters.
+  const reUnescapedHtml = /[&<>"']/g
+  // Cast (null,undefined,[] and 0 to empty string => '')
+  const reHasUnescapedHtml = RegExp(reUnescapedHtml.source)
+
+  return (string && reHasUnescapedHtml.test(string))
+    ? string.replace(reUnescapedHtml, (chr) => htmlEscapes[chr])
+    : (string || '')
 }
 
 const isString = (str) => str && typeof str.valueOf() === 'string'
