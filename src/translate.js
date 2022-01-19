@@ -70,7 +70,7 @@ export default (singleton) => {
     )
   }
 
-  function applyMarkdown(translation) {
+  function applyMarkdown(translation = '') {
     // Escape underscores.
     // (Since we use underscores to denote interpolations, we have to
     // exclude them from the markdown notation. Use asterisk (*) instead.)
