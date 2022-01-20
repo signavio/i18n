@@ -216,5 +216,17 @@ describe('i18n', () => {
         '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
       )
     })
+
+    it('should handle undefined values with markdown', () => {
+      expect(
+        i18n(undefined, {
+          markdown: true,
+        })
+      ).toStrictEqual([])
+    })
+
+    it('should handle undefined values without markdown', () => {
+      expect(i18n(undefined, {})).toStrictEqual([])
+    })
   })
 })
