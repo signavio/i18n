@@ -229,7 +229,7 @@ describe('i18n', () => {
       expect(i18n(undefined, {})).toStrictEqual([])
     })
 
-    it('should support using Markdown in translation messages', () => {
+    it('should support using Markdown in translation with number', () => {
       const t = i18n('This is a **__test__**.', {
         test: 100,
         markdown: true,
