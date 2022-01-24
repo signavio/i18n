@@ -228,5 +228,15 @@ describe('i18n', () => {
     it('should handle undefined values without markdown', () => {
       expect(i18n(undefined, {})).toStrictEqual([])
     })
+
+    it('should support using Markdown in translation messages', () => {
+      const t = i18n('This is a **__test__**.', {
+        test: 100,
+        markdown: true,
+      })
+      expect(React.isValidElement(t)).toBe(true)
+      const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
+      expect(renderedHtml).toBe('<span>This is a <strong>100</strong>.</span>')
+    })
   })
 })
