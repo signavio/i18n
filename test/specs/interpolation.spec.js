@@ -1,3 +1,4 @@
+import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 
 import i18n from '../../src'
@@ -9,7 +10,7 @@ describe('Test interpolation', () => {
       markdown: true,
     })
 
-    // expect(t).toBe({})
+    expect(React.isValidElement(t)).toBe(true)
     const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
     expect(renderedHtml).toBe('<span>This is a <strong>100</strong>.</span>')
   })
