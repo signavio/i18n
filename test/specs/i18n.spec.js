@@ -217,6 +217,13 @@ describe('i18n', () => {
       )
     })
 
+    it('should not escape html entities or html numbers', () => {
+      const str = '<div> & but also html entity_name &amp;<p> and &#60; are so called \'html entity_number"'
+      expect(escapeHtml(str)).toBe(
+        '&lt;div&gt; &amp; but also html entity_name &amp;&lt;p&gt; and &#60; are so called &#039;html entity_number&quot;'
+      )
+    })
+
     it('should handle undefined values with markdown', () => {
       expect(
         i18n(undefined, {

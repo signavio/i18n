@@ -184,7 +184,7 @@ export function escapeHtml(unsafe) {
   }
 
   // Used to match HTML entities and HTML characters.
-  const reUnescapedHtml = /[&<>"']/g
+  const reUnescapedHtml = /&(?![\w\#]+;)|[<>"']/g
   // Cast (null,undefined,[] and 0 to empty string => '')
   const reHasUnescapedHtml = RegExp(reUnescapedHtml.source)
 
