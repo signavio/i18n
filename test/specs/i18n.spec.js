@@ -225,9 +225,7 @@ describe('i18n', () => {
     })
     it('should not escape the already escaped', () => {
       const str = '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
-      expect(escapeHtml(str)).toBe(
-        '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
-      )
+      expect(escapeHtml(str)).toBe(str)
     })
 
     it('should handle undefined values with markdown', () => {
