@@ -223,6 +223,12 @@ describe('i18n', () => {
         '&lt;div&gt; &amp; but also html entity_name &amp;&lt;p&gt; and &#60; are so called &#039;html entity_number&quot;'
       )
     })
+    it('should not escape the already escaped', () => {
+      const str = '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
+      expect(escapeHtml(str)).toBe(
+        '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
+      )
+    })
 
     it('should handle undefined values with markdown', () => {
       expect(
