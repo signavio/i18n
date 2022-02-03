@@ -59,6 +59,17 @@ describe('i18n', () => {
         '<span>This is a <strong>success</strong>.</span>'
       )
     })
+    it('should skip html entities/numbers using Markdown in translation messages', () => {
+      const t = i18n('Entity: &bull; & number: a&#768;', {
+        test: 'success',
+        markdown: true,
+      })
+      expect(React.isValidElement(t)).toBe(true)
+      const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
+      expect(renderedHtml).toBe(
+        '<span>Entity: &bull; &amp; number: a&#768;</span>'
+      )
+    })
 
     it('should correctly escape interpolations when used with Markdown', () => {
       const t = i18n('This is a **__test__**.', {
