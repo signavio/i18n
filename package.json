@@ -82,5 +82,8 @@
   "peerDependencies": {
     "@babel/core": "^7.0.0",
     "react": "^16.13.0"
+  },
+  "resolutions": {
+    "set-value": "^4.1.0"
   }
 }
