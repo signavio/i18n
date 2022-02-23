@@ -84,6 +84,7 @@
     "react": "^16.13.0"
   },
   "resolutions": {
-    "set-value": "^4.1.0"
+    "set-value": "^4.1.0",
+    "strip-ansi": "^7.0.1"
   }
 }
