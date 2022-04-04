@@ -70,6 +70,7 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
       - run: yarn install && yarn build
+      - run: npm prune --production
 
       - blackduck/blackduck-detect:
           blackduck-project-group: SAP_Signavio_Process_Manager
@@ -158,12 +159,12 @@ workflows:
             - build
 
   blackduck-nightly-scan:
-    triggers:
-      - schedule:
-          cron: '0 0 * * *'
-          filters:
-            branches:
-              only: master
+#    triggers:
+#      - schedule:
+#          cron: '0 0 * * *'
+#          filters:
+#            branches:
+#              only: master
     jobs:
       - black-duck-scan:
           context: BlackDuck
