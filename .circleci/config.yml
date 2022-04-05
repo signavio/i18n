@@ -44,8 +44,7 @@ jobs:
     steps:
       - checkout
 
-      #- run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-      - run: echo "//npm.pkg.github.com/:_authToken=$GITHUB_NPM_TOKEN" >> ~/.npmrc
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
       - restore_cache:
           keys:
@@ -68,11 +67,9 @@ jobs:
     steps:
       - checkout
 
-#      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-      - run: echo "//npm.pkg.github.com/:_authToken=$GITHUB_NPM_TOKEN" >> ~/.npmrc
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
       - run: yarn install && yarn build
-      - run: npm prune --production
 
       - blackduck/blackduck-detect:
           blackduck-project-group: SAP_Signavio_Process_Manager
@@ -169,9 +166,7 @@ workflows:
 #              only: master
     jobs:
       - black-duck-scan:
-          context: 
-            - BlackDuck
-            - NPM
+          context: BlackDuck
 
   fortify-workflow:
     triggers:
