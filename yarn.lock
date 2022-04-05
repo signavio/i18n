@@ -1538,17 +1538,6 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.1.1.tgz#782fa5da44c4f38ae9fd38e9184b54e451936118"
   integrity sha512-BUyKJGdDWqvWC5GEhyOiUrGNi9iJUr4CU0O2WxJL6QJhHeeA/NVBalH+FeK0r/x/W0rPymXt5s78TDS7d6lCwg==
 
-"@signavio/i18n@^4.0.1":
-  version "4.0.1"
-  resolved "https://npm.pkg.github.com/download/@signavio/i18n/4.0.1/0c2f863b3cab6a5e36341f121af6f7c813ca67eddd96ec024ee24218240f0c2a#0743fbfa6ac57416982d051b9b8e757dacdb93d1"
-  integrity sha512-VFArHHR33/pkZm58dR3FWw/B47KI+PAuFvnPvF4+6EXHgHmmH2tj1ba97fWjzwqE5VFEeDR3fWpa3Z4b4+APEA==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    gettext-parser "2.0.0"
-    glob "^6.0.1"
-    marked "^4.0.10"
-    progress "^2.0.0"
-
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.3.tgz#3802ddd21a50a949b6721ddd72da36e67e7f1b2d"

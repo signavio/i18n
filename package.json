@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "@signavio/i18n": "^4.0.1",
     "gettext-parser": "2.0.0",
     "glob": "^6.0.1",
     "marked": "^4.0.10",
