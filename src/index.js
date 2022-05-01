@@ -3,6 +3,7 @@ import createTranslate from './translate'
 let config = {}
 let specifiedLocale
 let getLangLoader
+let updateLangLoader
 let changeLocaleListeners = []
 
 const singleton = {
@@ -35,6 +36,15 @@ export function init(getLangLoaderFn, configObj = {}) {
     singleton.interpolationPattern = configObj.interpolationPattern
   }
   return new Promise(loadBundle)
+}
+
+/**
+ * Allow updating the language messages/translations after init.
+ * This is beneficial in project with two language sources.
+ * @param {Function} updateLangLoaderFn A function that resolves new messages array to update the existing messages
+ */
+export function updateLangMessages(updateLangLoaderFn) {
+  updateLangLoader = updateLangLoaderFn
 }
 
 /**
@@ -108,10 +118,10 @@ function mapLocale(localeToMap) {
   return config.map[localeToMap] || localeToMap
 }
 
-function tryToGetLangLoader(forLocale) {
+function tryToGetLangLoader(forLocale, loader) {
   let waitForLangChunk
   try {
-    waitForLangChunk = getLangLoader(forLocale)
+    waitForLangChunk = loader ? loader(forLocale) : getLangLoader(forLocale)
   } catch (e) {
     return null
   }
@@ -126,9 +136,15 @@ function loadBundle(resolve) {
   }
 
   const waitForLangChunk = tryToGetLangLoader(locale())
+  const updateLangMessages = tryToGetLangLoader(locale(), updateLangLoader)
 
   waitForLangChunk((messages) => {
-    singleton.messages = messages
+    if (updateLangMessages) {
+      singleton.messages = Object.assign({}, messages, updateLangMessages)
+      updateLangLoader = undefined
+    } else {
+      singleton.messages = messages
+    }
     changeLocaleListeners.forEach((listener) => listener())
     resolve()
   })
