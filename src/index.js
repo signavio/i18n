@@ -136,10 +136,10 @@ function loadBundle(resolve) {
   }
 
   const waitForLangChunk = tryToGetLangLoader(locale())
-  const updateLangMessages = tryToGetLangLoader(locale(), updateLangLoader)
 
   waitForLangChunk((messages) => {
-    if (updateLangMessages && updateLangLoader) {
+    if (updateLangLoader) {
+      const updateLangMessages = tryToGetLangLoader(locale(), updateLangLoader)
       singleton.messages = Object.assign({}, messages, updateLangMessages)
       updateLangLoader = undefined
     } else {
