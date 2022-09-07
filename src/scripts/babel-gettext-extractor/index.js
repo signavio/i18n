@@ -62,12 +62,12 @@ function getStringValue(node: AstNodeT) {
 
 function getExtractedComment(node: AstNodeT) {
   const comments = []
-  ;(node.leadingComments || []).forEach((commentNode: AstNodeT) => {
-    const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
-    if (match) {
-      comments.push(match[1])
-    }
-  })
+    ; (node.leadingComments || []).forEach((commentNode: AstNodeT) => {
+      const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
+      if (match) {
+        comments.push(match[1])
+      }
+    })
   return comments.length > 0 ? comments.join('\n') : null
 }
 
@@ -132,6 +132,7 @@ export default function plugin() {
           headers = DEFAULT_HEADERS,
           addLocation = DEFAULT_ADD_LOCATION,
           noLocation = false,
+          replacements = null,
         } = config.opts
 
         let base = config.opts.baseDirectory
@@ -223,6 +224,33 @@ export default function plugin() {
         }
 
         context[translate.msgid] = translate
+        if (
+          replacements &&
+          (typeof replacements[translate.msgid] === 'string' ||
+            typeof replacements[translate.msgid_plural] === 'string')
+        ) {
+          const newTranslate = {
+            ...translate,
+            comments: {
+              ...translate.comments,
+              extracted: (
+                (translate.comments.extracted || '').trim() + ` REPLACEMENT`
+              ).trim(),
+            },
+          }
+
+          newTranslate.msgid =
+            typeof replacements[translate.msgid] === 'string'
+              ? replacements[newTranslate.msgid]
+              : newTranslate.msgid
+
+          newTranslate.msgid_plural =
+            typeof replacements[translate.msgid_plural] === 'string'
+              ? replacements[newTranslate.msgid_plural]
+              : newTranslate.msgid_plural
+
+          context[newTranslate.msgid] = newTranslate
+        }
 
         const output = gettextParser.po.compile(data)
         fs.writeFileSync(fileName, output)
