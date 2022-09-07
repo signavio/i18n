@@ -15,6 +15,12 @@ const callForDir = dirName => {
   )
 }
 
+const callForDirReplacements = dirName => {
+  childProcess.execSync(
+    `node ${process.cwd()}/bin/i18n-extract.js "${dirName}/**/*.js" ${dirName}/messages.pot} ${dirName}/replacements.json`
+  )
+}
+
 describe('extract', () => {
   describe('function name', () => {
     const customFunctionNameDir = `${fixtureDir}/customFunctionName`
@@ -36,7 +42,30 @@ describe('extract', () => {
       expect(messages).not.toContain('msgid "Not in the result"')
     })
   })
+  
+  describe('replacements', () => {
+    const replacementsDir = `${fixtureDir}/replacements`
 
+    afterEach(() => {
+      removeIfExists(`${replacementsDir}/messages.pot`)
+    })
+
+    it('should be possible to add replacement translations based on the replacements json', () => {
+      expect(existsSync(`${replacementsDir}/messages.pot`)).toBeFalsy()
+
+      callForDirReplacements(replacementsDir)
+
+      expect(existsSync(`${replacementsDir}/messages.pot`)).toBeDefined()
+      
+      const messages = readFileSync(`${replacementsDir}/messages.pot`).toString("utf-8")
+
+      expect(messages).toContain('msgid "Needs replacement"')
+      expect(messages).toContain(`msgid "A replacement for 'Needs replacement'`)
+      expect(messages).toContain('#. REPLACEMENT')
+      expect(messages).toContain('msgid "No replacement is needed"')
+    })
+  })
+  
   describe('file name', () => {
     const customFileNameDir = `${fixtureDir}/customFileName`
 
