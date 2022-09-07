@@ -2,8 +2,8 @@
 .nyc_output
 
 node_modules
-lib
-lib-es6
+# lib
+# lib-es6
 coverage
 junit
 xunit.xml
