@@ -35,6 +35,40 @@ describe('i18n', () => {
     })
   })
 
+  describe('replacements', () => {
+    it('should use the corresponding trasnlation from the replacements object en_US', () => {
+      setLocale('en_US')
+      const replacements = {"Old translation": "New translation"}
+      return init(getLangLoader, {}, replacements).then(() => {
+        expect(i18n('Old translation')).toBe('New translation')
+      })
+    })
+
+    it('should use the corresponding trasnlation from the replacements object de_DE', () => {
+      setLocale('de_DE')
+      const replacements = {"Old translation": "New translation"}
+      return init(getLangLoader, {}, replacements).then(() => {
+        expect(i18n('Old translation')).toBe('Neue Übersetzung')
+      })
+    })
+
+    it('should not use the replaced translation when there are no match en_US)', () => {
+      setLocale('en_US')
+      const replacements = {"Foobar": "New translation"}
+      return init(getLangLoader, {}, replacements).then(() => {
+        expect(i18n('Old translation')).toBe('Old translation')
+      })
+    })
+
+    it('should not use the replaced translation when there are no match de_DE)', () => {
+      setLocale('de_DE')
+      const replacements = {"Foobar": "New translation"}
+      return init(getLangLoader, {}, replacements).then(() => {
+        expect(i18n('Old translation')).toBe('Alte Übersetzung')
+      })
+    })
+  })
+
   describe('#translate', () => {
     it('should return a plain string whenever possible', () => {
       const t = i18n('This is a __test__.', { test: 'success' })
