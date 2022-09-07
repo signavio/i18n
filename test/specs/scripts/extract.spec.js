@@ -61,7 +61,7 @@ describe('extract', () => {
 
       expect(messages).toContain('msgid "Needs replacement"')
       expect(messages).toContain(`msgid "A replacement for 'Needs replacement'`)
-      expect(messages).toContain('#. REPLACEMENT')
+      expect(messages).toContain('#. REPLACEMENT for "Needs replacement"')
       expect(messages).toContain('msgid "No replacement is needed"')
     })
   })

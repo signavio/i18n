@@ -203,7 +203,7 @@ The .pot file will have the following content
 msgid "Old translation"
 msgstr ""
 
-#. comment 1 REPLACEMENT
+#. comment 1 REPLACEMENT for "New translation"
 msgid "New translation"
 msgstr ""
 
@@ -211,7 +211,7 @@ msgstr ""
 msgid "Old translation2"
 msgstr ""
 
-#. comment 2 REPLACEMENT
+#. comment 2 REPLACEMENT for "New translation2"
 msgid "New translation2"
 msgstr ""
 

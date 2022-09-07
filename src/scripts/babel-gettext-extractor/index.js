@@ -233,9 +233,7 @@ export default function plugin() {
             ...translate,
             comments: {
               ...translate.comments,
-              extracted: (
-                (translate.comments.extracted || '').trim() + ` REPLACEMENT`
-              ).trim(),
+              extracted: (`REPLACEMENT for "${translate.msgid}"`).trim(),
             },
           }
 
