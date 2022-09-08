@@ -68,7 +68,7 @@ describe('extract', () => {
       expect(messages).toContain(
         [
           `#: fixtures/replacements/index.js:3`,
-          `#. REPLACEMENT for "Needs replacement", context: someContext`,
+          `#. REPLACEMENT for "Needs replacement", context: "someContext"`,
           `msgctxt "someContext"`,
           `msgid "A replacement for 'Needs replacement'"`,
         ].join('\n')

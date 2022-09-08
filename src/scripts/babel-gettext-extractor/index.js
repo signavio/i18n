@@ -241,7 +241,7 @@ export default function plugin() {
                 ...translate.comments,
                 extracted:
                   `REPLACEMENT for "${translate.msgid}"`.trim() +
-                  (translate.msgctxt ? `, context: ${translate.msgctxt}` : ''),
+                  (translate.msgctxt ? `, context: "${translate.msgctxt}"` : ''),
               },
             }
 
