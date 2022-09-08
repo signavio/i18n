@@ -62,16 +62,16 @@
     "babel-plugin-transform-remove-debugger": "6.8.5",
     "commander": "6.2.1",
     "cross-env": "4.0.0",
-    "eslint": "5.16.0",
-    "eslint-config-react-app": "3.0.8",
-    "eslint-plugin-flowtype": "2.50.3",
-    "eslint-plugin-import": "2.23.4",
-    "eslint-plugin-jsx-a11y": "6.4.1",
-    "eslint-plugin-react": "7.24.0",
+    "eslint": "8.9.0",
+    "eslint-config-react-app": "7.0.0",
+    "eslint-plugin-flowtype": "8.0.3",
+    "eslint-plugin-import": "2.25.4",
+    "eslint-plugin-jsx-a11y": "6.5.1",
+    "eslint-plugin-react": "7.28.0",
     "flow-bin": "0.65.0",
     "gettext-to-messageformat": "0.3.1",
-    "jest": "27.0.6",
-    "jest-junit": "12.2.0",
+    "jest": "27.5.1",
+    "jest-junit": "13.0.0",
     "jsdom": "9.12.0",
     "po2json": "1.0.0-beta-3",
     "prettier": "1.15.3",
@@ -82,5 +82,11 @@
   "peerDependencies": {
     "@babel/core": "^7.0.0",
     "react": "^16.13.0"
+  },
+  "resolutions": {
+    "set-value": "^4.1.0",
+    "minimist": "^1.2.6",
+    "qs": "6.9.7",
+    "request": "2.88.2"
   }
 }

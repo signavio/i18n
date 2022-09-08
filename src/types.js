@@ -14,6 +14,12 @@ export type ConfigT = {
   noLocation?: boolean,
 }
 
+export type ObjectPropertyT = {
+  key: {
+    name: string,
+  },
+}
+
 export type AstNodeT = {
   type: string,
   properties?: Array<ObjectPropertyT>,
@@ -21,10 +27,4 @@ export type AstNodeT = {
 
 export type MapT<K, V> = {
   [key: K]: V,
-}
-
-export type ObjectPropertyT = {
-  key: {
-    name: string,
-  },
 }
