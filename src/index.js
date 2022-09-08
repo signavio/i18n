@@ -28,6 +28,8 @@ export default translate
  * locale
  * @param configObj A hashmap with keys `default` (default locale) and `map` (mapping of locales to
  * other locales)
+ * @param replacements A hashmap with translation context keys and translation hashmaps as their values
+ * 
  **/
 export function init(getLangLoaderFn, configObj = {}, replacements) {
   getLangLoader = getLangLoaderFn

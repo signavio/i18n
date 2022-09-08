@@ -8,17 +8,8 @@ const defaultOptions = {
 
 export default (singleton) => {
   return function translate(text, plural, options) {
-    // singleton.replacements optionally contains the translation replacements for the first two string arguments
-    if (singleton.replacements) {
 
-      if (typeof text === 'string' && singleton.replacements[text]) {
-        text = singleton.replacements[text]
-      }
-  
-      if (typeof plural === 'string' && singleton.replacements[plural]) {
-        plural = singleton.replacements[plural]
-      }
-    }
+
 
     // singleton.messages contains the translation messages for the currently active languae
     // format: singular key -> [ plural key, singular translations, plural translation ]
@@ -33,10 +24,26 @@ export default (singleton) => {
     finalOptions = {
       ...defaultOptions,
       ...finalOptions,
+      replacementsContext:  (finalOptions && finalOptions.context) || 'no_context', 
       context:
         finalOptions && finalOptions.context
           ? `${finalOptions.context}\u0004`
           : '',
+    }
+
+    // singleton.replacements optionally contains the translation replacements for the first two string arguments by context
+    if (singleton.replacements && singleton.replacements[finalOptions.replacementsContext]) {
+      const replacementsContext = singleton.replacements[finalOptions.replacementsContext]
+
+      if (replacementsContext) {
+        if (typeof text === 'string' && replacementsContext[text]) {
+          text = replacementsContext[text]
+        }
+    
+        if (typeof finalPlural === 'string' && replacementsContext[finalPlural]) {
+          finalPlural = replacementsContext[finalPlural]
+        }
+      }
     }
 
     const [translatedSingular, translatedPlural] = (
