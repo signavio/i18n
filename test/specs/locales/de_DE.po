@@ -35,3 +35,11 @@ msgstr "Alte Übersetzung"
 
 msgid "New translation"
 msgstr "Neue Übersetzung"
+
+msgctxt "someContext"
+msgid "Old translation"
+msgstr "Alte Übersetzung"
+
+msgctxt "someContext"
+msgid "New translation"
+msgstr "Neue Übersetzung someContext"

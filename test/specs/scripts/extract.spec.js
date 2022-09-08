@@ -3,19 +3,19 @@ import { existsSync, unlinkSync, readFileSync } from 'fs'
 
 const fixtureDir = `${process.cwd()}/test/fixtures`
 
-const removeIfExists = fileName => {
+const removeIfExists = (fileName) => {
   if (existsSync(fileName)) {
     unlinkSync(fileName)
   }
 }
 
-const callForDir = dirName => {
+const callForDir = (dirName) => {
   childProcess.execSync(
     `node ${process.cwd()}/bin/i18n-extract.js "${dirName}/**/*.js"`
   )
 }
 
-const callForDirReplacements = dirName => {
+const callForDirReplacements = (dirName) => {
   childProcess.execSync(
     `node ${process.cwd()}/bin/i18n-extract.js "${dirName}/**/*.js" ${dirName}/messages.pot} ${dirName}/replacements.json`
   )
@@ -35,14 +35,16 @@ describe('extract', () => {
       callForDir(customFunctionNameDir)
 
       expect(existsSync(`${customFunctionNameDir}/messages.pot`)).toBeDefined()
-      
-      const messages = readFileSync(`${customFunctionNameDir}/messages.pot`).toString("utf-8")
+
+      const messages = readFileSync(
+        `${customFunctionNameDir}/messages.pot`
+      ).toString('utf-8')
 
       expect(messages).toContain('msgid "Hello World"')
       expect(messages).not.toContain('msgid "Not in the result"')
     })
   })
-  
+
   describe('replacements', () => {
     const replacementsDir = `${fixtureDir}/replacements`
 
@@ -56,16 +58,38 @@ describe('extract', () => {
       callForDirReplacements(replacementsDir)
 
       expect(existsSync(`${replacementsDir}/messages.pot`)).toBeDefined()
-      
-      const messages = readFileSync(`${replacementsDir}/messages.pot`).toString("utf-8")
+
+      const messages = readFileSync(`${replacementsDir}/messages.pot`).toString(
+        'utf-8'
+      )
 
       expect(messages).toContain('msgid "Needs replacement"')
       expect(messages).toContain(`msgid "A replacement for 'Needs replacement'`)
       expect(messages).toContain('#. REPLACEMENT for "Needs replacement"')
       expect(messages).toContain('msgid "No replacement is needed"')
+
+      // context
+      expect(messages).toContain(
+        [
+          `#: fixtures/replacements/index.js:3`,
+          `#. REPLACEMENT for "Needs replacement", context: someContext`,
+          `msgctxt "someContext"`,
+          `msgid "A replacement for 'Needs replacement'"`,
+        ].join('\n')
+      )
+
+      // context plural
+      expect(messages).toContain(
+        [
+          `#: fixtures/replacements/index.js:5`,
+          `msgctxt "anotherContext"`,
+          `msgid "Needs replacement plural 1"`,
+          `msgid_plural "Needs replacement plural 2"`,
+        ].join('\n')
+      )
     })
   })
-  
+
   describe('file name', () => {
     const customFileNameDir = `${fixtureDir}/customFileName`
 
@@ -74,13 +98,19 @@ describe('extract', () => {
     })
 
     it('should be possible to specify an extract output file', () => {
-      expect(existsSync(`${customFileNameDir}/my-custom-messages.pot`)).toBeFalsy()
+      expect(
+        existsSync(`${customFileNameDir}/my-custom-messages.pot`)
+      ).toBeFalsy()
 
       callForDir(customFileNameDir)
 
-      expect(existsSync(`${customFileNameDir}/my-custom-messages.pot`)).toBeDefined()
+      expect(
+        existsSync(`${customFileNameDir}/my-custom-messages.pot`)
+      ).toBeDefined()
 
-      const messages = readFileSync(`${customFileNameDir}/my-custom-messages.pot`).toString("utf-8")
+      const messages = readFileSync(
+        `${customFileNameDir}/my-custom-messages.pot`
+      ).toString('utf-8')
       expect(messages).toBeDefined()
       expect(messages).toContain('msgid "Hello World"')
     })
@@ -101,44 +131,40 @@ describe('extract', () => {
       removeIfExists(`${defaultDir}/messages.pot`)
     })
 
-    it(
-      'should by default include the location where the message key was found',
-      () => {
-        expect(existsSync(`${defaultDir}/messages.pot`)).toBeFalsy()
-        callForDir(defaultDir)
-        expect(existsSync(`${defaultDir}/messages.pot`)).toBeDefined()
+    it('should by default include the location where the message key was found', () => {
+      expect(existsSync(`${defaultDir}/messages.pot`)).toBeFalsy()
+      callForDir(defaultDir)
+      expect(existsSync(`${defaultDir}/messages.pot`)).toBeDefined()
 
-        const messages = readFileSync(`${defaultDir}/messages.pot`).toString("utf-8")
-        
-        const referencePath = 'fixtures/addLocation/default'
-        expect(messages).toBeDefined()
-        expect(messages).toContain(`#: ${referencePath}/index.js:1`)
-      }
-    )
+      const messages = readFileSync(`${defaultDir}/messages.pot`).toString(
+        'utf-8'
+      )
 
-    it(
-      'should be possible to explicitly state that you want the full path',
-      () => {
-        expect(existsSync(`${fullDir}/messages.pot`)).toBeFalsy()
-        
-        callForDir(fullDir)
-        expect(existsSync(`${fullDir}/messages.pot`)).toBeDefined()
+      const referencePath = 'fixtures/addLocation/default'
+      expect(messages).toBeDefined()
+      expect(messages).toContain(`#: ${referencePath}/index.js:1`)
+    })
 
-        const messages = readFileSync(`${fullDir}/messages.pot`).toString("utf-8")
-        const referencePath = 'fixtures/addLocation/full'
+    it('should be possible to explicitly state that you want the full path', () => {
+      expect(existsSync(`${fullDir}/messages.pot`)).toBeFalsy()
 
-        expect(messages).toBeDefined()
-        expect(messages).toContain(`#: ${referencePath}/index.js:1`)
-      }
-    )
+      callForDir(fullDir)
+      expect(existsSync(`${fullDir}/messages.pot`)).toBeDefined()
+
+      const messages = readFileSync(`${fullDir}/messages.pot`).toString('utf-8')
+      const referencePath = 'fixtures/addLocation/full'
+
+      expect(messages).toBeDefined()
+      expect(messages).toContain(`#: ${referencePath}/index.js:1`)
+    })
 
     it('should be possible to only include the file name', () => {
       expect(existsSync(`${fileDir}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(fileDir)
       expect(existsSync(`${fileDir}/messages.pot`)).toBeDefined()
 
-      const messages = readFileSync(`${fileDir}/messages.pot`).toString("utf-8")
+      const messages = readFileSync(`${fileDir}/messages.pot`).toString('utf-8')
 
       expect(messages).toBeDefined()
       expect(messages).toContain('#: index.js:1')
@@ -146,11 +172,13 @@ describe('extract', () => {
 
     it('should be possible to never show the location', () => {
       expect(existsSync(`${neverDir}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(neverDir)
       expect(existsSync(`${neverDir}/messages.pot`)).toBeDefined()
 
-      const messages = readFileSync(`${neverDir}/messages.pot`).toString('utf-8')
+      const messages = readFileSync(`${neverDir}/messages.pot`).toString(
+        'utf-8'
+      )
 
       expect(messages).toBeDefined()
       expect(messages).not.toContain(`#: ${neverDir}/index.js:1`)
@@ -167,11 +195,13 @@ describe('extract', () => {
 
     it('should suppress locations in the .pot file completely', () => {
       expect(existsSync(`${noLocationDir}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(noLocationDir)
       expect(existsSync(`${noLocationDir}/messages.pot`)).toBeDefined()
 
-      const messages = readFileSync(`${noLocationDir}/messages.pot`).toString("utf-8")
+      const messages = readFileSync(`${noLocationDir}/messages.pot`).toString(
+        'utf-8'
+      )
 
       expect(messages).toBeDefined()
       expect(messages).not.toContain(`#: ${noLocationDir}/index.js:1`)
@@ -187,11 +217,13 @@ describe('extract', () => {
 
     it('should add the message context to the .pot file', () => {
       expect(existsSync(`${contextLocation}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(contextLocation)
       expect(existsSync(`${contextLocation}/messages.pot`)).toBeDefined()
 
-      const messages = readFileSync(`${contextLocation}/messages.pot`).toString("utf-8")
+      const messages = readFileSync(`${contextLocation}/messages.pot`).toString(
+        'utf-8'
+      )
 
       expect(messages).toBeDefined()
       expect(messages).toContain('msgctxt "This is context for my message"')
@@ -207,11 +239,15 @@ describe('extract', () => {
 
     it('should add the extracted comment correctly to the .pot file', () => {
       expect(existsSync(`${extractedCommentLocation}/messages.pot`)).toBeFalsy()
-      
-      callForDir(extractedCommentLocation)
-      expect(existsSync(`${extractedCommentLocation}/messages.pot`)).toBeDefined()
 
-      const messages = readFileSync(`${extractedCommentLocation}/messages.pot`).toString('utf-8')
+      callForDir(extractedCommentLocation)
+      expect(
+        existsSync(`${extractedCommentLocation}/messages.pot`)
+      ).toBeDefined()
+
+      const messages = readFileSync(
+        `${extractedCommentLocation}/messages.pot`
+      ).toString('utf-8')
 
       expect(messages).toBeDefined()
       expect(messages).toContain('#. This is a comment for the translators')
@@ -227,11 +263,13 @@ describe('extract', () => {
 
     it('should be possible to load extra plugins.', () => {
       expect(existsSync(`${flowLocation}/messages.pot`)).toBeFalsy()
-      
+
       callForDir(flowLocation)
       expect(existsSync(`${flowLocation}/messages.pot`)).toBeDefined()
 
-      const messages = readFileSync(`${flowLocation}/messages.pot`).toString('utf-8')
+      const messages = readFileSync(`${flowLocation}/messages.pot`).toString(
+        'utf-8'
+      )
 
       expect(messages).toBeDefined()
       expect(messages).toContain('msgid "I got extracted"')
@@ -248,7 +286,9 @@ describe('extract', () => {
       callForDir(multipleFilesLocation)
       expect(existsSync(`${multipleFilesLocation}/messages.pot`)).toBeDefined()
 
-      const messages = readFileSync(`${multipleFilesLocation}/messages.pot`).toString("utf-8")
+      const messages = readFileSync(
+        `${multipleFilesLocation}/messages.pot`
+      ).toString('utf-8')
 
       expect(messages).toBeDefined()
       expect(messages).toContain('msgid "Hello"')

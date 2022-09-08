@@ -36,35 +36,52 @@ describe('i18n', () => {
   })
 
   describe('replacements', () => {
-    it('should use the corresponding trasnlation from the replacements object en_US', () => {
+    beforeEach(reset)
+    it('should use the corresponding translation by context de_DE', () => {
+      setLocale('de_DE')
+      const replacements = { someContext: {'Old translation': 'New translation'} }
+      return init(getLangLoader, config, replacements).then(() => {
+        expect(i18n('Old translation', {context: 'someContext'})).toBe('Neue Übersetzung someContext')
+      })
+    })
+
+    it('should use the corresponding translation from the replacements object en_US', () => {
       setLocale('en_US')
-      const replacements = {"Old translation": "New translation"}
-      return init(getLangLoader, {}, replacements).then(() => {
+      const replacements = { no_context: {"Old translation": "New translation"} }
+      return init(getLangLoader, config, replacements).then(() => {
         expect(i18n('Old translation')).toBe('New translation')
       })
     })
 
-    it('should use the corresponding trasnlation from the replacements object de_DE', () => {
+    it('should use the corresponding translation from the replacements object de_DE', () => {
       setLocale('de_DE')
-      const replacements = {"Old translation": "New translation"}
-      return init(getLangLoader, {}, replacements).then(() => {
+      const replacements = { no_context: {"Old translation": "New translation"} }
+      return init(getLangLoader, config, replacements).then(() => {
         expect(i18n('Old translation')).toBe('Neue Übersetzung')
       })
     })
 
     it('should not use the replaced translation when there are no match en_US)', () => {
       setLocale('en_US')
-      const replacements = {"Foobar": "New translation"}
-      return init(getLangLoader, {}, replacements).then(() => {
+      const replacements = { no_context: {"Foobar": "New translation"} }
+      return init(getLangLoader, config, replacements).then(() => {
         expect(i18n('Old translation')).toBe('Old translation')
       })
     })
 
     it('should not use the replaced translation when there are no match de_DE)', () => {
       setLocale('de_DE')
-      const replacements = {"Foobar": "New translation"}
-      return init(getLangLoader, {}, replacements).then(() => {
+      const replacements = { no_context: {"Foobar": "New translation"} }
+      return init(getLangLoader, config, replacements).then(() => {
         expect(i18n('Old translation')).toBe('Alte Übersetzung')
+      })
+    })
+  
+    it('should use the corresponding translation by context en_US', () => {
+      setLocale('en_US')
+      const replacements = { someContext: {"Old translation": "New translation someContext"} }
+      return init(getLangLoader, config, replacements).then(() => {
+        expect(i18n('Old translation', {context: 'someContext'})).toBe('New translation someContext')
       })
     })
   })

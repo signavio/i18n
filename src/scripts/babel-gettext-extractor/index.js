@@ -19,6 +19,8 @@ const DEFAULT_HEADERS = {
 
 const DEFAULT_ADD_LOCATION = 'full'
 
+const NO_CONTEXT = 'no_context'
+
 function isStringLiteral(node: AstNodeT) {
   return node.type === 'StringLiteral'
 }
@@ -62,12 +64,12 @@ function getStringValue(node: AstNodeT) {
 
 function getExtractedComment(node: AstNodeT) {
   const comments = []
-    ; (node.leadingComments || []).forEach((commentNode: AstNodeT) => {
-      const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
-      if (match) {
-        comments.push(match[1])
-      }
-    })
+  ;(node.leadingComments || []).forEach((commentNode: AstNodeT) => {
+    const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
+    if (match) {
+      comments.push(match[1])
+    }
+  })
   return comments.length > 0 ? comments.join('\n') : null
 }
 
@@ -224,30 +226,39 @@ export default function plugin() {
         }
 
         context[translate.msgid] = translate
-        if (
-          replacements &&
-          (typeof replacements[translate.msgid] === 'string' ||
-            typeof replacements[translate.msgid_plural] === 'string')
-        ) {
-          const newTranslate = {
-            ...translate,
-            comments: {
-              ...translate.comments,
-              extracted: (`REPLACEMENT for "${translate.msgid}"`).trim(),
-            },
+
+        if (replacements) {
+          const contextName = translate.msgctxt || NO_CONTEXT
+          const contextReplacements = replacements[contextName]
+          if (
+            contextReplacements &&
+            (typeof contextReplacements[translate.msgid] === 'string' ||
+              typeof contextReplacements[translate.msgid_plural] === 'string')
+          ) {
+            const newTranslate = {
+              ...translate,
+              comments: {
+                ...translate.comments,
+                extracted:
+                  `REPLACEMENT for "${translate.msgid}"`.trim() +
+                  (translate.msgctxt ? `, context: ${translate.msgctxt}` : ''),
+              },
+            }
+
+            newTranslate.msgid =
+              typeof contextReplacements[translate.msgid] === 'string'
+                ? contextReplacements[newTranslate.msgid]
+                : newTranslate.msgid
+
+            newTranslate.msgid_plural =
+              typeof contextReplacements[translate.msgid_plural] === 'string'
+                ? contextReplacements[newTranslate.msgid_plural]
+                : newTranslate.msgid_plural
+
+            newTranslate.msgctxt = translate.msgctxt
+
+            context[newTranslate.msgid] = newTranslate
           }
-
-          newTranslate.msgid =
-            typeof replacements[translate.msgid] === 'string'
-              ? replacements[newTranslate.msgid]
-              : newTranslate.msgid
-
-          newTranslate.msgid_plural =
-            typeof replacements[translate.msgid_plural] === 'string'
-              ? replacements[newTranslate.msgid_plural]
-              : newTranslate.msgid_plural
-
-          context[newTranslate.msgid] = newTranslate
         }
 
         const output = gettextParser.po.compile(data)
