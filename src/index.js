@@ -7,6 +7,7 @@ let changeLocaleListeners = []
 
 const singleton = {
   messages: {},
+  replacements: null,
   interpolationPattern: '__(\\w+)__',
 }
 
@@ -28,12 +29,13 @@ export default translate
  * @param configObj A hashmap with keys `default` (default locale) and `map` (mapping of locales to
  * other locales)
  **/
-export function init(getLangLoaderFn, configObj = {}) {
+export function init(getLangLoaderFn, configObj = {}, replacements) {
   getLangLoader = getLangLoaderFn
   config = configObj
   if (config.interpolationPattern) {
     singleton.interpolationPattern = configObj.interpolationPattern
   }
+  singleton.replacements = replacements 
   return new Promise(loadBundle)
 }
 
@@ -97,6 +99,7 @@ export function reset() {
   getLangLoader = undefined
 
   singleton.messages = {}
+  singleton.replacements = null
   changeLocaleListeners = []
 }
 

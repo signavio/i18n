@@ -5,8 +5,21 @@ const defaultOptions = {
   markdown: false,
 }
 
+
 export default (singleton) => {
   return function translate(text, plural, options) {
+    // singleton.replacements optionally contains the translation replacements for the first two string arguments
+    if (singleton.replacements) {
+
+      if (typeof text === 'string' && singleton.replacements[text]) {
+        text = singleton.replacements[text]
+      }
+  
+      if (typeof plural === 'string' && singleton.replacements[plural]) {
+        plural = singleton.replacements[plural]
+      }
+    }
+
     // singleton.messages contains the translation messages for the currently active languae
     // format: singular key -> [ plural key, singular translations, plural translation ]
     let finalOptions = options

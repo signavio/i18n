@@ -29,3 +29,9 @@ msgstr "Export"
 
 msgid "Export"
 msgstr "Export"
+
+msgid "Old translation"
+msgstr "Old translation"
+
+msgid "New translation"
+msgstr "New translation"
