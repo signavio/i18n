@@ -5,7 +5,7 @@ const defaultOptions = {
   markdown: false,
 }
 
-const NO_CONTEXT = 'no_context'
+const NO_CONTEXT = ""
 
 export default (singleton) => {
   return function translate(text, plural, options) {

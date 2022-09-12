@@ -47,7 +47,7 @@ describe('i18n', () => {
   
     it('should use the corresponding translation from the replacements object en_US', () => {
       setLocale('en_US')
-      const replacements = { no_context: { "Old translation": "New translation" } }
+      const replacements = { "": { "Old translation": "New translation" } }
       return init(getLangLoader, config, replacements).then(() => {
         expect(i18n('Old translation')).toBe('New translation')
       })
@@ -55,7 +55,7 @@ describe('i18n', () => {
   
     it('should use the corresponding translation from the replacements object de_DE', () => {
       setLocale('de_DE')
-      const replacements = { no_context: { "Old translation": "New translation" } }
+      const replacements = { "": { "Old translation": "New translation" } }
       return init(getLangLoader, config, replacements).then(() => {
         expect(i18n('Old translation')).toBe('Neue Übersetzung')
       })
@@ -63,7 +63,7 @@ describe('i18n', () => {
   
     it('should not use the replaced translation when there are no match en_US)', () => {
       setLocale('en_US')
-      const replacements = { no_context: { "Foobar": "New translation" } }
+      const replacements = { "": { "Foobar": "New translation" } }
       return init(getLangLoader, config, replacements).then(() => {
         expect(i18n('Old translation')).toBe('Old translation')
       })
@@ -71,7 +71,7 @@ describe('i18n', () => {
   
     it('should not use the replaced translation when there are no match de_DE)', () => {
       setLocale('de_DE')
-      const replacements = { no_context: { "Foobar": "New translation" } }
+      const replacements = { "": { "Foobar": "New translation" } }
       return init(getLangLoader, config, replacements).then(() => {
         expect(i18n('Old translation')).toBe('Alte Übersetzung')
       })

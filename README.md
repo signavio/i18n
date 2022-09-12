@@ -191,11 +191,11 @@ Values of each context are objects for the original translation strings and the 
 }
 ```
 
-If the translation does not have the context, then it should be stored in the `no_context` field.
+If the translation does not have the context, then it should be stored in the `""` (empty string) field.
 
 ```json
 {
-  "no_context" : {
+  "" : {
     "Old translation": "New translation without context",
   },
   "some context": {

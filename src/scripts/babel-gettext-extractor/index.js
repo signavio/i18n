@@ -19,8 +19,6 @@ const DEFAULT_HEADERS = {
 
 const DEFAULT_ADD_LOCATION = 'full'
 
-const NO_CONTEXT = 'no_context'
-
 function isStringLiteral(node: AstNodeT) {
   return node.type === 'StringLiteral'
 }
@@ -228,7 +226,7 @@ export default function plugin() {
         context[translate.msgid] = translate
 
         if (replacements) {
-          const contextName = translate.msgctxt || NO_CONTEXT
+          const contextName = translate.msgctxt
           const contextReplacements = replacements[contextName]
           if (
             contextReplacements &&
