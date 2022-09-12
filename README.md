@@ -179,14 +179,31 @@ Doing that manually could be laborious, that's why `i18n-extract` supports a pat
 }
 ```
 
-Replacements json file should be a simple object, where the keys are the original translation strings and the values are the new ones.
+Replacements json file should be an object where the keys are translation context names.
+Values of each context are objects for the original translation strings and the values are the new ones.
 
 ```json
 {
+  "some context" : {
     "Old translation": "New translation",
     "Old translation2": "New translation2"
+  }
 }
 ```
+
+If the translation does not have the context, then it should be stored in the `""` (empty string) field.
+
+```json
+{
+  "" : {
+    "Old translation": "New translation without context",
+  },
+  "some context": {
+    "Old translation": "New translation with some context",
+  }
+}
+```
+
 
 Having the original JS code: 
 ```javascript

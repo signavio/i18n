@@ -42,7 +42,7 @@ describe('extract', () => {
       expect(messages).not.toContain('msgid "Not in the result"')
     })
   })
-  
+
   describe('replacements', () => {
     const replacementsDir = `${fixtureDir}/replacements`
 
@@ -63,6 +63,26 @@ describe('extract', () => {
       expect(messages).toContain(`msgid "A replacement for 'Needs replacement'`)
       expect(messages).toContain('#. REPLACEMENT for "Needs replacement"')
       expect(messages).toContain('msgid "No replacement is needed"')
+
+      // context
+      expect(messages).toContain(
+        [
+          `#: fixtures/replacements/index.js:3`,
+          `#. REPLACEMENT for "Needs replacement", context: "someContext"`,
+          `msgctxt "someContext"`,
+          `msgid "A replacement for 'Needs replacement'"`,
+        ].join('\n')
+      )
+
+      // context plural
+      expect(messages).toContain(
+        [
+          `#: fixtures/replacements/index.js:5`,
+          `msgctxt "anotherContext"`,
+          `msgid "Needs replacement plural 1"`,
+          `msgid_plural "Needs replacement plural 2"`,
+        ].join('\n')
+      )
     })
   })
   

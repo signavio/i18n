@@ -5,20 +5,12 @@ const defaultOptions = {
   markdown: false,
 }
 
+const NO_CONTEXT = ""
 
 export default (singleton) => {
   return function translate(text, plural, options) {
-    // singleton.replacements optionally contains the translation replacements for the first two string arguments
-    if (singleton.replacements) {
 
-      if (typeof text === 'string' && singleton.replacements[text]) {
-        text = singleton.replacements[text]
-      }
-  
-      if (typeof plural === 'string' && singleton.replacements[plural]) {
-        plural = singleton.replacements[plural]
-      }
-    }
+
 
     // singleton.messages contains the translation messages for the currently active languae
     // format: singular key -> [ plural key, singular translations, plural translation ]
@@ -33,10 +25,27 @@ export default (singleton) => {
     finalOptions = {
       ...defaultOptions,
       ...finalOptions,
-      context:
-        finalOptions && finalOptions.context
-          ? `${finalOptions.context}\u0004`
-          : '',
+    }
+
+    const context = finalOptions && finalOptions.context
+    finalOptions.context = context ? `${finalOptions.context}\u0004` : ''
+
+    const replacementContextKey = context || NO_CONTEXT
+    // singleton.replacements optionally contains the translation replacements for the first two string arguments by context
+    const { replacements } = singleton
+
+    if (replacements && replacements[replacementContextKey]) {
+      const replacementsContext = replacements[replacementContextKey]
+
+      if (replacementsContext) {
+        if (isString(text)  && replacementsContext[text]) {
+          text = replacementsContext[text]
+        }
+    
+        if (isString(finalPlural) && replacementsContext[finalPlural]) {
+          finalPlural = replacementsContext[finalPlural]
+        }
+      }
     }
 
     const [translatedSingular, translatedPlural] = (

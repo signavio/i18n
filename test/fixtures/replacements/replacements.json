@@ -1,3 +1,13 @@
+
 {
-  "Needs replacement": "A replacement for 'Needs replacement'"
+  "": {
+    "Needs replacement": "A replacement for 'Needs replacement'"
+  },
+  "someContext": {
+    "Needs replacement": "A replacement for 'Needs replacement'"
+  },
+  "anotherContext": {
+    "Needs replacement with context plural 1": "A replacement for 'Needs replacement with context plural 1'",
+    "Needs replacement with context plural 2": "A replacement for 'Needs replacement with context plural 2'"
+  }
 }
