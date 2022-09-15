@@ -226,7 +226,7 @@ export default function plugin() {
         context[translate.msgid] = translate
 
         if (replacements) {
-          const contextName = translate.msgctxt
+          const contextName = translate.msgctxt || ""
           const contextReplacements = replacements[contextName]
           if (
             contextReplacements &&

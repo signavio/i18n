@@ -59,8 +59,20 @@ describe('extract', () => {
       
       const messages = readFileSync(`${replacementsDir}/messages.pot`).toString("utf-8")
 
-      expect(messages).toContain('msgid "Needs replacement"')
-      expect(messages).toContain(`msgid "A replacement for 'Needs replacement'`)
+
+      expect(messages).toContain([
+        `#: fixtures/replacements/index.js:1`,
+        `msgid "Needs replacement"`,
+        `msgstr ""`,
+      ].join('\n'))
+
+      expect(messages).toContain([
+        `#: fixtures/replacements/index.js:1`,
+        `#. REPLACEMENT for "Needs replacement"`,
+        `msgid "A replacement for 'Needs replacement'"`,
+        `msgstr ""`,
+      ].join('\n'))
+
       expect(messages).toContain('#. REPLACEMENT for "Needs replacement"')
       expect(messages).toContain('msgid "No replacement is needed"')
 
