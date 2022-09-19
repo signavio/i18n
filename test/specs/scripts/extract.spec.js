@@ -43,6 +43,28 @@ describe('extract', () => {
     })
   })
 
+  describe('template literals ', () => {
+    const templateLiteralsDir = `${fixtureDir}/templateLiterals`
+
+    afterEach(() => {
+      removeIfExists(`${templateLiteralsDir}/messages.pot`)
+    })
+
+    it('should be possible to pass template literals as arguments', () => {
+      expect(existsSync(`${templateLiteralsDir}/messages.pot`)).toBeFalsy()
+
+      callForDir(templateLiteralsDir)
+
+      expect(existsSync(`${templateLiteralsDir}/messages.pot`)).toBeDefined()
+      
+      const messages = readFileSync(`${templateLiteralsDir}/messages.pot`).toString("utf-8")
+
+      expect(messages).toContain('msgid "Hello World"')
+      expect(messages).toContain('msgid "Hello World concat"')
+      expect(messages).not.toContain('msgid "Hello World Not in the result"')
+    })
+  })
+
   describe('replacements', () => {
     const replacementsDir = `${fixtureDir}/replacements`
 
