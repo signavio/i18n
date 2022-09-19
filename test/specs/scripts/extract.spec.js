@@ -56,11 +56,15 @@ describe('extract', () => {
       callForDir(templateLiteralsDir)
 
       expect(existsSync(`${templateLiteralsDir}/messages.pot`)).toBeDefined()
-      
-      const messages = readFileSync(`${templateLiteralsDir}/messages.pot`).toString("utf-8")
+
+      const messages = readFileSync(`${templateLiteralsDir}/messages.pot`).toString('utf-8')
 
       expect(messages).toContain('msgid "Hello World"')
       expect(messages).toContain('msgid "Hello World concat"')
+      expect(messages).toContain('msgid "Hello World concat different quotes"')
+      expect(messages).toContain([`#: fixtures/templateLiterals/index.js:1`, `msgid "Hello World"`].join('\n'))
+      expect(messages).toContain([`#: fixtures/templateLiterals/index.js:3`, `msgctxt "someContext"`, `msgid "Hello World"`].join('\n'))
+      expect(messages).toContain([`#: fixtures/templateLiterals/index.js:5`, `msgid "Hello World concat"`].join('\n'))
       expect(messages).not.toContain('msgid "Hello World Not in the result"')
     })
   })

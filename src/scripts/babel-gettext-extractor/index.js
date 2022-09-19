@@ -224,8 +224,7 @@ export default function plugin() {
           const ctxtProp = getContextProperty(options)
 
           if (ctxtProp) {
-            const messageContext = ctxtProp.value.extra.rawValue
-
+            const messageContext = getStringValue(ctxtProp.value)
             if (messageContext) {
               translate.msgctxt = messageContext
             }
