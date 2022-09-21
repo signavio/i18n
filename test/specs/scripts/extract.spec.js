@@ -65,7 +65,8 @@ describe('extract', () => {
       expect(messages).toContain([`#: fixtures/templateLiterals/index.js:1`, `msgid "Hello World"`].join('\n'))
       expect(messages).toContain([`#: fixtures/templateLiterals/index.js:3`, `msgctxt "someContext"`, `msgid "Hello World"`].join('\n'))
       expect(messages).toContain([`#: fixtures/templateLiterals/index.js:5`, `msgid "Hello World concat"`].join('\n'))
-      expect(messages).not.toContain('msgid "Hello World Not in the result"')
+      expect(messages).not.toContain('Not in the result')
+      expect(messages.split('\n')).toHaveLength(19)
     })
   })
 

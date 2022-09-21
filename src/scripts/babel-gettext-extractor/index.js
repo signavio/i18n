@@ -26,8 +26,8 @@ function isStringLiteral(node: AstNodeT) {
 function isTemplateLiteral(node: AstNodeT) {
   return node.type === 'TemplateLiteral';
 }
-function isLiteral(node: AstNodeT) {
-  return isStringLiteral(node) || isTemplateLiteral(node)
+function isSimpleLiteral(node: AstNodeT) {
+  return isStringLiteral(node) || (isTemplateLiteral(node) && typeof getStringValue(node) === 'string') 
 }
 
 function isObjectLiteral(node: AstNodeT) {
@@ -50,8 +50,8 @@ function isStringConcatExpr(node: AstNodeT) {
   return (
     node.type === 'BinaryExpression' &&
     node.operator === '+' &&
-    ((isLiteral(left) || isStringConcatExpr(left)) &&
-      (isLiteral(right) || isStringConcatExpr(right)))
+    ((isSimpleLiteral(left) || isStringConcatExpr(left)) &&
+      (isSimpleLiteral(right) || isStringConcatExpr(right)))
   )
 }
 
