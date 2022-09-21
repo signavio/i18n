@@ -70,7 +70,11 @@ function getStringValue(node: AstNodeT) {
   }
 
   if (isStringConcatExpr(node)) {
-    return getStringValue(node.left) + getStringValue(node.right)
+    const [left, right] = [getStringValue(node.left), getStringValue(node.right)]
+    if ([left, right].includes(null)) {
+      return null
+    }
+    return left + right
   }
 
   return null
