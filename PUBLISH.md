@@ -39,10 +39,10 @@ git merge origin/release-new-version-[a-b-c] --ff-only
 git push origin master
 ```
 
-5. Create a release note (Use template from older release tags https://github.com/signavio/i18n/releases)
+7. Create a release note (Use template from older release tags https://github.com/signavio/i18n/releases)
 
    1. Add summary: Describe the changes/packages of this release
    2. Add the release tag created in the previous steps: (v1.2.0)
    3. Add title: #<release-number> release of i18n packages
 
-6. Great Job! You've done it. 🎉
+8. Great Job! You've done it. 🎉
