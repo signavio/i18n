@@ -19,27 +19,11 @@ git reset origin/master --hard
 git checkout -b release-new-version-[a-b-c]
 ```
 
-4.  Start the publishing procedure (\*\*)
+4.  Start the publishing procedure (\*\*)  
+    1.  Check the current version using `npm version`
+    2.  Update the version you would to like to publish `npm version [version] # version -> major, minor, patch ... version`
+    3.  Push the branch `git push`
 
-    1.  Check the current version using
-
-```bash
-npm version
-```
-
-   2.  Update the version you would to like to publish
-
-```bash
-npm version [version] # version -> major, minor, patch ... version`
-
-```
-
-   3.  Push the branch
-
-```bash
-git push
-
-```
 
 5.  Publish the package.
 
