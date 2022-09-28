@@ -23,31 +23,31 @@ git checkout -b release-new-version-[a-b-c]
 
     1.  Check the current version using
 
-        ```bash
-        		npm version
-        ```
+```bash
+npm version
+```
 
     2.  Update the version you would to like to publish
 
-        ```bash
-        		npm version [version] # version -> major, minor, patch ... version`
+```bash
+npm version [version] # version -> major, minor, patch ... version`
 
-        ```
+```
 
     3.  Commit the changes
 
     4.  Make a new git tag
 
-        ```bash
-        		git tag [tag] # tag -> v1.2.0`
-        ```
+```bash
+git tag [tag] # tag -> v1.2.0`
+```
 
     5.  Push the branch
 
-        ```bash
-        git tag [tag] # tag -> v1.2.0`
+```bash
+git tag [tag] # tag -> v1.2.0`
 
-        ```
+```
 
 5.  Publish the package.
 
