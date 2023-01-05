@@ -120,7 +120,9 @@ i18n('Contact __supportLink__', {
 })
 ```
 
-The default syntax for interpolations is a group of characters or numbers (`\w+`) wrapped in double underscores (`__`). If you require a different syntax this can be customized using the init option `interpolationPattern`. Internally, pattern value will be used to create a regular expression for matching interpolation placeholder like this:
+The default syntax for interpolations is a group of characters or numbers (`\w+`) wrapped in double underscores (`__`). Note that the identifiers `context` and `markdown` are reserved and should not be used as a placeholder (see docs below).
+
+If you require a different syntax this can be customized using the init option `interpolationPattern`. Internally, pattern value will be used to create a regular expression for matching interpolation placeholder like this:
 
 ```
 new RegExp(interpolationPattern, 'g')
@@ -139,9 +141,19 @@ i18n('Showing __count__ item', 'Showing __count__ items', { count })
 ```
 
 To use this feature simply pass two different translations to the `i18n` function.
-The first string is used for the singular case and the second one for the plural case.
-Note that you **have** to hand in a variable called count.
+The first string is used for the singular case (`count == ±1` ) and the second one for the plural case.
+Note that you **have** to hand in a variable called `count`.
 This variable is used to decide which version of the translation to choose.
+
+You can also use multiple variables, but only the `count` variable is used to select the translation:
+
+```javascript
+i18n(
+    'Showing __count__ item out of __total__',
+    'Showing __count__ items out of __total__',
+    { count, total }
+)
+```
 
 ### Message context
 
@@ -166,7 +178,7 @@ i18n('I want _this_ to be **bold**', {
 
 ### Replacements
 
-#### Extrtaction
+#### Extraction
 
 Sometimes there may be cases when you need to rename several entities across the whole project, but keep the both versions of translations and show them based on the feature flag.
 Doing that manually could be laborious, that's why `i18n-extract` supports a path to the replacements json as an optional third command line argument.
@@ -237,7 +249,7 @@ msgstr ""
 
 #### Usage
 
-To use the replacements instead of the old strings in runtime pass the same replecements object which was used in the extraction step to the `init` function:
+To use the replacements instead of the old strings in runtime pass the same replacements object which was used in the extraction step to the `init` function:
 
 ```javascript
 import replacements from 'replacements.json'
