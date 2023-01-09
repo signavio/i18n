@@ -1,4 +1,4 @@
-# How to publish packages
+# How to publish packages test
 
 1. Enter the master branch and check that pipelines are green
 
