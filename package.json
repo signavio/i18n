@@ -75,13 +75,13 @@
     "jest-junit": "13.0.0",
     "po2json": "1.0.0-beta-3",
     "prettier": "1.15.3",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "rimraf": "2.7.1"
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0",
-    "react": "^16.13.0"
+    "react": "^16.13.0 || ^18.0.0"
   },
   "resolutions": {
     "set-value": "^4.1.0",
