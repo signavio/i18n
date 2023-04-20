@@ -43,8 +43,7 @@ Create the file `.i18nrc` and add a configuration object for gettext message ext
 }
 ```
 
-
-**IMPORTANT:**  when the second command line argument is passed to the `i18n-extract` command, it will overwrite the `fileName` field of the `.i18nrc` config.
+**IMPORTANT:** when the second command line argument is passed to the `i18n-extract` command, it will overwrite the `fileName` field of the `.i18nrc` config.
 
 More available options are documented here: https://github.com/getsentry/babel-gettext-extractor
 
@@ -216,7 +215,9 @@ i18n('Contact __supportLink__', {
 })
 ```
 
-The default syntax for interpolations is a group of characters or numbers (`\w+`) wrapped in double underscores (`__`). If you require a different syntax this can be customized using the init option `interpolationPattern`. Internally, pattern value will be used to create a regular expression for matching interpolation placeholder like this:
+The default syntax for interpolations is a group of characters or numbers (`\w+`) wrapped in double underscores (`__`). Note that the identifiers `context` and `markdown` are reserved and should not be used as a placeholder (see docs below).
+
+If you require a different syntax this can be customized using the init option `interpolationPattern`. Internally, pattern value will be used to create a regular expression for matching interpolation placeholder like this:
 
 ```
 new RegExp(interpolationPattern, 'g')
@@ -235,9 +236,19 @@ i18n('Showing __count__ item', 'Showing __count__ items', { count })
 ```
 
 To use this feature simply pass two different translations to the `i18n` function.
-The first string is used for the singular case and the second one for the plural case.
-Note that you **have** to hand in a variable called count.
+The first string is used for the singular case (`count == ±1` ) and the second one for the plural case.
+Note that you **have** to hand in a variable called `count`.
 This variable is used to decide which version of the translation to choose.
+
+You can also use multiple variables, but only the `count` variable is used to select the translation:
+
+```javascript
+i18n(
+    'Showing __count__ item out of __total__',
+    'Showing __count__ items out of __total__',
+    { count, total }
+)
+```
 
 ### Message context
 
@@ -260,7 +271,10 @@ i18n('I want _this_ to be **bold**', {
 })
 ```
 ### Replacements
+
+
 #### Extraction
+
 Sometimes there may be cases when you need to rename several entities across the whole project, but keep the both versions of translations and show them based on the feature flag.
 Doing that manually could be laborious, that's why `i18n-extract` supports a path to the replacements json as an optional third command line argument.
 
@@ -278,7 +292,7 @@ Values of each context are objects for the original translation strings and the 
 
 ```json
 {
-  "some context" : {
+  "some context": {
     "Old translation": "New translation",
     "Old translation2": "New translation2"
   }
@@ -289,22 +303,22 @@ If the translation does not have the context, then it should be stored in the `"
 
 ```json
 {
-  "" : {
-    "Old translation": "New translation without context",
+  "": {
+    "Old translation": "New translation without context"
   },
   "some context": {
-    "Old translation": "New translation with some context",
+    "Old translation": "New translation with some context"
   }
 }
 ```
 
+Having the original JS code:
 
-Having the original JS code: 
 ```javascript
 // translators: comment 1
-i18n('Old translation');
+i18n('Old translation')
 // translators: comment 2
-i18n('Old translation2');
+i18n('Old translation2')
 ```
 
 The .pot file will have the following content
@@ -329,7 +343,8 @@ msgstr ""
 ```
 
 #### Usage
-To use the replacements instead of the old strings in runtime pass the same replecements object which was used in the extraction step to the `init` function:
+
+To use the replacements instead of the old strings in runtime pass the same replacements object which was used in the extraction step to the `init` function:
 
 ```javascript
 import replacements from 'replacements.json'
@@ -346,6 +361,9 @@ init(getLangLoader, config, replacements).then(() => {
 })
 ```
 
+### Publishing Packages
+
+Read the following [guide](PUBLISH.md) to publish packages of the i18n repository
 
 [build-badge]: https://circleci.com/gh/signavio/i18n/tree/master.svg?style=shield&circle-token=:circle-token
 [build]: https://circleci.com/gh/signavio/i18n/tree/master
