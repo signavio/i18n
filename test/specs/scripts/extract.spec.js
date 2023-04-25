@@ -43,6 +43,33 @@ describe('extract', () => {
     })
   })
 
+  describe('template literals ', () => {
+    const templateLiteralsDir = `${fixtureDir}/templateLiterals`
+
+    afterEach(() => {
+      removeIfExists(`${templateLiteralsDir}/messages.pot`)
+    })
+
+    it('should be possible to pass template literals as arguments', () => {
+      expect(existsSync(`${templateLiteralsDir}/messages.pot`)).toBeFalsy()
+
+      callForDir(templateLiteralsDir)
+
+      expect(existsSync(`${templateLiteralsDir}/messages.pot`)).toBeDefined()
+
+      const messages = readFileSync(`${templateLiteralsDir}/messages.pot`).toString('utf-8')
+
+      expect(messages).toContain('msgid "Hello World"')
+      expect(messages).toContain('msgid "Hello World concat"')
+      expect(messages).toContain('msgid "Hello World concat different quotes"')
+      expect(messages).toContain([`#: fixtures/templateLiterals/index.js:1`, `msgid "Hello World"`].join('\n'))
+      expect(messages).toContain([`#: fixtures/templateLiterals/index.js:3`, `msgctxt "someContext"`, `msgid "Hello World"`].join('\n'))
+      expect(messages).toContain([`#: fixtures/templateLiterals/index.js:5`, `msgid "Hello World concat"`].join('\n'))
+      expect(messages).not.toContain('Not in the result')
+      expect(messages.split('\n')).toHaveLength(19)
+    })
+  })
+
   describe('replacements', () => {
     const replacementsDir = `${fixtureDir}/replacements`
 

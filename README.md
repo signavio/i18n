@@ -61,6 +61,101 @@ messages, which is helpful if your project is using a legacy version of babel
   }
 }
 ```
+## Extraction
+`i18n-extract` command will extract up to first two string arguments of the `i18n` call and treat them as translation keys.
+Message context property will be extracted in the same way as well.
+
+
+Having the original JS code: 
+```javascript
+// translators: singular
+i18n('Translation');
+
+// translators: plural
+i18n('Another translation', 'Another translations');
+
+// translators: context
+i18n('Translation', {context: 'button'});
+
+```
+The .pot file will have the following content
+
+```
+#. singular
+msgid "Translation"
+msgstr ""
+
+#. plural
+msgid "Another translation"
+msgid_plural "Another translations"
+msgstr[0] ""
+msgstr[1] ""
+
+#. context
+msgctxt "button"
+msgid "Translation"
+msgstr ""
+```
+
+**IMPORTANT:** only the following parameters will be extracted:
+- String literals (`'single'` and `"double"` quotes)
+- Simple template literals (``backticks`` without any nested expressions and tags)
+- Their concatenation with `+` operator
+
+Otherwise the translation function call will be omitted.
+
+These translations will be extracted:
+```javascript
+
+i18n('Translation');
+i18n("Translation");
+i18n(`Translation`);
+
+
+i18n('Translation ' + "with" + ` concatenation`);
+i18n('Translation ' + "with" + ` concatenation`, 'Translation ' + "with" + ` concatenation plural`);
+
+```
+
+These contexts will be extracted:
+```javascript
+i18n("Translation", {context: 'button'});
+i18n("Translation", {context: "button"});
+i18n("Translation", {context: `button`});
+
+
+i18n("Translation", {context: 'context' + ` with ` + "concatenation"});
+```
+
+These translations will be ignored:
+
+```javascript
+
+i18n('Translation' + 123);
+i18n("Translation" + {});
+i18n("Translation" + foobar);
+i18n(`Translation${"nested expression with string"}`);
+i18n(`Translation${foobar}`);
+i18n(someTag`Translation`);
+
+i18n('Translation ' + "with" + ` concatenation`);
+i18n('Translation ' + "with" + ` concatenation`, 'Translation ' + "with" + ` concatenation plural`);
+```
+
+These contexts will be ignored:
+
+```javascript
+
+i18n("Translation", {context: 'button' + 123});
+i18n("Translation", {context: "button" + {}});
+i18n("Translation", {context: "button" + foobar});
+i18n("Translation", {context: `button ${'nested expression with string'}`});
+i18n("Translation", {context: `button ${foobar}`});
+i18n("Translation", {context: 'context' + ` with ` + "concatenation"});
+```
+
+**IMPORTANT:** when the translation key is valid and the context is not, the translation will be extracted without context.
+
 
 ## Usage
 
@@ -175,8 +270,8 @@ i18n('I want _this_ to be **bold**', {
   markdown: true,
 })
 ```
-
 ### Replacements
+
 
 #### Extraction
 

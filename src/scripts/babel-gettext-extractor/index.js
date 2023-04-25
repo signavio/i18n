@@ -23,6 +23,13 @@ function isStringLiteral(node: AstNodeT) {
   return node.type === 'StringLiteral'
 }
 
+function isTemplateLiteral(node: AstNodeT) {
+  return node.type === 'TemplateLiteral';
+}
+function isSimpleLiteral(node: AstNodeT) {
+  return isStringLiteral(node) || (isTemplateLiteral(node) && typeof getStringValue(node) === 'string') 
+}
+
 function isObjectLiteral(node: AstNodeT) {
   return node.type === 'ObjectExpression'
 }
@@ -43,8 +50,8 @@ function isStringConcatExpr(node: AstNodeT) {
   return (
     node.type === 'BinaryExpression' &&
     node.operator === '+' &&
-    ((isStringLiteral(left) || isStringConcatExpr(left)) &&
-      (isStringLiteral(right) || isStringConcatExpr(right)))
+    ((isSimpleLiteral(left) || isStringConcatExpr(left)) &&
+      (isSimpleLiteral(right) || isStringConcatExpr(right)))
   )
 }
 
@@ -53,8 +60,21 @@ function getStringValue(node: AstNodeT) {
     return node.value
   }
 
+  if (isTemplateLiteral(node)) {
+    // Support only simple template literals without expressions
+    if (node.expressions.length > 0 || node.quasis.length !== 1) {
+      return null
+    }
+    return node.quasis[0].value.cooked
+
+  }
+
   if (isStringConcatExpr(node)) {
-    return getStringValue(node.left) + getStringValue(node.right)
+    const [left, right] = [getStringValue(node.left), getStringValue(node.right)]
+    if ([left, right].includes(null)) {
+      return null
+    }
+    return left + right
   }
 
   return null
@@ -208,8 +228,7 @@ export default function plugin() {
           const ctxtProp = getContextProperty(options)
 
           if (ctxtProp) {
-            const messageContext = ctxtProp.value.extra.rawValue
-
+            const messageContext = getStringValue(ctxtProp.value)
             if (messageContext) {
               translate.msgctxt = messageContext
             }
