@@ -13,3 +13,5 @@ junit.xml
 *.sublime-workspace
 *.log
 *.pot
+
+.idea/

@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  blackduck: signavio/blackduck@1.3.0
-  fortify: signavio/fortify@1.1.1
+  blackduck: signavio/blackduck@1.9.0
+  fortify: signavio/fortify@2.0.0
 
 executors:
   fortify:
@@ -11,7 +11,7 @@ executors:
     resource_class: 2xlarge
 
 references:
-  workspace_root: &workspace_root ~/repo
+  workspace_root: &workspace_root /home/circleci/repo
 
   container_config: &container_config
     docker:
@@ -70,9 +70,10 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
       - run: yarn install && yarn build
+      - run: npm prune --production
 
       - blackduck/blackduck-detect:
-          blackduck-project-group: SAP_PROCESS_MANAGER_OD_2.0
+          blackduck-project-group: SAP_Signavio_Process_Manager
           blackduck-project-name: i18n
           blackduck-project-path: *workspace_root
 
@@ -100,6 +101,16 @@ jobs:
               -f i18n.fpr
       - store_artifacts:
           path: i18n.fpr
+      - run:
+          name: 'Fortify: upload'
+          command: |
+            fortifyclient \
+               -url "$FORTIFY_SSC" \
+               -authtoken "$SSC_API_TOKEN" \
+               uploadFPR \
+               -file i18n.fpr \
+               -project signavio-i18n \
+               -version master
 
   test:
     <<: *container_config
@@ -155,7 +166,7 @@ workflows:
   fortify-workflow:
     triggers:
       - schedule:
-          cron: '0 0 * * *'
+          cron: '0 0 * * 0'
           filters:
             branches:
               only: master

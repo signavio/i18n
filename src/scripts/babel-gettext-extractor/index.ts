@@ -20,6 +20,13 @@ function isStringLiteral(node: AstNodeT) {
   return node.type === 'StringLiteral'
 }
 
+function isTemplateLiteral(node: AstNodeT) {
+  return node.type === 'TemplateLiteral';
+}
+function isSimpleLiteral(node: AstNodeT) {
+  return isStringLiteral(node) || (isTemplateLiteral(node) && typeof getStringValue(node) === 'string')
+}
+
 function isObjectLiteral(node: AstNodeT) {
   return node.type === 'ObjectExpression'
 }
@@ -40,8 +47,8 @@ function isStringConcatExpr(node: any) {
   return (
     node.type === 'BinaryExpression' &&
     node.operator === '+' &&
-    ((isStringLiteral(left) || isStringConcatExpr(left)) &&
-      (isStringLiteral(right) || isStringConcatExpr(right)))
+    ((isSimpleLiteral(left) || isStringConcatExpr(left)) &&
+      (isSimpleLiteral(right) || isStringConcatExpr(right)))
   )
 }
 
@@ -50,8 +57,21 @@ function getStringValue(node: any) {
     return node.value
   }
 
+  if (isTemplateLiteral(node)) {
+    // Support only simple template literals without expressions
+    if (node.expressions.length > 0 || node.quasis.length !== 1) {
+      return null
+    }
+    return node.quasis[0].value.cooked
+
+  }
+
   if (isStringConcatExpr(node)) {
-    return getStringValue(node.left) + getStringValue(node.right)
+    const [left, right] = [getStringValue(node.left), getStringValue(node.right)]
+    if ([left, right].includes(null)) {
+      return null
+    }
+    return left + right
   }
 
   return null
@@ -59,12 +79,12 @@ function getStringValue(node: any) {
 
 function getExtractedComment(node: any) {
   const comments = []
-  ;(node.leadingComments || []).forEach((commentNode: any) => {
-    const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
-    if (match) {
-      comments.push(match[1])
-    }
-  })
+    ; (node.leadingComments || []).forEach((commentNode: any) => {
+      const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
+      if (match) {
+        comments.push(match[1])
+      }
+    })
   return comments.length > 0 ? comments.join('\n') : null
 }
 
@@ -129,6 +149,7 @@ export default function plugin() {
           headers = DEFAULT_HEADERS,
           addLocation = DEFAULT_ADD_LOCATION,
           noLocation = false,
+          replacements = null,
         } = config.opts
 
         let base = config.opts.baseDirectory
@@ -204,8 +225,7 @@ export default function plugin() {
           const ctxtProp: any = getContextProperty(options)
 
           if (ctxtProp) {
-            const messageContext = ctxtProp.value.extra.rawValue
-
+            const messageContext = getStringValue(ctxtProp.value)
             if (messageContext) {
               translate.msgctxt = messageContext
             }
@@ -220,6 +240,40 @@ export default function plugin() {
         }
 
         context[translate.msgid] = translate
+
+        if (replacements) {
+          const contextName = translate.msgctxt || ""
+          const contextReplacements = replacements[contextName]
+          if (
+            contextReplacements &&
+            (typeof contextReplacements[translate.msgid] === 'string' ||
+              typeof contextReplacements[translate.msgid_plural] === 'string')
+          ) {
+            const newTranslate = {
+              ...translate,
+              comments: {
+                ...translate.comments,
+                extracted:
+                  `REPLACEMENT for "${translate.msgid}"`.trim() +
+                  (translate.msgctxt ? `, context: "${translate.msgctxt}"` : ''),
+              },
+            }
+
+            newTranslate.msgid =
+              typeof contextReplacements[translate.msgid] === 'string'
+                ? contextReplacements[newTranslate.msgid]
+                : newTranslate.msgid
+
+            newTranslate.msgid_plural =
+              typeof contextReplacements[translate.msgid_plural] === 'string'
+                ? contextReplacements[newTranslate.msgid_plural]
+                : newTranslate.msgid_plural
+
+            newTranslate.msgctxt = translate.msgctxt
+
+            context[newTranslate.msgid] = newTranslate
+          }
+        }
 
         const output = gettextParser.po.compile(data)
         fs.writeFileSync(fileName, output)

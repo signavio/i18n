@@ -15,6 +15,12 @@ const callForDir = dirName => {
   )
 }
 
+const callForDirReplacements = dirName => {
+  childProcess.execSync(
+    `node ${process.cwd()}/bin/i18n-extract.js "${dirName}/**/*.js" ${dirName}/messages.pot} ${dirName}/replacements.json`
+  )
+}
+
 describe('extract', () => {
   describe('function name', () => {
     const customFunctionNameDir = `${fixtureDir}/customFunctionName`
@@ -37,6 +43,88 @@ describe('extract', () => {
     })
   })
 
+  describe('template literals ', () => {
+    const templateLiteralsDir = `${fixtureDir}/templateLiterals`
+
+    afterEach(() => {
+      removeIfExists(`${templateLiteralsDir}/messages.pot`)
+    })
+
+    it('should be possible to pass template literals as arguments', () => {
+      expect(existsSync(`${templateLiteralsDir}/messages.pot`)).toBeFalsy()
+
+      callForDir(templateLiteralsDir)
+
+      expect(existsSync(`${templateLiteralsDir}/messages.pot`)).toBeDefined()
+
+      const messages = readFileSync(`${templateLiteralsDir}/messages.pot`).toString('utf-8')
+
+      expect(messages).toContain('msgid "Hello World"')
+      expect(messages).toContain('msgid "Hello World concat"')
+      expect(messages).toContain('msgid "Hello World concat different quotes"')
+      expect(messages).toContain([`#: fixtures/templateLiterals/index.js:1`, `msgid "Hello World"`].join('\n'))
+      expect(messages).toContain([`#: fixtures/templateLiterals/index.js:3`, `msgctxt "someContext"`, `msgid "Hello World"`].join('\n'))
+      expect(messages).toContain([`#: fixtures/templateLiterals/index.js:5`, `msgid "Hello World concat"`].join('\n'))
+      expect(messages).not.toContain('Not in the result')
+      expect(messages.split('\n')).toHaveLength(19)
+    })
+  })
+
+  describe('replacements', () => {
+    const replacementsDir = `${fixtureDir}/replacements`
+
+    afterEach(() => {
+      removeIfExists(`${replacementsDir}/messages.pot`)
+    })
+
+    it('should be possible to add replacement translations based on the replacements json', () => {
+      expect(existsSync(`${replacementsDir}/messages.pot`)).toBeFalsy()
+
+      callForDirReplacements(replacementsDir)
+
+      expect(existsSync(`${replacementsDir}/messages.pot`)).toBeDefined()
+      
+      const messages = readFileSync(`${replacementsDir}/messages.pot`).toString("utf-8")
+
+
+      expect(messages).toContain([
+        `#: fixtures/replacements/index.js:1`,
+        `msgid "Needs replacement"`,
+        `msgstr ""`,
+      ].join('\n'))
+
+      expect(messages).toContain([
+        `#: fixtures/replacements/index.js:1`,
+        `#. REPLACEMENT for "Needs replacement"`,
+        `msgid "A replacement for 'Needs replacement'"`,
+        `msgstr ""`,
+      ].join('\n'))
+
+      expect(messages).toContain('#. REPLACEMENT for "Needs replacement"')
+      expect(messages).toContain('msgid "No replacement is needed"')
+
+      // context
+      expect(messages).toContain(
+        [
+          `#: fixtures/replacements/index.js:3`,
+          `#. REPLACEMENT for "Needs replacement", context: "someContext"`,
+          `msgctxt "someContext"`,
+          `msgid "A replacement for 'Needs replacement'"`,
+        ].join('\n')
+      )
+
+      // context plural
+      expect(messages).toContain(
+        [
+          `#: fixtures/replacements/index.js:5`,
+          `msgctxt "anotherContext"`,
+          `msgid "Needs replacement plural 1"`,
+          `msgid_plural "Needs replacement plural 2"`,
+        ].join('\n')
+      )
+    })
+  })
+  
   describe('file name', () => {
     const customFileNameDir = `${fixtureDir}/customFileName`
 
