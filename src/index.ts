@@ -1,6 +1,7 @@
 import createTranslate from './translate'
+import { TranslationConfiguration } from './types'
 
-let config = {}
+let config: TranslationConfiguration = {}
 let specifiedLocale
 let getLangLoader
 let changeLocaleListeners = []
@@ -29,15 +30,19 @@ export default translate
  * @param configObj A hashmap with keys `default` (default locale) and `map` (mapping of locales to
  * other locales)
  * @param replacements A hashmap with translation context keys and translation hashmaps as their values
- * 
+ *
  **/
-export function init(getLangLoaderFn, configObj = {}, replacements) {
+export function init(
+  getLangLoaderFn: (locale: string) => Awaited<any>,
+  configObj: TranslationConfiguration = {},
+  replacements
+) {
   getLangLoader = getLangLoaderFn
   config = configObj
   if (config.interpolationPattern) {
     singleton.interpolationPattern = configObj.interpolationPattern
   }
-  singleton.replacements = replacements 
+  singleton.replacements = replacements
   return new Promise(loadBundle)
 }
 

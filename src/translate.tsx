@@ -1,5 +1,5 @@
-import { marked } from 'marked'
 import React from 'react'
+import { marked } from 'marked'
 
 const defaultOptions = {
   markdown: false,
@@ -8,13 +8,16 @@ const defaultOptions = {
 const NO_CONTEXT = ""
 
 export default (singleton) => {
-  return function translate(text, plural, options) {
-
+  return function translate(
+    text: string,
+    plural?: string | { [key: string]: any },
+    options?: { [key: string]: any }
+  ) {
 
 
     // singleton.messages contains the translation messages for the currently active languae
     // format: singular key -> [ plural key, singular translations, plural translation ]
-    let finalOptions = options
+    let finalOptions: any = options
     let finalPlural = plural
 
     if (!finalOptions && isPlainObject(finalPlural)) {
@@ -41,7 +44,7 @@ export default (singleton) => {
         if (isString(text)  && replacementsContext[text]) {
           text = replacementsContext[text]
         }
-    
+
         if (isString(finalPlural) && replacementsContext[finalPlural]) {
           finalPlural = replacementsContext[finalPlural]
         }

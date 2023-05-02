@@ -1,4 +1,3 @@
-// @flow
 import glob from 'glob'
 import ProgressBar from 'progress'
 import { transformFileSync } from '@babel/core'

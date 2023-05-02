@@ -1,10 +1,7 @@
-// @flow
 import gettextParser from 'gettext-parser'
 import fs from 'fs'
 
 import type {
-  AddLocationT,
-  ConfigT,
   AstNodeT,
   ObjectPropertyT,
 } from '../../types'
@@ -27,7 +24,7 @@ function isTemplateLiteral(node: AstNodeT) {
   return node.type === 'TemplateLiteral';
 }
 function isSimpleLiteral(node: AstNodeT) {
-  return isStringLiteral(node) || (isTemplateLiteral(node) && typeof getStringValue(node) === 'string') 
+  return isStringLiteral(node) || (isTemplateLiteral(node) && typeof getStringValue(node) === 'string')
 }
 
 function isObjectLiteral(node: AstNodeT) {
@@ -43,7 +40,7 @@ function getContextProperty(node: AstNodeT) {
   )
 }
 
-function isStringConcatExpr(node: AstNodeT) {
+function isStringConcatExpr(node: any) {
   const left = node.left
   const right = node.right
 
@@ -55,7 +52,7 @@ function isStringConcatExpr(node: AstNodeT) {
   )
 }
 
-function getStringValue(node: AstNodeT) {
+function getStringValue(node: any) {
   if (isStringLiteral(node)) {
     return node.value
   }
@@ -80,9 +77,9 @@ function getStringValue(node: AstNodeT) {
   return null
 }
 
-function getExtractedComment(node: AstNodeT) {
+function getExtractedComment(node: any) {
   const comments = []
-    ; (node.leadingComments || []).forEach((commentNode: AstNodeT) => {
+    ; (node.leadingComments || []).forEach((commentNode: any) => {
       const match = commentNode.value.match(/^\s*translators:\s*(.*?)\s*$/im)
       if (match) {
         comments.push(match[1])
@@ -92,10 +89,10 @@ function getExtractedComment(node: AstNodeT) {
 }
 
 function getReference(
-  addLocation: AddLocationT,
-  fn: string,
-  node: AstNodeT
-): ?string {
+  addLocation: any,
+  fn: any,
+  node: any
+): string | undefined {
   if (!addLocation || addLocation === 'full') {
     return `${fn}:${node.loc.start.line}`
   }
@@ -128,12 +125,12 @@ const relocatedComments = {}
 export default function plugin() {
   return {
     visitor: {
-      VariableDeclaration({ node }: { node: AstNodeT }) {
+      VariableDeclaration({ node }: { node: any }) {
         const extractedComment = getExtractedComment(node)
         if (!extractedComment) {
           return
         }
-        node.declarations.forEach((declarator: AstNodeT) => {
+        node.declarations.forEach((declarator: any) => {
           const comment = getExtractedComment(declarator)
           if (!comment) {
             const key = `${declarator.init.start}|${declarator.init.end}`
@@ -143,8 +140,8 @@ export default function plugin() {
       },
 
       CallExpression(
-        { node, parent }: { node: AstNodeT, parent: AstNodeT },
-        config: ConfigT
+        { node, parent }: { node: any, parent: any },
+        config: any
       ) {
         const {
           functionName = DEFAULT_FUNCTION_NAME,
@@ -174,7 +171,7 @@ export default function plugin() {
           return
         }
 
-        const translate = {}
+        const translate: any = {}
 
         const args = node.arguments
         if (args.length === 0) {
@@ -225,7 +222,7 @@ export default function plugin() {
         const options = args[args.length - 1]
 
         if (isObjectLiteral(options)) {
-          const ctxtProp = getContextProperty(options)
+          const ctxtProp: any = getContextProperty(options)
 
           if (ctxtProp) {
             const messageContext = getStringValue(ctxtProp.value)
