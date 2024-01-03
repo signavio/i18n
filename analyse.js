@@ -4,7 +4,7 @@ let options = {
     "sonar.sources": "src",
     "sonar.tests": "test",
     "sonar.typescript.lcov.reportPaths": "coverage/lcov.info",
-    "sonar.projectKey": "com.sap.signavio.I18N"
+    "sonar.projectKey": "com.sap.signavio.i18N"
 }
 
 process.argv.slice(2).forEach(function (argument) {
