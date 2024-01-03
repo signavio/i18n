@@ -3,7 +3,7 @@ const scanner = require("sonarqube-scanner");
 let options = {
     "sonar.sources": "src",
     "sonar.tests": "test",
-    "sonar.typescript.lcov.reportPaths": "coverage/lcov.info",
+    "sonar.javascript.lcov.reportPaths": "coverage/lcov.info",
     "sonar.projectKey": "com.sap.signavio.i18N"
 }
 
