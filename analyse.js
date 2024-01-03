@@ -1,7 +1,7 @@
 const scanner = require("sonarqube-scanner");
 
 let options = {
-    "sonar.sources": "lib",
+    "sonar.sources": "src",
     "sonar.tests": "test",
     "sonar.typescript.lcov.reportPaths": "coverage/lcov.info",
     "sonar.projectKey": "com.sap.signavio.I18N"
