@@ -7,7 +7,7 @@ orbs:
 executors:
   fortify:
     machine:
-      image: ubuntu-2004:202104-01
+      image: &ubuntu "ubuntu-2204:current"
     resource_class: 2xlarge
 
 references:
