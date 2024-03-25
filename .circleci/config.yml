@@ -2,13 +2,6 @@ version: 2.1
 
 orbs:
   blackduck: signavio/blackduck@1.16.4
-  fortify: signavio/fortify@2.0.0
-
-executors:
-  fortify:
-    machine:
-      image: &ubuntu "ubuntu-2204:current"
-    resource_class: 2xlarge
 
 references:
   workspace_root: &workspace_root /home/circleci/repo
@@ -76,41 +69,6 @@ jobs:
           blackduck-project-group: SAP_Signavio_Process_Manager
           blackduck-project-name: i18n
           blackduck-project-path: *workspace_root
-
-  fortify-translate-and-scan:
-    executor: fortify
-    working_directory: *workspace_root
-    steps:
-      - checkout
-      - fortify/setup
-      - run:
-          name: Translate i18n
-          command: |
-            set -x
-            sourceanalyzer \
-              -b i18n \
-              -verbose \
-              ./src
-      - run:
-          name: Analyze i18n
-          command: |
-            sourceanalyzer \
-              -b i18n \
-              -verbose \
-              -scan \
-              -f i18n.fpr
-      - store_artifacts:
-          path: i18n.fpr
-      - run:
-          name: 'Fortify: upload'
-          command: |
-            fortifyclient \
-               -url "$FORTIFY_SSC" \
-               -authtoken "$SSC_API_TOKEN" \
-               uploadFPR \
-               -file i18n.fpr \
-               -project signavio-i18n \
-               -version master
 
   test:
     <<: *container_config
@@ -194,15 +152,3 @@ workflows:
     jobs:
       - black-duck-scan:
           context: BlackDuck
-
-  fortify-workflow:
-    triggers:
-      - schedule:
-          cron: '0 0 * * 0'
-          filters:
-            branches:
-              only: master
-    jobs:
-      - fortify-translate-and-scan:
-          context:
-            - fortify
