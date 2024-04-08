@@ -176,8 +176,8 @@ workflows:
   checkmarx:
     jobs:
       - checkmarx-one-scan:
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
           context: checkmarx-one
