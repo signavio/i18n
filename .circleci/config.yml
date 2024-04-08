@@ -82,7 +82,7 @@ jobs:
             scan create \
             -s . \
             --agent CircleCI \
-            --project-name SIGNAVIO_I18N \
+            --project-name signavio-i18n \
             --branch master \
             --base-uri $CX_BASE_URI \
             --base-auth-uri $CX_BASE_AUTH_URI \
