@@ -173,11 +173,12 @@ workflows:
       - black-duck-scan:
           context: BlackDuck
 
-  checkmarx:
+  checkmarx-workflow:
     jobs:
       - checkmarx-one-scan:
           # filters:
           #   branches:
           #     only:
           #       - master
-          context: checkmarx-one
+          context:
+            - checkmarx-one
