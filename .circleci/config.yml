@@ -83,6 +83,7 @@ jobs:
             -s . \
             --agent CircleCI \
             --project-name signavio-i18n \
+            --application-name SIGNAVIO_I18N \
             --branch master \
             --base-uri $CX_BASE_URI \
             --base-auth-uri $CX_BASE_AUTH_URI \
