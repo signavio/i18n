@@ -174,12 +174,25 @@ workflows:
       - black-duck-scan:
           context: BlackDuck
 
-  checkmarx-workflow:
+  checkmarx:
     jobs:
       - checkmarx-one-scan:
-          # filters:
-          #   branches:
-          #     only:
-          #       - master
+          filters:
+            branches:
+              only:
+                - master
+          context:
+            - checkmarx-one
+
+  checkmarx-weekly:
+    triggers:
+      - schedule:
+          cron: '0 0 * * 0'
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - checkmarx-one-scan:
           context:
             - checkmarx-one
