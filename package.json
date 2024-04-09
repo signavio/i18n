@@ -78,7 +78,7 @@
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "rimraf": "2.7.1",
-    "sonarqube-scanner": "3.3.0"
+    "sonarqube-scanner": "3.4.0"
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0",
