@@ -89,6 +89,5 @@
     "minimist": "^1.2.6",
     "qs": "6.9.7",
     "json5": "2.2.3"
-  },
-  "packageManager": "^yarn@1.22.22"
+  }
 }
