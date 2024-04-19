@@ -6444,10 +6444,10 @@ slugify@^1.6.6:
   resolved "https://registry.yarnpkg.com/slugify/-/slugify-1.6.6.tgz#2d4ac0eacb47add6af9e04d3be79319cbcc7924b"
   integrity sha512-h+z7HKHYXj6wJU+AnS/+IH8Uh9fdcX1Lrhg1/VMdf9PwoBQXFcXiAdsy2tSK0P6gKwJLXp02r90ahUCqHk9rrw==
 
-sonarqube-scanner@3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/sonarqube-scanner/-/sonarqube-scanner-3.3.0.tgz#6fdb4e529db538aad6c3acca6870ec2e1e9dc4c9"
-  integrity sha512-G1A6nXT3GwoK5eRwHfFrR/7ThiDfaRefWPIFQ+ifwFOQ/V9OwziLpZBdWZgmZp21kBRnzAMvjcTzgZMqGBXQKA==
+sonarqube-scanner@3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/sonarqube-scanner/-/sonarqube-scanner-3.4.0.tgz#2ed77859ab009d38c04b217d390e95ad9db89a11"
+  integrity sha512-2B/IgA2CkTg8GPKlkqxSPuWLlcEZcoRxWkcZYr47f8Ni1YOEbCS/EUl9/bn68sanZ0lee5adRPuQpGj0EiEW2A==
   dependencies:
     adm-zip "^0.5.10"
     fancy-log "^2.0.0"
