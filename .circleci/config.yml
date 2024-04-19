@@ -1,14 +1,7 @@
 version: 2.1
 
 orbs:
-  blackduck: signavio/blackduck@1.16.2
-  fortify: signavio/fortify@2.0.0
-
-executors:
-  fortify:
-    machine:
-      image: ubuntu-2004:202104-01
-    resource_class: 2xlarge
+  blackduck: signavio/blackduck@1.16.4
 
 references:
   workspace_root: &workspace_root /home/circleci/repo
@@ -77,40 +70,26 @@ jobs:
           blackduck-project-name: i18n
           blackduck-project-path: *workspace_root
 
-  fortify-translate-and-scan:
-    executor: fortify
-    working_directory: *workspace_root
+  checkmarx-one-scan:
+    docker:
+      - image: checkmarx/ast-cli
     steps:
       - checkout
-      - fortify/setup
       - run:
-          name: Translate i18n
+          name: 'Run Scan'
           command: |
-            set -x
-            sourceanalyzer \
-              -b i18n \
-              -verbose \
-              ./src
-      - run:
-          name: Analyze i18n
-          command: |
-            sourceanalyzer \
-              -b i18n \
-              -verbose \
-              -scan \
-              -f i18n.fpr
-      - store_artifacts:
-          path: i18n.fpr
-      - run:
-          name: 'Fortify: upload'
-          command: |
-            fortifyclient \
-               -url "$FORTIFY_SSC" \
-               -authtoken "$SSC_API_TOKEN" \
-               uploadFPR \
-               -file i18n.fpr \
-               -project signavio-i18n \
-               -version master
+            /app/bin/cx \
+            scan create \
+            -s . \
+            --agent CircleCI \
+            --project-name signavio-i18n \
+            --application-name SIGNAVIO_I18N \
+            --branch master \
+            --base-uri $CX_BASE_URI \
+            --base-auth-uri $CX_BASE_AUTH_URI \
+            --tenant $CX_TENANT \
+            --client-id $CX_CLIENT_ID \
+            --client-secret $CX_CLIENT_SECRET \
 
   test:
     <<: *container_config
@@ -123,6 +102,21 @@ jobs:
       - *restore_deps
 
       - run: yarn coverage --ci
+      - run:
+          name: Sonar scan
+          command: |
+            if [ -n "$CIRCLE_PULL_REQUEST" ]; then
+                PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | sed -E "s/.+\/([0-9]+)$/\1/g")
+                SONAR_ARGS="\
+                  sonar.pullrequest.key=${PR_NUMBER} \
+                  sonar.pullrequest.branch=${CIRCLE_BRANCH} \
+                  sonar.pullrequest.base=master"
+              else
+                SONAR_ARGS="\
+                  sonar.branch.name=${CIRCLE_BRANCH}"
+              fi
+
+            node analyse.js $SONAR_ARGS
 
       - *publish_test_results
       - *store_test_results
@@ -158,6 +152,7 @@ workflows:
       - build
 
       - test:
+          context: SonarQubeSAP
           requires:
             - build
       - lint:
@@ -179,14 +174,25 @@ workflows:
       - black-duck-scan:
           context: BlackDuck
 
-  fortify-workflow:
+  checkmarx:
+    jobs:
+      - checkmarx-one-scan:
+          filters:
+            branches:
+              only:
+                - master
+          context:
+            - checkmarx-one
+
+  checkmarx-weekly:
     triggers:
       - schedule:
           cron: '0 0 * * 0'
           filters:
             branches:
-              only: master
+              only:
+                - master
     jobs:
-      - fortify-translate-and-scan:
+      - checkmarx-one-scan:
           context:
-            - fortify
+            - checkmarx-one
