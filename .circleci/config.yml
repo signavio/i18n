@@ -6,10 +6,6 @@ orbs:
 references:
   workspace_root: &workspace_root /home/circleci/repo
 
-  container_config: &container_config
-    docker:
-      - image: cimg/node:lts
-
   dep_cache_key: &dep_cache_key deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
   dep_backup_cache_key: &dep_backup_cache_key deps-{{ .Branch }}
 
@@ -28,10 +24,22 @@ references:
       path: junit.xml
       prefix: tests
 
+# define images as executor/not via 'reference' so that renovate will pick it 
+# up for updates
+executors:
+  node:
+    resource_class: medium+
+    docker:
+      # On Circle-CI We have to use a build images approved by SAP (for build compliance)
+      # see https://wiki.one.int.sap/wiki/pages/viewpage.action?pageId=2650697023
+      - image: node:20
+  ubuntu:
+    machine:
+      image: ubuntu-2204:current
+
 jobs:
   build:
-    <<: *container_config
-
+    executor: node
     working_directory: *workspace_root
 
     steps:
@@ -92,7 +100,7 @@ jobs:
             --client-secret $CX_CLIENT_SECRET \
 
   test:
-    <<: *container_config
+    executor: node
 
     working_directory: *workspace_root
 
@@ -122,7 +130,7 @@ jobs:
       - *store_test_results
 
   lint:
-    <<: *container_config
+    executor: node
 
     working_directory: *workspace_root
 
@@ -134,7 +142,7 @@ jobs:
       - run: yarn lint
 
   flow:
-    <<: *container_config
+    executor: node
 
     working_directory: *workspace_root
 
@@ -164,12 +172,12 @@ workflows:
             - build
 
   blackduck-nightly-scan:
-    triggers:
-      - schedule:
-          cron: '0 0 * * *'
-          filters:
-            branches:
-              only: master
+#    triggers:
+#      - schedule:
+#          cron: '0 0 * * *'
+#          filters:
+#            branches:
+#              only: master
     jobs:
       - black-duck-scan:
           context: BlackDuck
@@ -177,10 +185,10 @@ workflows:
   checkmarx:
     jobs:
       - checkmarx-one-scan:
-          filters:
-            branches:
-              only:
-                - master
+#          filters:
+#            branches:
+#              only:
+#                - master
           context:
             - checkmarx-one
 
