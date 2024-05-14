@@ -33,10 +33,6 @@ executors:
       # On Circle-CI We have to use a build images approved by SAP (for build compliance)
       # see https://wiki.one.int.sap/wiki/pages/viewpage.action?pageId=2650697023
       - image: node:20
-  node-browser:
-    docker:
-      # used for blackduck scan
-      - image: cimg/node:lts-browsers
 
 jobs:
   build:
@@ -58,7 +54,7 @@ jobs:
             - node_modules
 
   black-duck-scan:
-    executor: node-browser
+    executor: node
 
     working_directory: *workspace_root
 
