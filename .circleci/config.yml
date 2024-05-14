@@ -56,7 +56,7 @@ jobs:
   black-duck-scan:
     docker:
       # blackduck requires node and java
-      - image: cimg/node:20-browsers
+      - image: cimg/node:lts-browsers
 
     working_directory: *workspace_root
 
