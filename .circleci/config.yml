@@ -33,9 +33,10 @@ executors:
       # On Circle-CI We have to use a build images approved by SAP (for build compliance)
       # see https://wiki.one.int.sap/wiki/pages/viewpage.action?pageId=2650697023
       - image: node:20
-  ubuntu:
-    machine:
-      image: ubuntu-2204:current
+  node-browser:
+    docker:
+      # used for blackduck scan
+      - image: cimg/node:lts-browsers
 
 jobs:
   build:
@@ -60,8 +61,7 @@ jobs:
             - node_modules
 
   black-duck-scan:
-    docker:
-      - image: cimg/node:lts-browsers
+    executor: node-browser
 
     working_directory: *workspace_root
 
@@ -172,12 +172,12 @@ workflows:
             - build
 
   blackduck-nightly-scan:
-#    triggers:
-#      - schedule:
-#          cron: '0 0 * * *'
-#          filters:
-#            branches:
-#              only: master
+    triggers:
+      - schedule:
+          cron: '0 0 * * *'
+          filters:
+            branches:
+              only: master
     jobs:
       - black-duck-scan:
           context: BlackDuck
@@ -185,10 +185,10 @@ workflows:
   checkmarx:
     jobs:
       - checkmarx-one-scan:
-#          filters:
-#            branches:
-#              only:
-#                - master
+          filters:
+            branches:
+              only:
+                - master
           context:
             - checkmarx-one
 
