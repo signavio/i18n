@@ -4,7 +4,7 @@ orbs:
   blackduck: signavio/blackduck@1.16.4
 
 references:
-  workspace_root: &workspace_root /home/circleci/repo
+  workspace_root: &workspace_root ~/repo
 
   dep_cache_key: &dep_cache_key deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
   dep_backup_cache_key: &dep_backup_cache_key deps-{{ .Branch }}
