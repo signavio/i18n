@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  blackduck: signavio/blackduck@1.16.4
+  blackduck: signavio/blackduck@1.16.6
 
 references:
   workspace_root: &workspace_root ~/repo
@@ -71,7 +71,7 @@ jobs:
       - blackduck/blackduck-detect:
           blackduck-project-group: SAP_Signavio_Process_Manager
           blackduck-project-name: i18n
-          blackduck-project-path: *workspace_root
+          blackduck-project-path: "$HOME/repo"
 
   checkmarx-one-scan:
     docker:
