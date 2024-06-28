@@ -77,7 +77,7 @@
     "prettier": "3.3.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "rimraf": "2.7.1",
+    "rimraf": "5.0.7",
     "sonarqube-scanner": "3.5.0"
   },
   "peerDependencies": {
