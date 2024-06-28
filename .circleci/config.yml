@@ -1,24 +1,13 @@
 version: 2.1
 
 orbs:
-  blackduck: signavio/blackduck@1.16.4
-  fortify: signavio/fortify@2.0.0
-
-executors:
-  fortify:
-    machine:
-      image: &ubuntu "ubuntu-2204:current"
-    resource_class: 2xlarge
+  blackduck: signavio/blackduck@1.16.6
 
 references:
-  workspace_root: &workspace_root /home/circleci/repo
+  workspace_root: &workspace_root ~/repo
 
-  container_config: &container_config
-    docker:
-      - image: cimg/node:lts
-
-  dep_cache_key: &dep_cache_key deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-  dep_backup_cache_key: &dep_backup_cache_key deps-{{ .Branch }}
+  dep_cache_key: &dep_cache_key deps2-{{ .Branch }}-{{ checksum "yarn.lock" }}
+  dep_backup_cache_key: &dep_backup_cache_key deps2-{{ .Branch }}
 
   restore_deps: &restore_deps
     restore_cache:
@@ -35,10 +24,19 @@ references:
       path: junit.xml
       prefix: tests
 
+# define images as executor/not via 'reference' so that renovate will pick it 
+# up for updates
+executors:
+  node:
+    resource_class: medium+
+    docker:
+      # On Circle-CI We have to use a build images approved by SAP (for build compliance)
+      # see https://wiki.one.int.sap/wiki/pages/viewpage.action?pageId=2650697023
+      - image: node:22
+
 jobs:
   build:
-    <<: *container_config
-
+    executor: node
     working_directory: *workspace_root
 
     steps:
@@ -46,20 +44,18 @@ jobs:
 
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
-      - restore_cache:
-          keys:
-            - deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - *dep_backup_cache_key
+      - *restore_deps
 
       - run: yarn install
 
       - save_cache:
-          key: deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          key: *dep_cache_key
           paths:
             - node_modules
 
   black-duck-scan:
     docker:
+      # blackduck requires node and java
       - image: cimg/node:lts-browsers
 
     working_directory: *workspace_root
@@ -75,45 +71,31 @@ jobs:
       - blackduck/blackduck-detect:
           blackduck-project-group: SAP_Signavio_Process_Manager
           blackduck-project-name: i18n
-          blackduck-project-path: *workspace_root
+          blackduck-project-path: "$HOME/repo"
 
-  fortify-translate-and-scan:
-    executor: fortify
-    working_directory: *workspace_root
+  checkmarx-one-scan:
+    docker:
+      - image: checkmarx/ast-cli
     steps:
       - checkout
-      - fortify/setup
       - run:
-          name: Translate i18n
+          name: 'Run Scan'
           command: |
-            set -x
-            sourceanalyzer \
-              -b i18n \
-              -verbose \
-              ./src
-      - run:
-          name: Analyze i18n
-          command: |
-            sourceanalyzer \
-              -b i18n \
-              -verbose \
-              -scan \
-              -f i18n.fpr
-      - store_artifacts:
-          path: i18n.fpr
-      - run:
-          name: 'Fortify: upload'
-          command: |
-            fortifyclient \
-               -url "$FORTIFY_SSC" \
-               -authtoken "$SSC_API_TOKEN" \
-               uploadFPR \
-               -file i18n.fpr \
-               -project signavio-i18n \
-               -version master
+            /app/bin/cx \
+            scan create \
+            -s . \
+            --agent CircleCI \
+            --project-name signavio-i18n \
+            --application-name SIGNAVIO_I18N \
+            --branch master \
+            --base-uri $CX_BASE_URI \
+            --base-auth-uri $CX_BASE_AUTH_URI \
+            --tenant $CX_TENANT \
+            --client-id $CX_CLIENT_ID \
+            --client-secret $CX_CLIENT_SECRET \
 
   test:
-    <<: *container_config
+    executor: node
 
     working_directory: *workspace_root
 
@@ -143,7 +125,7 @@ jobs:
       - *store_test_results
 
   lint:
-    <<: *container_config
+    executor: node
 
     working_directory: *workspace_root
 
@@ -155,7 +137,7 @@ jobs:
       - run: yarn lint
 
   flow:
-    <<: *container_config
+    executor: node
 
     working_directory: *workspace_root
 
@@ -195,14 +177,25 @@ workflows:
       - black-duck-scan:
           context: BlackDuck
 
-  fortify-workflow:
+  checkmarx:
+    jobs:
+      - checkmarx-one-scan:
+          filters:
+            branches:
+              only:
+                - master
+          context:
+            - checkmarx-one
+
+  checkmarx-weekly:
     triggers:
       - schedule:
           cron: '0 0 * * 0'
           filters:
             branches:
-              only: master
+              only:
+                - master
     jobs:
-      - fortify-translate-and-scan:
+      - checkmarx-one-scan:
           context:
-            - fortify
+            - checkmarx-one
