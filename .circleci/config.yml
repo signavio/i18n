@@ -93,6 +93,7 @@ jobs:
             --tenant $CX_TENANT \
             --client-id $CX_CLIENT_ID \
             --client-secret $CX_CLIENT_SECRET \
+            --file-filter '!**/yarn.lock' \
 
   test:
     executor: node
