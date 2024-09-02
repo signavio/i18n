@@ -46,7 +46,7 @@ jobs:
 
       - *restore_deps
 
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
 
       - save_cache:
           key: *dep_cache_key
@@ -65,7 +65,7 @@ jobs:
 
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
-      - run: yarn install && yarn build
+      - run: yarn install --frozen-lockfile && yarn build
       - run: npm prune --production
 
       - blackduck/blackduck-detect:
