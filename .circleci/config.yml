@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  blackduck: signavio/blackduck@1.16.6
+  blackduck: signavio/blackduck@1.18.0
 
 references:
   workspace_root: &workspace_root ~/repo
