@@ -24,7 +24,7 @@ references:
       path: junit.xml
       prefix: tests
 
-# define images as executor/not via 'reference' so that renovate will pick it 
+# define images as executor/not via 'reference' so that renovate will pick it
 # up for updates
 executors:
   node:
@@ -57,7 +57,17 @@ jobs:
     docker:
       # blackduck requires node and java
       - image: cimg/node:lts-browsers
-
+    parameters:
+      scan-mode:
+        description: "use RAPID on branches to not persist the result and INTELLIGENT as default for the nightly job"
+        default: INTELLIGENT
+        type: enum
+        enum: [INTELLIGENT, RAPID]
+      enable_ctp:
+        default: false
+        description: |
+          Boolean for whether or not to run CTP Scan after OS3 scan. Default is false.
+        type: boolean
     working_directory: *workspace_root
 
     steps:
@@ -69,6 +79,8 @@ jobs:
       - run: npm prune --production
 
       - blackduck/blackduck-detect:
+          enable_ctp: << parameters.enable_ctp >>
+          blackduck-scan-mode: << parameters.scan-mode >>
           blackduck-project-group: SAP_Signavio_Process_Manager
           blackduck-project-name: i18n
           blackduck-project-path: "$HOME/repo"
@@ -176,6 +188,7 @@ workflows:
               only: master
     jobs:
       - black-duck-scan:
+          enable_ctp: true
           context: BlackDuck
 
   checkmarx:
