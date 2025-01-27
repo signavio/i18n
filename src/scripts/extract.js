@@ -1,5 +1,5 @@
 // @flow
-import glob from 'glob'
+import { globSync } from 'glob'
 import ProgressBar from 'progress'
 import { transformFileSync } from '@babel/core'
 import fs from 'fs'
@@ -16,7 +16,7 @@ if (process.argv.length < 3) {
 }
 
 // glob sync returns an array of filenames matching the pattern
-const files = glob.sync(process.argv[2])
+const files = globSync(process.argv[2])
 const outputfileName = process.argv[3]
 const replacementsJSONPath = process.argv[4]
 
