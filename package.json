@@ -37,7 +37,7 @@
     "url": "https://github.com/signavio/i18n/issues"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.26.10",
     "gettext-parser": "2.0.0",
     "glob": "^11.0.0",
     "marked": "^4.0.10",
