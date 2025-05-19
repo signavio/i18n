@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  blackduck: signavio/blackduck@1.18.0
+  blackduck: signavio/blackduck@2.2.1
 
 references:
   workspace_root: &workspace_root ~/repo
@@ -59,7 +59,7 @@ jobs:
       - image: cimg/node:lts-browsers
     parameters:
       scan-mode:
-        description: "use RAPID on branches to not persist the result and INTELLIGENT as default for the nightly job"
+        description: 'use RAPID on branches to not persist the result and INTELLIGENT as default for the nightly job'
         default: INTELLIGENT
         type: enum
         enum: [INTELLIGENT, RAPID]
@@ -83,7 +83,7 @@ jobs:
           blackduck-scan-mode: << parameters.scan-mode >>
           blackduck-project-group: SAP_Signavio_Process_Manager
           blackduck-project-name: i18n
-          blackduck-project-path: "$HOME/repo"
+          blackduck-project-path: '$HOME/repo'
 
   checkmarx-one-scan:
     docker:
