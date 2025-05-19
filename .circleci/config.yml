@@ -180,12 +180,12 @@ workflows:
             - build
 
   blackduck-nightly-scan:
-    # triggers:
-    #   - schedule:
-    #       cron: '0 0 * * *'
-    #       filters:
-    #         branches:
-    #           only: master
+    triggers:
+      - schedule:
+          cron: '0 0 * * *'
+          filters:
+            branches:
+              only: master
     jobs:
       - black-duck-scan:
           enable_ctp: true
