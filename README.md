@@ -5,6 +5,12 @@
 
 Minimalist gettext style i18n for JavaScript
 
+> [!NOTE]
+> Access is now [managed via CAM](https://wiki.one.int.sap/wiki/display/SIGDEX/ADR-MIG-0001+-+GitHub+Hyperspace+Migration%3A+CAM+Profiles).
+> To gain access to the new location, please request one of the following CAM profiles:
+> * [BPI Signavio Github Process Manager Developer](https://cam.int.sap/cam/ui/admin?item=request&profile_uuid=FA163EF13B451EEFBED2AE491C91D327)
+> * [BPI Signavio Github Process Manager Admin](https://cam.int.sap/cam/ui/admin?item=request&profile_uuid=FA163EF13B451EEFBED27BB37B5AD327)
+
 ## Features
 
 - [Supports React components as interpolations](#interpolations)

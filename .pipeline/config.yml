@@ -1,0 +1,56 @@
+general:
+  buildTool: 'npm'
+  productiveBranch: 'master'
+  vaultPath: 'piper/sap-project-signavio-process-manager'
+  vaultBasePath: 'piper/sap-project-signavio-process-manager'
+  vaultPipelineName: 'i18n'
+  vaultServerUrl: 'https://vault.tools.sap'
+  vaultNamespace: 'ies/hyperspace/pipelines'
+  nativeBuild: true
+stages:
+  Release:
+    sapDownloadArtifact: false
+  Post:
+    # Secret rotation handled by Hyperspace Portal, enabling it back might cause unintended behavior
+    vaultRotateSecretId: false
+  customFeatures:
+    slackNotification: true
+steps:
+  sapCallStagingService:
+    url: 'https://staging.repositories.cloud.sap/stage/api'
+    profile: 'group-signavio-process-manager-h4zzv-default'
+  sapCumulusUpload:
+    pipelineId: '009975ee-cc96-46d9-89e6-4f765630a283'
+  npmExecuteScripts:
+    vaultCredentialPath: 'artifactory'
+    vaultCredentialKeys: ['token']
+    vaultCredentialEnvPrefix: 'ARTIFACTORY_'
+    verbose: true
+    packBeforePublish: true
+    publish: true
+    runScripts:
+      - 'build'
+      - 'lint'
+      - 'test'
+      - 'flow'
+  sonarExecuteScan:
+    serverUrl: 'https://sonar.tools.sap'
+    sonarVaultSecretName: 'GROUP-SECRETS/sonar-sonartechtoken'
+  checkmarxOneExecuteScan:
+    checkmarxOneVaultSecretName: GROUP-SECRETS/checkmarxOne
+    projectName: 'i18n_SIGNAVIO_PROCESS_MANAGER'
+    branch: 'master'
+    preset: 'SAP_Corp_JavaScript'
+    applicationName: 'SIGNAVIO_PROCESS_MANAGER'
+  detectExecuteScan:
+    failOnSevereVulnerabilities: false
+    projectName: 'i18n'
+    customScanVersion: 1
+    groups:
+      - 'SAP_Signavio_Process_Manager'
+  slackNotification:
+    slackChannelId: 'C09062HQ1HS'
+    event: fail
+    customMessage: false
+    vaultGroup: 'sap-project-signavio-process-manager'
+    customNotification: false
