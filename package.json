@@ -65,7 +65,7 @@
     "eslint": "8.57.1",
     "eslint-config-react-app": "7.0.0",
     "eslint-plugin-flowtype": "8.0.3",
-    "eslint-plugin-import": "2.31.0",
+    "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsx-a11y": "6.10.1",
     "eslint-plugin-react": "7.37.2",
     "flow-bin": "0.65.0",
