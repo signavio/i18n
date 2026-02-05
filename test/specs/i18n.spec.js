@@ -110,6 +110,17 @@ describe('i18n', () => {
         '<span>This is a <strong>success</strong>.</span>'
       )
     })
+    it('should skip html entities/numbers using Markdown in translation messages', () => {
+      const t = i18n('Entity: &bull; & number: a&#768;', {
+        test: 'success',
+        markdown: true,
+      })
+      expect(React.isValidElement(t)).toBe(true)
+      const renderedHtml = ReactDOMServer.renderToStaticMarkup(t)
+      expect(renderedHtml).toBe(
+        '<span>Entity: &bull; &amp; number: a&#768;</span>'
+      )
+    })
 
     it('should correctly escape interpolations when used with Markdown', () => {
       const t = i18n('This is a **__test__**.', {
@@ -266,6 +277,17 @@ describe('i18n', () => {
       expect(escapeHtml(str)).toBe(
         '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
       )
+    })
+
+    it('should not escape html entities or html numbers', () => {
+      const str = '<div> & but also html entity_name &amp;<p> and &#60; are so called \'html entity_number"'
+      expect(escapeHtml(str)).toBe(
+        '&lt;div&gt; &amp; but also html entity_name &amp;&lt;p&gt; and &#60; are so called &#039;html entity_number&quot;'
+      )
+    })
+    it('should not escape the already escaped', () => {
+      const str = '&lt;div&gt; &amp; &lt;p&gt; are so called &#039;html tags&quot;'
+      expect(escapeHtml(str)).toBe(str)
     })
 
     it('should handle undefined values with markdown', () => {
