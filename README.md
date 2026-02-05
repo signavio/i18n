@@ -2,6 +2,7 @@
 
 [![CircleCI][build-badge]][build]
 [![npm package][npm-badge]][npm]
+[![REUSE status](https://api.reuse.software/badge/github.com/signavio/i18n)](https://api.reuse.software/info/github.com/signavio/i18n)
 
 Minimalist gettext style i18n for JavaScript
 
